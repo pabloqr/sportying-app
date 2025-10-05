@@ -41,9 +41,12 @@ class ClientDashboardViewModel extends ChangeNotifier {
         final reservations = reservationsResult.value
             .where((reservation) => reservation.timeFilter == TimeFilter.upcoming)
             .toList();
-        reservations.sort((a, b) => a.dateIni.compareTo(b.dateIni));
 
-        _reservation = reservations.first;
+        if (reservations.isNotEmpty) {
+          reservations.sort((a, b) => a.dateIni.compareTo(b.dateIni));
+          _reservation = reservations.first;
+        }
+
         notifyListeners();
         break;
       case Error<List<Reservation>>():

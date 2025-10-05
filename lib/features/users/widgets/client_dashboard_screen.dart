@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
+import 'package:sportying_app/features/reservations/widgets/reservation_card.dart';
 import 'package:sportying_app/features/users/view_model/client_dashboard_viewmodel.dart';
 
 class ClientDashboardScreen extends StatefulWidget {
@@ -16,6 +20,7 @@ class _ClientDashboardScreenState extends State<ClientDashboardScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Home')),
       body: SafeArea(
+        top: false,
         child: ListenableBuilder(
           listenable: widget.viewModel.load,
           builder: (context, child) {
@@ -33,6 +38,46 @@ class _ClientDashboardScreenState extends State<ClientDashboardScreen> {
 
             return child!;
           },
+          child: ListenableBuilder(
+            listenable: widget.viewModel,
+            builder: (context, _) {
+              return SingleChildScrollView(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  spacing: 16.0,
+                  children: [
+                    if (widget.viewModel.reservation != null)
+                      ReservationCard(userId: 6, reservation: widget.viewModel.reservation!)
+                    else
+                      const Center(child: Text('No upcoming reservations')),
+
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxHeight: 264.0),
+                      child: CarouselView(
+                        itemExtent: 240.0,
+                        onTap: (index) {},
+                        children: List<Widget>.generate(
+                          widget.viewModel.complexes.isNotEmpty ? widget.viewModel.complexes.length : 10,
+                          (int index) {
+                            if (widget.viewModel.complexes.isEmpty) {
+                              return Container(color: Theme.of(context).colorScheme.surfaceContainer);
+                            }
+
+                            return ComplexCard.small(
+                              userId: null,
+                              complex: widget.viewModel.complexes.elementAt(index),
+                              rating: Random().nextInt(11) / 2.0,
+                              sports: {},
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
