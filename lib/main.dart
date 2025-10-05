@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:sportying_app/data/repositories/complexes/complexes_repository.dart';
+import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
+import 'package:sportying_app/features/users/view_model/client_dashboard_viewmodel.dart';
+import 'package:sportying_app/features/users/widgets/client_dashboard_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +15,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    http.Client client = http.Client();
+
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -30,7 +37,7 @@ class MyApp extends StatelessWidget {
         // tested with just a hot reload.
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const ClientDashboardScreen(viewModel: ClientDashboardViewModel(complexesRepository: ComplexesRepositoryImpl(remoteService: ComplexesRemoteServiceImpl(client: client)))),
     );
   }
 }
