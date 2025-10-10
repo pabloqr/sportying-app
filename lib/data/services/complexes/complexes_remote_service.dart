@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 
 abstract class ComplexesRemoteService {
   Future<Result<List<ComplexApiModel>>> getComplexes(Map<String, dynamic>? query);
-  // Future<Result<ComplexApiModel>> getComplex(int complexId);
+  Future<Result<ComplexApiModel>> getComplex(int complexId);
 }
 
 class ComplexesRemoteServiceImpl implements ComplexesRemoteService {
@@ -51,6 +51,25 @@ class ComplexesRemoteServiceImpl implements ComplexesRemoteService {
       if (response.statusCode == 200) {
         final data = jsonDecode(utf8.decode(response.bodyBytes)) as List<dynamic>;
         return Result.ok(data.map((e) => ComplexApiModel.fromJson(e)).toList());
+      } else {
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        return Result.error(HttpException(data['message'] ?? 'Error getting complexes: ${response.statusCode}'));
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<ComplexApiModel>> getComplex(int complexId) async {
+    Uri uri = Uri.parse('http://100.70.62.176:3000/complexes/$complexId');
+
+    try {
+      final response = await _client.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        return Result.ok(ComplexApiModel.fromJson(data));
       } else {
         final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
         return Result.error(HttpException(data['message'] ?? 'Error getting complexes: ${response.statusCode}'));

@@ -5,7 +5,6 @@ import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/core/widget_size.dart';
-import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 import 'package:sportying_app/features/core/widgets/info_section_widget.dart';
 import 'package:sportying_app/features/core/widgets/labeled_info_widget.dart';
 import 'package:sportying_app/features/core/widgets/small_chip.dart';
@@ -13,7 +12,6 @@ import 'package:sportying_app/features/core/widgets/small_chip.dart';
 class ComplexCard extends StatelessWidget {
   final WidgetSize size;
 
-  final int? userId;
   final Complex complex;
   final double rating;
   final Set<Sport> sports;
@@ -23,7 +21,6 @@ class ComplexCard extends StatelessWidget {
 
   const ComplexCard._(
     this.size, {
-    required this.userId,
     required this.complex,
     required this.rating,
     required this.sports,
@@ -32,7 +29,6 @@ class ComplexCard extends StatelessWidget {
   });
 
   factory ComplexCard.small({
-    required int? userId,
     required Complex complex,
     required double rating,
     required Set<Sport> sports,
@@ -42,7 +38,6 @@ class ComplexCard extends StatelessWidget {
     ValueNotifier<int> notifier = selectedIndex ?? ValueNotifier<int>(-1);
     return ComplexCard._(
       WidgetSize.small,
-      userId: userId,
       complex: complex,
       rating: rating,
       sports: sports,
@@ -52,7 +47,6 @@ class ComplexCard extends StatelessWidget {
   }
 
   factory ComplexCard.medium({
-    required int? userId,
     required Complex complex,
     required double rating,
     required Set<Sport> sports,
@@ -62,7 +56,6 @@ class ComplexCard extends StatelessWidget {
     ValueNotifier<int> notifier = selectedIndex ?? ValueNotifier<int>(-1);
     return ComplexCard._(
       WidgetSize.medium,
-      userId: userId,
       complex: complex,
       rating: rating,
       sports: sports,
@@ -72,7 +65,6 @@ class ComplexCard extends StatelessWidget {
   }
 
   factory ComplexCard.large({
-    required int? userId,
     required Complex complex,
     required double rating,
     required Set<Sport> sports,
@@ -82,7 +74,6 @@ class ComplexCard extends StatelessWidget {
     ValueNotifier<int> notifier = selectedIndex ?? ValueNotifier<int>(-1);
     return ComplexCard._(
       WidgetSize.large,
-      userId: userId,
       complex: complex,
       rating: rating,
       sports: sports,
@@ -123,7 +114,7 @@ class ComplexCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(complex.complexName, style: textTheme.titleLarge, softWrap: false),
+        Text(complex.name, style: textTheme.titleLarge, softWrap: false),
         const SizedBox(height: 4.0),
         ClipRect(
           child: OverflowBox(
@@ -192,21 +183,7 @@ class ComplexCard extends StatelessWidget {
         if (size != WidgetSize.small)
           InfoSectionWidget(
             leftChildren: [
-              FutureBuilder(
-                future: WidgetUtilities.getAddressFromLatLng(complex.locLatitude!, complex.locLongitude!),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting || snapshot.hasError || !snapshot.hasData) {
-                    return LabeledInfoWidget(
-                      icon: Symbols.location_on_rounded,
-                      label: 'Address',
-                      text: 'C/XXXXXXXX XXXXXXXX, 00',
-                    );
-                  }
-
-                  final address = snapshot.data!;
-                  return LabeledInfoWidget(icon: Symbols.location_on_rounded, label: 'Address', text: address);
-                },
-              ),
+              LabeledInfoWidget(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
             ],
             rightChildren: [
               LabeledInfoWidget(

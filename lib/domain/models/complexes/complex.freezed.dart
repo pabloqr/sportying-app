@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Complex {
 
- int? get id; String get complexName; String get timeIni; String get timeEnd; double? get locLongitude; double? get locLatitude; DateTime get createdAt; DateTime get updatedAt;
+ int? get id; String get name; String get timeIni; String get timeEnd; String get address; double? get locLongitude; double? get locLatitude; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of Complex
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ComplexCopyWith<Complex> get copyWith => _$ComplexCopyWithImpl<Complex>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Complex&&(identical(other.id, id) || other.id == id)&&(identical(other.complexName, complexName) || other.complexName == complexName)&&(identical(other.timeIni, timeIni) || other.timeIni == timeIni)&&(identical(other.timeEnd, timeEnd) || other.timeEnd == timeEnd)&&(identical(other.locLongitude, locLongitude) || other.locLongitude == locLongitude)&&(identical(other.locLatitude, locLatitude) || other.locLatitude == locLatitude)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Complex&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.timeIni, timeIni) || other.timeIni == timeIni)&&(identical(other.timeEnd, timeEnd) || other.timeEnd == timeEnd)&&(identical(other.address, address) || other.address == address)&&(identical(other.locLongitude, locLongitude) || other.locLongitude == locLongitude)&&(identical(other.locLatitude, locLatitude) || other.locLatitude == locLatitude)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,complexName,timeIni,timeEnd,locLongitude,locLatitude,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,timeIni,timeEnd,address,locLongitude,locLatitude,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'Complex(id: $id, complexName: $complexName, timeIni: $timeIni, timeEnd: $timeEnd, locLongitude: $locLongitude, locLatitude: $locLatitude, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Complex(id: $id, name: $name, timeIni: $timeIni, timeEnd: $timeEnd, address: $address, locLongitude: $locLongitude, locLatitude: $locLatitude, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ComplexCopyWith<$Res>  {
   factory $ComplexCopyWith(Complex value, $Res Function(Complex) _then) = _$ComplexCopyWithImpl;
 @useResult
 $Res call({
- int? id, String complexName, String timeIni, String timeEnd, double? locLongitude, double? locLatitude, DateTime createdAt, DateTime updatedAt
+ int? id, String name, String timeIni, String timeEnd, String address, double? locLongitude, double? locLatitude, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,12 +65,13 @@ class _$ComplexCopyWithImpl<$Res>
 
 /// Create a copy of Complex
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? complexName = null,Object? timeIni = null,Object? timeEnd = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? name = null,Object? timeIni = null,Object? timeEnd = null,Object? address = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,complexName: null == complexName ? _self.complexName : complexName // ignore: cast_nullable_to_non_nullable
+as int?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,timeIni: null == timeIni ? _self.timeIni : timeIni // ignore: cast_nullable_to_non_nullable
 as String,timeEnd: null == timeEnd ? _self.timeEnd : timeEnd // ignore: cast_nullable_to_non_nullable
+as String,address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as String,locLongitude: freezed == locLongitude ? _self.locLongitude : locLongitude // ignore: cast_nullable_to_non_nullable
 as double?,locLatitude: freezed == locLatitude ? _self.locLatitude : locLatitude // ignore: cast_nullable_to_non_nullable
 as double?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Complex() when $default != null:
-return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.loc
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Complex():
-return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.loc
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Complex() when $default != null:
-return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -216,13 +217,14 @@ return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.loc
 @JsonSerializable()
 
 class _Complex implements Complex {
-  const _Complex({this.id, required this.complexName, required this.timeIni, required this.timeEnd, required this.locLongitude, required this.locLatitude, required this.createdAt, required this.updatedAt});
+  const _Complex({this.id, required this.name, required this.timeIni, required this.timeEnd, required this.address, required this.locLongitude, required this.locLatitude, required this.createdAt, required this.updatedAt});
   factory _Complex.fromJson(Map<String, dynamic> json) => _$ComplexFromJson(json);
 
 @override final  int? id;
-@override final  String complexName;
+@override final  String name;
 @override final  String timeIni;
 @override final  String timeEnd;
+@override final  String address;
 @override final  double? locLongitude;
 @override final  double? locLatitude;
 @override final  DateTime createdAt;
@@ -241,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Complex&&(identical(other.id, id) || other.id == id)&&(identical(other.complexName, complexName) || other.complexName == complexName)&&(identical(other.timeIni, timeIni) || other.timeIni == timeIni)&&(identical(other.timeEnd, timeEnd) || other.timeEnd == timeEnd)&&(identical(other.locLongitude, locLongitude) || other.locLongitude == locLongitude)&&(identical(other.locLatitude, locLatitude) || other.locLatitude == locLatitude)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Complex&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.timeIni, timeIni) || other.timeIni == timeIni)&&(identical(other.timeEnd, timeEnd) || other.timeEnd == timeEnd)&&(identical(other.address, address) || other.address == address)&&(identical(other.locLongitude, locLongitude) || other.locLongitude == locLongitude)&&(identical(other.locLatitude, locLatitude) || other.locLatitude == locLatitude)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,complexName,timeIni,timeEnd,locLongitude,locLatitude,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,name,timeIni,timeEnd,address,locLongitude,locLatitude,createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'Complex(id: $id, complexName: $complexName, timeIni: $timeIni, timeEnd: $timeEnd, locLongitude: $locLongitude, locLatitude: $locLatitude, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'Complex(id: $id, name: $name, timeIni: $timeIni, timeEnd: $timeEnd, address: $address, locLongitude: $locLongitude, locLatitude: $locLatitude, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -261,7 +263,7 @@ abstract mixin class _$ComplexCopyWith<$Res> implements $ComplexCopyWith<$Res> {
   factory _$ComplexCopyWith(_Complex value, $Res Function(_Complex) _then) = __$ComplexCopyWithImpl;
 @override @useResult
 $Res call({
- int? id, String complexName, String timeIni, String timeEnd, double? locLongitude, double? locLatitude, DateTime createdAt, DateTime updatedAt
+ int? id, String name, String timeIni, String timeEnd, String address, double? locLongitude, double? locLatitude, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -278,12 +280,13 @@ class __$ComplexCopyWithImpl<$Res>
 
 /// Create a copy of Complex
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? complexName = null,Object? timeIni = null,Object? timeEnd = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? name = null,Object? timeIni = null,Object? timeEnd = null,Object? address = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_Complex(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,complexName: null == complexName ? _self.complexName : complexName // ignore: cast_nullable_to_non_nullable
+as int?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,timeIni: null == timeIni ? _self.timeIni : timeIni // ignore: cast_nullable_to_non_nullable
 as String,timeEnd: null == timeEnd ? _self.timeEnd : timeEnd // ignore: cast_nullable_to_non_nullable
+as String,address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as String,locLongitude: freezed == locLongitude ? _self.locLongitude : locLongitude // ignore: cast_nullable_to_non_nullable
 as double?,locLatitude: freezed == locLatitude ? _self.locLatitude : locLatitude // ignore: cast_nullable_to_non_nullable
 as double?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable

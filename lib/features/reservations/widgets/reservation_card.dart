@@ -3,7 +3,6 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
-import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 import 'package:sportying_app/features/core/widgets/info_section_widget.dart';
 import 'package:sportying_app/features/core/widgets/labeled_info_widget.dart';
 import 'package:sportying_app/features/core/widgets/marquee_widget.dart';
@@ -50,42 +49,14 @@ class _ReservationCardState extends State<ReservationCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     spacing: 4.0,
                     children: [
-                      Text('Complex ${widget.reservation.complexId}', style: textTheme.titleLarge),
-                      // if (complex.locLatitude != null &&
-                      //     complex.locLongitude != null)
-                      FutureBuilder(
-                        future: WidgetUtilities.getAddressFromLatLng(0.0, 0.0),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting ||
-                              snapshot.hasError ||
-                              !snapshot.hasData) {
-                            return MarqueeWidget(
-                              child: Text(
-                                'C/XXXXXXXX, XXXXXXXX, XXXXXXXX, 00',
-                                style: textTheme.titleSmall?.copyWith(color: colorScheme.onSurfaceVariant),
-                                overflow: TextOverflow.fade,
-                              ),
-                            );
-                          }
-
-                          final address = snapshot.data!;
-                          return MarqueeWidget(
-                            child: Text(
-                              address,
-                              style: textTheme.titleSmall?.copyWith(color: colorScheme.onSurfaceVariant),
-                              overflow: TextOverflow.fade,
-                            ),
-                          );
-                        },
+                      Text(widget.reservation.complex.name, style: textTheme.titleLarge),
+                      MarqueeWidget(
+                        child: Text(
+                          widget.reservation.complex.address,
+                          style: textTheme.titleSmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                          overflow: TextOverflow.fade,
+                        ),
                       ),
-                      // else
-                      //   MarqueeWidget(
-                      //     child: Text(
-                      //       'C/XXXXXXXX, XXXXXXXX, XXXXXXXX, 00',
-                      //       style: textTheme.titleSmall?.copyWith(color: colorScheme.onSurfaceVariant),
-                      //       overflow: TextOverflow.fade,
-                      //     ),
-                      //   ),
                     ],
                   ),
                 ),
@@ -97,7 +68,7 @@ class _ReservationCardState extends State<ReservationCard> {
                 LabeledInfoWidget(
                   icon: Symbols.location_on_rounded,
                   label: 'Court',
-                  text: 'Court ${widget.reservation.courtId}',
+                  text: widget.reservation.court.name,
                 ),
                 LabeledInfoWidget(icon: Symbols.sports_rounded, label: 'Sport', text: 'Sport'),
               ],

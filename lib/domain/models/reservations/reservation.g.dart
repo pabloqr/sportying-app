@@ -9,8 +9,8 @@ part of 'reservation.dart';
 _Reservation _$ReservationFromJson(Map<String, dynamic> json) => _Reservation(
   id: (json['id'] as num?)?.toInt(),
   userId: json['userId'],
-  complexId: (json['complexId'] as num).toInt(),
-  courtId: (json['courtId'] as num).toInt(),
+  complex: Complex.fromJson(json['complex'] as Map<String, dynamic>),
+  court: Court.fromJson(json['court'] as Map<String, dynamic>),
   dateIni: DateTime.parse(json['dateIni'] as String),
   dateEnd: DateTime.parse(json['dateEnd'] as String),
   status: $enumDecode(_$AvailabilityStatusEnumMap, json['status']),
@@ -28,8 +28,8 @@ Map<String, dynamic> _$ReservationToJson(
 ) => <String, dynamic>{
   'id': instance.id,
   'userId': instance.userId,
-  'complexId': instance.complexId,
-  'courtId': instance.courtId,
+  'complex': instance.complex,
+  'court': instance.court,
   'dateIni': instance.dateIni.toIso8601String(),
   'dateEnd': instance.dateEnd.toIso8601String(),
   'status': _$AvailabilityStatusEnumMap[instance.status]!,

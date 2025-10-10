@@ -33,17 +33,23 @@ class ClientHomeViewModel extends ChangeNotifier {
   late Command1<void, int> load;
 
   Future<Result> _load(int userId) async {
+    // Obtener las reservas del usuario
     final reservationsResult = await _reservationsRepository.getUserReservations(userId);
+    // Obtener el resultado de la operación
     switch (reservationsResult) {
       case Ok<List<Reservation>>():
         _log.fine('Loaded reservations. Getting next upcoming reservation.');
 
+        // Filtrar las reservas para seleccionar sólo las próximas
         final reservations = reservationsResult.value
             .where((reservation) => reservation.timeFilter == TimeFilter.upcoming)
             .toList();
 
+        // Verificar que hay reservas
         if (reservations.isNotEmpty) {
+          // Ordenar de más cercana a más lejana en el tiempo
           reservations.sort((a, b) => a.dateIni.compareTo(b.dateIni));
+          // Actualizar la reserva almacenada en la memoria de la aplicación
           _reservation = reservations.first;
         }
 
@@ -54,11 +60,14 @@ class ClientHomeViewModel extends ChangeNotifier {
         return Result.error(reservationsResult.error);
     }
 
+    // Obtener los complejos almacenados en el sistema
     final complexesResult = await _complexesRepository.getComplexes();
+    // Obtener el resultado de la operación
     switch (complexesResult) {
       case Ok<List<Complex>>():
         _log.fine('Loaded complexes.');
 
+        // Actualizar la lista de complejos almacenados en el sistema
         _complexes = complexesResult.value;
         notifyListeners();
         break;

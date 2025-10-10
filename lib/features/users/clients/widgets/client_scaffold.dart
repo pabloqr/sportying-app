@@ -41,6 +41,11 @@ class ClientScaffold extends StatelessWidget {
       appBar: _buildAppBar(context),
       bottomNavigationBar: _buildBottomNavigationBar(context),
       body: SafeArea(child: navigationShell),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        label: const Text('Book'),
+        icon: const Icon(Symbols.calendar_add_on_rounded, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
+      ),
     );
   }
 

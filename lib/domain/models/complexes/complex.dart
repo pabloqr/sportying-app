@@ -7,9 +7,10 @@ part 'complex.g.dart';
 abstract class Complex with _$Complex {
   const factory Complex({
     int? id,
-    required String complexName,
+    required String name,
     required String timeIni,
     required String timeEnd,
+    required String address,
     required double? locLongitude,
     required double? locLatitude,
     required DateTime createdAt,

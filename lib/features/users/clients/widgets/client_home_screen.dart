@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/widgets/header.dart';
 import 'package:sportying_app/features/news/widgets/news_card.dart';
@@ -41,7 +42,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         listenable: widget.viewModel,
         builder: (context, _) {
           return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+            padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 88.0),
             child: Column(
               spacing: 16.0,
               children: [_buildReservationSubsection(), _buildDiscoverSubsection(), _buildNewsSubsection()],
@@ -95,10 +96,9 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 }
 
                 return ComplexCard.small(
-                  userId: null,
                   complex: widget.viewModel.complexes.elementAt(index),
                   rating: Random().nextInt(11) / 2.0,
-                  sports: {},
+                  sports: {Sport.tennis, Sport.padel},
                 );
               },
             ),

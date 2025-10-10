@@ -8,9 +8,10 @@ part of 'complex.dart';
 
 _Complex _$ComplexFromJson(Map<String, dynamic> json) => _Complex(
   id: (json['id'] as num?)?.toInt(),
-  complexName: json['complexName'] as String,
+  name: json['name'] as String,
   timeIni: json['timeIni'] as String,
   timeEnd: json['timeEnd'] as String,
+  address: json['address'] as String,
   locLongitude: (json['locLongitude'] as num?)?.toDouble(),
   locLatitude: (json['locLatitude'] as num?)?.toDouble(),
   createdAt: DateTime.parse(json['createdAt'] as String),
@@ -19,9 +20,10 @@ _Complex _$ComplexFromJson(Map<String, dynamic> json) => _Complex(
 
 Map<String, dynamic> _$ComplexToJson(_Complex instance) => <String, dynamic>{
   'id': instance.id,
-  'complexName': instance.complexName,
+  'name': instance.name,
   'timeIni': instance.timeIni,
   'timeEnd': instance.timeEnd,
+  'address': instance.address,
   'locLongitude': instance.locLongitude,
   'locLatitude': instance.locLatitude,
   'createdAt': instance.createdAt.toIso8601String(),

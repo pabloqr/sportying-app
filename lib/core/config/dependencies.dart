@@ -4,6 +4,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:sportying_app/data/repositories/complexes/complexes_repository.dart';
 import 'package:sportying_app/data/repositories/reservations/reservations_repository.dart';
 import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
+import 'package:sportying_app/data/services/courts/courts_remote_service.dart';
 import 'package:sportying_app/data/services/reservations/reservations_remote_service.dart';
 
 List<SingleChildWidget> get appProviders {
@@ -17,13 +18,22 @@ List<SingleChildWidget> get appProviders {
     // SERVICES LEVEL 1 (No dependencies on other custom services)
     // ---------------------------------------------------------------------------------------------------------------//
     Provider(create: (context) => ComplexesRemoteServiceImpl(client: context.read()) as ComplexesRemoteService),
+    Provider(create: (context) => CourtsRemoteServiceImpl(client: context.read()) as CourtsRemoteService),
     Provider(create: (context) => ReservationsRemoteServiceImpl(client: context.read()) as ReservationsRemoteService),
 
     // ---------------------------------------------------------------------------------------------------------------//
     // REPOSITORIES LEVEL 1 (Depend on services from level 1)
     // ---------------------------------------------------------------------------------------------------------------//
     Provider(create: (context) => ComplexesRepositoryImpl(remoteService: context.read()) as ComplexesRepository),
-    Provider(create: (context) => ReservationsRepositoryImpl(remoteService: context.read()) as ReservationsRepository),
+    Provider(
+      create: (context) =>
+          ReservationsRepositoryImpl(
+                remoteService: context.read(),
+                complexesRemoteService: context.read(),
+                courtsRemoteService: context.read(),
+              )
+              as ReservationsRepository,
+    ),
 
     // ---------------------------------------------------------------------------------------------------------------//
     // SERVICES LEVEL 2 (Depend on repositories)
