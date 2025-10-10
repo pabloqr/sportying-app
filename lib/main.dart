@@ -11,12 +11,16 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final theme = ClientTheme();
-    // http.Client client = http.Client();
 
-    return MaterialApp.router(title: 'Flutter Demo', theme: theme.light, routerConfig: router());
+    return MaterialApp.router(
+      title: 'Sporty.ing',
+      theme: theme.light,
+      darkTheme: theme.dark,
+      themeMode: ThemeMode.light,
+      routerConfig: router(),
+    );
   }
 }
