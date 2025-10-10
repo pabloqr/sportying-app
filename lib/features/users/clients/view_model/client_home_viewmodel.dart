@@ -10,10 +10,10 @@ import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/domain/models/reservations/time_filter.dart';
 
-class ClientDashboardViewModel extends ChangeNotifier {
+class ClientHomeViewModel extends ChangeNotifier {
   final _log = Logger('ClientDashboardViewModel');
 
-  ClientDashboardViewModel({
+  ClientHomeViewModel({
     required ReservationsRepository reservationRepository,
     required ComplexesRepository complexesRepository,
   }) : _reservationsRepository = reservationRepository,

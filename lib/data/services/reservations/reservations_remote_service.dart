@@ -39,7 +39,7 @@ class ReservationsRemoteServiceImpl implements ReservationsRemoteService {
 
   @override
   Future<Result<List<ReservationApiModel>>> getUserReservations(int userId, Map<String, dynamic>? query) async {
-    Uri uri = Uri.parse('http://10.0.2.2:3000/users/$userId/reservations');
+    Uri uri = Uri.parse('http://100.70.62.176:3000/users/$userId/reservations');
 
     if (query != null && query.isNotEmpty) {
       Map<String, String> queryParameters = {};

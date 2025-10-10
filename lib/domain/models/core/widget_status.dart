@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:sportying_app/features/core/themes/theme.dart';
+import 'package:sportying_app/features/core/themes/theme_old.dart';
 
 enum WidgetStatus { neutralSurface, neutralCard, alert, success, error }
 
