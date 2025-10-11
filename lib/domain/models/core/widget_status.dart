@@ -1,31 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:sportying_app/features/core/themes/theme_old.dart';
+// import 'package:sportying_app/features/core/themes/theme_old.dart';
 
 enum WidgetStatus { neutralSurface, neutralCard, alert, success, error }
 
 extension WidgetStatusColor on WidgetStatus {
   Color colorSurface(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    // final brightness = Theme.of(context).brightness;
 
     switch (this) {
       case WidgetStatus.neutralSurface:
-        return colorScheme.surfaceContainer;
       case WidgetStatus.neutralCard:
-        return colorScheme.surface;
+        return colorScheme.tertiaryContainer;
       case WidgetStatus.alert:
-        if (brightness == Brightness.light) {
-          return MaterialTheme.warning.light.colorContainer;
-        } else {
-          return MaterialTheme.warning.dark.colorContainer;
-        }
+        // if (brightness == Brightness.light) {
+        //   return MaterialTheme.warning.light.colorContainer;
+        // } else {
+        //   return MaterialTheme.warning.dark.colorContainer;
+        // }
+        return colorScheme.tertiary;
       case WidgetStatus.success:
-        if (brightness == Brightness.light) {
-          return MaterialTheme.success.light.colorContainer;
-        } else {
-          return MaterialTheme.success.dark.colorContainer;
-        }
+        // if (brightness == Brightness.light) {
+        //   return MaterialTheme.success.light.colorContainer;
+        // } else {
+        //   return MaterialTheme.success.dark.colorContainer;
+        // }
+        return colorScheme.secondaryContainer;
       case WidgetStatus.error:
         return colorScheme.errorContainer;
     }
@@ -33,25 +34,26 @@ extension WidgetStatusColor on WidgetStatus {
 
   Color colorOnSurface(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    // final brightness = Theme.of(context).brightness;
 
     switch (this) {
       case WidgetStatus.neutralSurface:
-        return colorScheme.onSurface;
       case WidgetStatus.neutralCard:
-        return colorScheme.onSurface;
+        return colorScheme.onTertiaryContainer;
       case WidgetStatus.alert:
-        if (brightness == Brightness.light) {
-          return MaterialTheme.warning.light.onColorContainer;
-        } else {
-          return MaterialTheme.warning.dark.onColorContainer;
-        }
+        // if (brightness == Brightness.light) {
+        //   return MaterialTheme.warning.light.onColorContainer;
+        // } else {
+        //   return MaterialTheme.warning.dark.onColorContainer;
+        // }
+        return colorScheme.onTertiary;
       case WidgetStatus.success:
-        if (brightness == Brightness.light) {
-          return MaterialTheme.success.light.onColorContainer;
-        } else {
-          return MaterialTheme.success.dark.onColorContainer;
-        }
+        // if (brightness == Brightness.light) {
+        //   return MaterialTheme.success.light.onColorContainer;
+        // } else {
+        //   return MaterialTheme.success.dark.onColorContainer;
+        // }
+        return colorScheme.onSecondaryContainer;
       case WidgetStatus.error:
         return colorScheme.onErrorContainer;
     }

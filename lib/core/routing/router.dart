@@ -47,6 +47,24 @@ GoRouter router() => GoRouter(
                 );
               },
             ),
+            GoRoute(
+              path: Routes.clientReservationsRoute,
+              builder: (context, state) {
+                return Center(child: const Text('Reservations screen content'));
+              },
+            ),
+            GoRoute(
+              path: Routes.clientExploreRoute,
+              builder: (context, state) {
+                return Center(child: const Text('Explore screen content'));
+              },
+            ),
+            GoRoute(
+              path: Routes.clientProfileRoute,
+              builder: (context, state) {
+                return Center(child: const Text('Profile screen content'));
+              },
+            ),
           ],
         ),
       ],
