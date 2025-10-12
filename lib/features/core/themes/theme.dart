@@ -311,12 +311,16 @@ abstract class MaterialTheme {
             surfaceTintColor: colorScheme.surfaceTint,
           ),
           appBarTheme: AppBarThemeData(surfaceTintColor: colorScheme.surfaceContainerLowest),
+          floatingActionButtonTheme: FloatingActionButtonThemeData(
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
+          ),
           navigationBarTheme: NavigationBarThemeData(
             backgroundColor: colorScheme.surfaceContainerLowest,
-            indicatorColor: colorScheme.primaryContainer,
+            indicatorColor: colorScheme.primary,
             iconTheme: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return IconThemeData(color: colorScheme.onPrimaryContainer);
+                return IconThemeData(color: colorScheme.onPrimary);
               }
               return IconThemeData(color: colorScheme.onSurfaceVariant);
             }),
@@ -337,20 +341,20 @@ abstract class MaterialTheme {
           canvasColor: colorScheme.surface,
           appBarTheme: AppBarThemeData(surfaceTintColor: colorScheme.surfaceContainerLowest),
           floatingActionButtonTheme: FloatingActionButtonThemeData(
-            backgroundColor: colorScheme.primaryFixedDim,
-            foregroundColor: colorScheme.onPrimaryFixedVariant,
+            backgroundColor: colorScheme.primary,
+            foregroundColor: colorScheme.onPrimary,
           ),
           navigationBarTheme: NavigationBarThemeData(
-            indicatorColor: colorScheme.primaryFixedDim,
+            indicatorColor: colorScheme.primary,
             iconTheme: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return IconThemeData(color: colorScheme.onPrimaryFixedVariant);
+                return IconThemeData(color: colorScheme.onPrimary);
               }
               return IconThemeData(color: colorScheme.onSurfaceVariant);
             }),
             labelTextStyle: WidgetStateProperty.resolveWith((states) {
               if (states.contains(WidgetState.selected)) {
-                return TextStyle(color: colorScheme.primaryFixedDim, fontSize: 12, fontWeight: FontWeight.w600);
+                return TextStyle(color: colorScheme.primary, fontSize: 12, fontWeight: FontWeight.w600);
               }
               return TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12);
             }),

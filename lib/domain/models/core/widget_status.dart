@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 // import 'package:sportying_app/features/core/themes/theme_old.dart';
 
-enum WidgetStatus { neutralSurface, neutralCard, alert, success, error }
+enum WidgetStatus { neutralLight, neutralDark, alert, success, error }
 
 extension WidgetStatusColor on WidgetStatus {
   Color colorSurface(BuildContext context) {
@@ -10,8 +10,9 @@ extension WidgetStatusColor on WidgetStatus {
     // final brightness = Theme.of(context).brightness;
 
     switch (this) {
-      case WidgetStatus.neutralSurface:
-      case WidgetStatus.neutralCard:
+      case WidgetStatus.neutralLight:
+        return colorScheme.tertiary;
+      case WidgetStatus.neutralDark:
         return colorScheme.tertiaryContainer;
       case WidgetStatus.alert:
         // if (brightness == Brightness.light) {
@@ -37,8 +38,9 @@ extension WidgetStatusColor on WidgetStatus {
     // final brightness = Theme.of(context).brightness;
 
     switch (this) {
-      case WidgetStatus.neutralSurface:
-      case WidgetStatus.neutralCard:
+      case WidgetStatus.neutralLight:
+        return colorScheme.onTertiary;
+      case WidgetStatus.neutralDark:
         return colorScheme.onTertiaryContainer;
       case WidgetStatus.alert:
         // if (brightness == Brightness.light) {
@@ -61,8 +63,8 @@ extension WidgetStatusColor on WidgetStatus {
 
   IconData get icon {
     switch (this) {
-      case WidgetStatus.neutralSurface:
-      case WidgetStatus.neutralCard:
+      case WidgetStatus.neutralLight:
+      case WidgetStatus.neutralDark:
         return Symbols.info_rounded;
       case WidgetStatus.alert:
         return Symbols.warning_rounded;

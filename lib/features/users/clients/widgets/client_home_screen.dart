@@ -2,7 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
+import 'package:sportying_app/domain/models/courts/court.dart';
+import 'package:sportying_app/domain/models/courts/court_status.dart';
+import 'package:sportying_app/domain/models/reservations/availability_status.dart';
+import 'package:sportying_app/domain/models/reservations/reservation.dart';
+import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
+import 'package:sportying_app/domain/models/reservations/time_filter.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/widgets/header.dart';
 import 'package:sportying_app/features/news/widgets/news_card.dart';
@@ -67,7 +74,49 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         if (widget.viewModel.reservation != null)
           ReservationCard(userId: 6, reservation: widget.viewModel.reservation!)
         else
-          const Center(child: Text('No upcoming reservations')),
+          ReservationCard(
+            userId: 6,
+            reservation: Reservation(
+              userId: -1,
+              complex: Complex(
+                name: 'Núñez Blanca',
+                timeIni: '09:00',
+                timeEnd: '23:00',
+                address: 'Av. Principal 123, Granada',
+                locLongitude: 0,
+                locLatitude: 0,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ),
+              court: Court(
+                complex: Complex(
+                  name: 'Núñez Blanca',
+                  timeIni: '09:00',
+                  timeEnd: '23:00',
+                  address: 'Av. Principal 123, Granada',
+                  locLongitude: 0,
+                  locLatitude: 0,
+                  createdAt: DateTime.now(),
+                  updatedAt: DateTime.now(),
+                ),
+                sport: Sport.tennis,
+                name: 'Court 1',
+                description: 'Tennis court 1',
+                maxPeople: 4,
+                status: CourtStatus.open,
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ),
+              dateIni: DateTime(2025, 10, 11, 9),
+              dateEnd: DateTime(2025, 10, 11, 9),
+              status: AvailabilityStatus.empty,
+              reservationStatus: ReservationStatus.scheduled,
+              timeFilter: TimeFilter.upcoming,
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            ),
+          ),
+        // const Center(child: Text('No upcoming reservations')),
       ],
     );
   }

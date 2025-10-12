@@ -183,10 +183,10 @@ class ComplexCard extends StatelessWidget {
         if (size != WidgetSize.small)
           InfoSectionWidget(
             leftChildren: [
-              LabeledInfoWidget(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
+              LabeledInfoWidget.dark(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
             ],
             rightChildren: [
-              LabeledInfoWidget(
+              LabeledInfoWidget.dark(
                 icon: Symbols.schedule_rounded,
                 label: 'Schedule',
                 text: '${complex.timeIni} - ${complex.timeEnd}',
