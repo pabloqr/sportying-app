@@ -33,8 +33,6 @@ class LabeledInfoWidget extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final themeBrightness = Theme.of(context).brightness;
-
     return Row(
       spacing: 8.0,
       children: [
@@ -46,7 +44,7 @@ class LabeledInfoWidget extends StatelessWidget {
             weight: 400,
             grade: 0,
             opticalSize: 24,
-            color: brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onSurface,
+            color: colorScheme.onSurface,
           ),
         Expanded(
           child: Column(
@@ -55,24 +53,12 @@ class LabeledInfoWidget extends StatelessWidget {
               MarqueeWidget(
                 child: Text(
                   label,
-                  style: textTheme.labelSmall?.copyWith(
-                    color: brightness == Brightness.light
-                        ? themeBrightness == Brightness.light
-                              ? colorScheme.primaryContainer
-                              : colorScheme.onPrimaryContainer
-                        : colorScheme.onSurfaceVariant,
-                  ),
+                  style: textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
                   softWrap: false,
                 ),
               ),
               MarqueeWidget(
-                child: Text(
-                  text,
-                  style: textTheme.bodyMedium?.copyWith(
-                    color: brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onSurface,
-                  ),
-                  softWrap: false,
-                ),
+                child: Text(text, style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface), softWrap: false),
               ),
             ],
           ),

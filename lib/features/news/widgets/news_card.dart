@@ -30,6 +30,7 @@ class NewsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Card.filled(
@@ -76,7 +77,13 @@ class NewsCard extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       spacing: 4.0,
-                      children: [TextButton(onPressed: () {}, child: const Text('Read more'))],
+                      children: [
+                        TextButton(
+                          style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary)),
+                          onPressed: () {},
+                          child: const Text('Read more'),
+                        ),
+                      ],
                     ),
                   ],
                 ),

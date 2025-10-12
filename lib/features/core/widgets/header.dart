@@ -44,6 +44,8 @@ class Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -51,13 +53,24 @@ class Header extends StatelessWidget {
         if (showButton)
           if (icon != null)
             TextButton.icon(
+              style: ButtonStyle(
+                overlayColor: WidgetStatePropertyAll(colorScheme.secondary.withAlpha(25)),
+                foregroundColor: WidgetStatePropertyAll(colorScheme.secondary),
+              ),
               onPressed: onPressed,
               iconAlignment: IconAlignment.end,
               icon: Icon(icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
               label: Text(buttonText ?? 'Text'),
             )
           else
-            TextButton(onPressed: onPressed, child: Text(buttonText ?? 'Text')),
+            TextButton(
+              style: ButtonStyle(
+                overlayColor: WidgetStatePropertyAll(colorScheme.secondary.withAlpha(25)),
+                foregroundColor: WidgetStatePropertyAll(colorScheme.secondary),
+              ),
+              onPressed: onPressed,
+              child: Text(buttonText ?? 'Text'),
+            ),
       ],
     );
   }

@@ -107,125 +107,6 @@ class ComplexCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(complex.name, style: textTheme.titleLarge, softWrap: false),
-        const SizedBox(height: 4.0),
-        ClipRect(
-          child: OverflowBox(
-            alignment: Alignment.centerLeft,
-            maxWidth: double.infinity,
-            fit: OverflowBoxFit.deferToChild,
-            child: Row(
-              spacing: 4.0,
-              children: [
-                Row(
-                  children: List.generate(5, (index) {
-                    IconData icon = Symbols.star_rounded;
-                    double iconFill = 0.0;
-
-                    if (rating >= index + 0.5) {
-                      iconFill = 1.0;
-                      icon = rating >= index + 1 ? icon : Symbols.star_half_rounded;
-                    }
-
-                    return Icon(
-                      icon,
-                      color: colorScheme.primary,
-                      size: 18,
-                      fill: iconFill,
-                      weight: 400,
-                      grade: 0,
-                      opticalSize: 18,
-                    );
-                  }),
-                ),
-                Text(
-                  rating.toString(),
-                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary),
-                  softWrap: false,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    if (size == WidgetSize.small) {
-      return _buildTitle(context);
-    } else {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        spacing: 8.0,
-        children: [
-          _buildTitle(context),
-          // TODO: substitute condition with real condition
-          if (size != WidgetSize.small && true) SmallChip.success(label: 'Available'),
-        ],
-      );
-    }
-  }
-
-  Widget _buildBody(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 16.0,
-      children: [
-        _buildHeader(context),
-        if (size != WidgetSize.small)
-          InfoSectionWidget(
-            leftChildren: [
-              LabeledInfoWidget.dark(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
-            ],
-            rightChildren: [
-              LabeledInfoWidget.dark(
-                icon: Symbols.schedule_rounded,
-                label: 'Schedule',
-                text: '${complex.timeIni} - ${complex.timeEnd}',
-              ),
-            ],
-          ),
-        SizedBox(
-          width: double.infinity,
-          child: ClipRect(
-            child: OverflowBox(
-              alignment: Alignment.centerLeft,
-              maxWidth: double.infinity,
-              fit: OverflowBoxFit.deferToChild,
-              child: _buildSportsRow(context),
-            ),
-          ),
-        ),
-        if (size != WidgetSize.small)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            spacing: 4.0,
-            children: [
-              TextButton(onPressed: () {}, child: const Text('More info')),
-              FilledButton(onPressed: () {}, child: const Text('Book court')),
-            ],
-          ),
-      ],
-    );
-  }
-
-  Widget _buildSportsRow(BuildContext context) {
-    return Row(
-      spacing: 4.0,
-      children: sports.map((sport) {
-        return SmallChip.alert(label: sport.name.toCapitalized());
-      }).toList(),
-    );
-  }
-
   Widget _buildContent(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -277,6 +158,129 @@ class ComplexCard extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16.0,
+      children: [
+        _buildHeader(context),
+        if (size != WidgetSize.small)
+          InfoSectionWidget(
+            leftChildren: [
+              LabeledInfoWidget.dark(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
+            ],
+            rightChildren: [
+              LabeledInfoWidget.dark(
+                icon: Symbols.schedule_rounded,
+                label: 'Schedule',
+                text: '${complex.timeIni} - ${complex.timeEnd}',
+              ),
+            ],
+          ),
+        SizedBox(
+          width: double.infinity,
+          child: ClipRect(
+            child: OverflowBox(
+              alignment: Alignment.centerLeft,
+              maxWidth: double.infinity,
+              fit: OverflowBoxFit.deferToChild,
+              child: _buildSportsRow(context),
+            ),
+          ),
+        ),
+        if (size != WidgetSize.small)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            spacing: 4.0,
+            children: [
+              TextButton(onPressed: () {}, child: const Text('More info')),
+              FilledButton(onPressed: () {}, child: const Text('Book court')),
+            ],
+          ),
+      ],
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    if (size == WidgetSize.small) {
+      return _buildTitle(context);
+    } else {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        spacing: 8.0,
+        children: [
+          _buildTitle(context),
+          // TODO: substitute condition with real condition
+          if (size != WidgetSize.small && true) SmallChip.success(label: 'Available'),
+        ],
+      );
+    }
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final brightness = Theme.of(context).brightness;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(complex.name, style: textTheme.titleLarge, softWrap: false),
+        const SizedBox(height: 4.0),
+        ClipRect(
+          child: OverflowBox(
+            alignment: Alignment.centerLeft,
+            maxWidth: double.infinity,
+            fit: OverflowBoxFit.deferToChild,
+            child: Row(
+              spacing: 4.0,
+              children: [
+                Row(
+                  children: List.generate(5, (index) {
+                    IconData icon = Symbols.star_rounded;
+                    double iconFill = 0.0;
+
+                    if (rating >= index + 0.5) {
+                      iconFill = 1.0;
+                      icon = rating >= index + 1 ? icon : Symbols.star_half_rounded;
+                    }
+
+                    return Icon(
+                      icon,
+                      color: brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary,
+                      size: 18,
+                      fill: iconFill,
+                      weight: 400,
+                      grade: 0,
+                      opticalSize: 18,
+                    );
+                  }),
+                ),
+                Text(
+                  rating.toString(),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary,
+                  ),
+                  softWrap: false,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSportsRow(BuildContext context) {
+    return Row(
+      spacing: 4.0,
+      children: sports.map((sport) {
+        return SmallChip.alert(label: sport.name.toCapitalized());
+      }).toList(),
     );
   }
 }

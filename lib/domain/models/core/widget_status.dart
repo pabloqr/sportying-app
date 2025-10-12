@@ -13,7 +13,7 @@ extension WidgetStatusColor on WidgetStatus {
       case WidgetStatus.neutralLight:
         return colorScheme.tertiary;
       case WidgetStatus.neutralDark:
-        return colorScheme.tertiaryContainer;
+        return colorScheme.tertiary;
       case WidgetStatus.alert:
         // if (brightness == Brightness.light) {
         //   return MaterialTheme.warning.light.colorContainer;
@@ -41,7 +41,7 @@ extension WidgetStatusColor on WidgetStatus {
       case WidgetStatus.neutralLight:
         return colorScheme.onTertiary;
       case WidgetStatus.neutralDark:
-        return colorScheme.onTertiaryContainer;
+        return colorScheme.onTertiary;
       case WidgetStatus.alert:
         // if (brightness == Brightness.light) {
         //   return MaterialTheme.warning.light.onColorContainer;
