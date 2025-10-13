@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/features/core/utils/dashed_line_painter.dart';
-import 'package:sportying_app/features/core/widgets/info_section_widget.dart';
-import 'package:sportying_app/features/core/widgets/labeled_info_widget.dart';
-import 'package:sportying_app/features/core/widgets/small_chip.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/info_section_widget.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
+import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
 
 class ReservationCard extends StatefulWidget {
   final int? userId;

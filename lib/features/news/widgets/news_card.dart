@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportying_app/features/core/widgets/small_chip.dart';
+import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
 
 class NewsCard extends StatelessWidget {
   final String title;

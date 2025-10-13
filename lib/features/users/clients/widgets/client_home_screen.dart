@@ -11,7 +11,7 @@ import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
 import 'package:sportying_app/domain/models/reservations/time_filter.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
-import 'package:sportying_app/features/core/widgets/header.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/header.dart';
 import 'package:sportying_app/features/news/widgets/news_card.dart';
 import 'package:sportying_app/features/reservations/widgets/reservation_card.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_home_viewmodel.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportying_app/features/core/widgets/marquee_widget.dart';
+import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
 
 class LabeledInfoWidget extends StatelessWidget {
   final Brightness brightness;

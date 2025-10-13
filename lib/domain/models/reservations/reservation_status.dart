@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sportying_app/features/core/widgets/medium_chip.dart';
-import 'package:sportying_app/features/core/widgets/small_chip.dart';
+import 'package:sportying_app/features/core/widgets/visuals/medium_chip.dart';
+import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
 
 enum ReservationStatus { scheduled, weather, completed, cancelled }
 

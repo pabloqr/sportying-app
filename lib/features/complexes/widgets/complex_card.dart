@@ -5,9 +5,9 @@ import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/core/widget_size.dart';
-import 'package:sportying_app/features/core/widgets/info_section_widget.dart';
-import 'package:sportying_app/features/core/widgets/labeled_info_widget.dart';
-import 'package:sportying_app/features/core/widgets/small_chip.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/info_section_widget.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
+import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
 
 class ComplexCard extends StatelessWidget {
   final WidgetSize size;

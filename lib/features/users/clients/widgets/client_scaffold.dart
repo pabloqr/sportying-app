@@ -12,10 +12,9 @@ class _Destination {
 }
 
 final List<_Destination> _destinations = [
-  _Destination('/home', 'Home', Symbols.home_rounded),
-  _Destination('/reservations', 'Reservations', Symbols.calendar_month_rounded),
-  _Destination('/explore', 'Explore', Symbols.search_rounded),
-  _Destination('/profile', 'Profile', Symbols.account_circle_rounded),
+  _Destination('/client/explore', 'Explore', Symbols.search_rounded),
+  _Destination('/client/home', 'Home', Symbols.home_rounded),
+  _Destination('/client/reservations', 'Reservations', Symbols.calendar_month_rounded),
 ];
 
 class ClientScaffold extends StatelessWidget {
@@ -30,7 +29,7 @@ class ClientScaffold extends StatelessWidget {
       if (uriPath.startsWith(_destinations[i].route)) return i;
     }
 
-    return 0;
+    return 1;
   }
 
   void _onDestinationSelected(int index, BuildContext context) => navigationShell.goBranch(index);

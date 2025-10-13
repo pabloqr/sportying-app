@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sportying_app/core/routing/routes.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_home_viewmodel.dart';
+import 'package:sportying_app/features/users/clients/widgets/client_explore_screen.dart';
 import 'package:sportying_app/features/users/clients/widgets/client_home_screen.dart';
+import 'package:sportying_app/features/users/clients/widgets/client_reservations_screen.dart';
 import 'package:sportying_app/features/users/clients/widgets/client_scaffold.dart';
 
 Widget withSystemUiOverlay(BuildContext context, {required Widget child}) {
@@ -37,6 +39,16 @@ GoRouter router() => GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              path: Routes.clientExploreRoute,
+              builder: (context, state) {
+                return ClientExploreScreen();
+              },
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
               path: Routes.clientDashboardRoute,
               builder: (context, state) {
                 return ClientHomeScreen(
@@ -47,22 +59,14 @@ GoRouter router() => GoRouter(
                 );
               },
             ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
             GoRoute(
               path: Routes.clientReservationsRoute,
               builder: (context, state) {
-                return Center(child: const Text('Reservations screen content'));
-              },
-            ),
-            GoRoute(
-              path: Routes.clientExploreRoute,
-              builder: (context, state) {
-                return Center(child: const Text('Explore screen content'));
-              },
-            ),
-            GoRoute(
-              path: Routes.clientProfileRoute,
-              builder: (context, state) {
-                return Center(child: const Text('Profile screen content'));
+                return ClientReservationsScreen();
               },
             ),
           ],
