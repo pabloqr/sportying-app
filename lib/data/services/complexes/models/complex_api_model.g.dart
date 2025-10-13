@@ -14,6 +14,9 @@ _ComplexApiModel _$ComplexApiModelFromJson(Map<String, dynamic> json) =>
       timeEnd: json['timeEnd'] as String,
       locLongitude: (json['locLongitude'] as num?)?.toDouble(),
       locLatitude: (json['locLatitude'] as num?)?.toDouble(),
+      sports: (json['sports'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -26,6 +29,7 @@ Map<String, dynamic> _$ComplexApiModelToJson(_ComplexApiModel instance) =>
       'timeEnd': instance.timeEnd,
       'locLongitude': instance.locLongitude,
       'locLatitude': instance.locLatitude,
+      'sports': instance.sports,
       'createdAt': instance.createdAt.toIso8601String(),
       'updatedAt': instance.updatedAt.toIso8601String(),
     };

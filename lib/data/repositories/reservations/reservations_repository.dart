@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
 import 'package:sportying_app/data/services/complexes/models/complex_api_model.dart';
@@ -29,6 +30,8 @@ abstract class ReservationsRepository {
 }
 
 class ReservationsRepositoryImpl implements ReservationsRepository {
+  final _log = Logger('ReservationsRepository');
+
   ReservationsRepositoryImpl({
     required ReservationsRemoteService remoteService,
     required ComplexesRemoteService complexesRemoteService,
@@ -49,6 +52,8 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
       // Obtener el resultado de la operación
       switch (result) {
         case Ok<List<ReservationApiModel>>():
+          _log.fine('Fetched reservations from server. Getting nested information.');
+
           return Result.ok(
             // Necesario para las operaciones asíncronas que se realizan dentro del bucle
             await Future.wait(
@@ -78,6 +83,15 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                       address: address,
                       locLongitude: value.locLongitude,
                       locLatitude: value.locLatitude,
+                      sports: value.sports
+                          .map(
+                            (valueSport) => Sport.values.firstWhere((sport) {
+                              final String name = sport.name.toLowerCase();
+                              final String jsonName = valueSport.toLowerCase();
+                              return name == jsonName;
+                            }),
+                          )
+                          .toSet(),
                       createdAt: value.createdAt,
                       updatedAt: value.updatedAt,
                     );
@@ -117,6 +131,8 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                     throw courtResult.error;
                 }
 
+                _log.fine('Fetched nested information.');
+
                 // Crear la instancia del modelo de la reserva
                 return Reservation(
                   userId: reservation.userId,
@@ -146,9 +162,11 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
             ),
           );
         case Error<List<ReservationApiModel>>():
+          _log.warning('Filed to fetch nested information.');
           return Result.error(result.error);
       }
     } on Exception catch (e) {
+      _log.warning('Filed to fetch reservations.');
       return Result.error(e);
     }
   }

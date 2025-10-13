@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ComplexApiModel {
 
- int? get id; String get complexName; String get timeIni; String get timeEnd; double? get locLongitude; double? get locLatitude; DateTime get createdAt; DateTime get updatedAt;
+ int? get id; String get complexName; String get timeIni; String get timeEnd; double? get locLongitude; double? get locLatitude; List<String> get sports; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of ComplexApiModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $ComplexApiModelCopyWith<ComplexApiModel> get copyWith => _$ComplexApiModelCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplexApiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.complexName, complexName) || other.complexName == complexName)&&(identical(other.timeIni, timeIni) || other.timeIni == timeIni)&&(identical(other.timeEnd, timeEnd) || other.timeEnd == timeEnd)&&(identical(other.locLongitude, locLongitude) || other.locLongitude == locLongitude)&&(identical(other.locLatitude, locLatitude) || other.locLatitude == locLatitude)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ComplexApiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.complexName, complexName) || other.complexName == complexName)&&(identical(other.timeIni, timeIni) || other.timeIni == timeIni)&&(identical(other.timeEnd, timeEnd) || other.timeEnd == timeEnd)&&(identical(other.locLongitude, locLongitude) || other.locLongitude == locLongitude)&&(identical(other.locLatitude, locLatitude) || other.locLatitude == locLatitude)&&const DeepCollectionEquality().equals(other.sports, sports)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,complexName,timeIni,timeEnd,locLongitude,locLatitude,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,complexName,timeIni,timeEnd,locLongitude,locLatitude,const DeepCollectionEquality().hash(sports),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'ComplexApiModel(id: $id, complexName: $complexName, timeIni: $timeIni, timeEnd: $timeEnd, locLongitude: $locLongitude, locLatitude: $locLatitude, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ComplexApiModel(id: $id, complexName: $complexName, timeIni: $timeIni, timeEnd: $timeEnd, locLongitude: $locLongitude, locLatitude: $locLatitude, sports: $sports, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $ComplexApiModelCopyWith<$Res>  {
   factory $ComplexApiModelCopyWith(ComplexApiModel value, $Res Function(ComplexApiModel) _then) = _$ComplexApiModelCopyWithImpl;
 @useResult
 $Res call({
- int? id, String complexName, String timeIni, String timeEnd, double? locLongitude, double? locLatitude, DateTime createdAt, DateTime updatedAt
+ int? id, String complexName, String timeIni, String timeEnd, double? locLongitude, double? locLatitude, List<String> sports, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,7 +65,7 @@ class _$ComplexApiModelCopyWithImpl<$Res>
 
 /// Create a copy of ComplexApiModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? complexName = null,Object? timeIni = null,Object? timeEnd = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? complexName = null,Object? timeIni = null,Object? timeEnd = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? sports = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,complexName: null == complexName ? _self.complexName : complexName // ignore: cast_nullable_to_non_nullable
@@ -73,7 +73,8 @@ as String,timeIni: null == timeIni ? _self.timeIni : timeIni // ignore: cast_nul
 as String,timeEnd: null == timeEnd ? _self.timeEnd : timeEnd // ignore: cast_nullable_to_non_nullable
 as String,locLongitude: freezed == locLongitude ? _self.locLongitude : locLongitude // ignore: cast_nullable_to_non_nullable
 as double?,locLatitude: freezed == locLatitude ? _self.locLatitude : locLatitude // ignore: cast_nullable_to_non_nullable
-as double?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as double?,sports: null == sports ? _self.sports : sports // ignore: cast_nullable_to_non_nullable
+as List<String>,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  List<String> sports,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ComplexApiModel() when $default != null:
-return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.sports,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.loc
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  List<String> sports,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ComplexApiModel():
-return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.sports,_that.createdAt,_that.updatedAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.loc
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  String complexName,  String timeIni,  String timeEnd,  double? locLongitude,  double? locLatitude,  List<String> sports,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ComplexApiModel() when $default != null:
-return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.locLongitude,_that.locLatitude,_that.sports,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.id,_that.complexName,_that.timeIni,_that.timeEnd,_that.loc
 @JsonSerializable()
 
 class _ComplexApiModel implements ComplexApiModel {
-  const _ComplexApiModel({this.id, required this.complexName, required this.timeIni, required this.timeEnd, required this.locLongitude, required this.locLatitude, required this.createdAt, required this.updatedAt});
+  const _ComplexApiModel({this.id, required this.complexName, required this.timeIni, required this.timeEnd, required this.locLongitude, required this.locLatitude, required final  List<String> sports, required this.createdAt, required this.updatedAt}): _sports = sports;
   factory _ComplexApiModel.fromJson(Map<String, dynamic> json) => _$ComplexApiModelFromJson(json);
 
 @override final  int? id;
@@ -225,6 +226,13 @@ class _ComplexApiModel implements ComplexApiModel {
 @override final  String timeEnd;
 @override final  double? locLongitude;
 @override final  double? locLatitude;
+ final  List<String> _sports;
+@override List<String> get sports {
+  if (_sports is EqualUnmodifiableListView) return _sports;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_sports);
+}
+
 @override final  DateTime createdAt;
 @override final  DateTime updatedAt;
 
@@ -241,16 +249,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplexApiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.complexName, complexName) || other.complexName == complexName)&&(identical(other.timeIni, timeIni) || other.timeIni == timeIni)&&(identical(other.timeEnd, timeEnd) || other.timeEnd == timeEnd)&&(identical(other.locLongitude, locLongitude) || other.locLongitude == locLongitude)&&(identical(other.locLatitude, locLatitude) || other.locLatitude == locLatitude)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ComplexApiModel&&(identical(other.id, id) || other.id == id)&&(identical(other.complexName, complexName) || other.complexName == complexName)&&(identical(other.timeIni, timeIni) || other.timeIni == timeIni)&&(identical(other.timeEnd, timeEnd) || other.timeEnd == timeEnd)&&(identical(other.locLongitude, locLongitude) || other.locLongitude == locLongitude)&&(identical(other.locLatitude, locLatitude) || other.locLatitude == locLatitude)&&const DeepCollectionEquality().equals(other._sports, _sports)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,complexName,timeIni,timeEnd,locLongitude,locLatitude,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,complexName,timeIni,timeEnd,locLongitude,locLatitude,const DeepCollectionEquality().hash(_sports),createdAt,updatedAt);
 
 @override
 String toString() {
-  return 'ComplexApiModel(id: $id, complexName: $complexName, timeIni: $timeIni, timeEnd: $timeEnd, locLongitude: $locLongitude, locLatitude: $locLatitude, createdAt: $createdAt, updatedAt: $updatedAt)';
+  return 'ComplexApiModel(id: $id, complexName: $complexName, timeIni: $timeIni, timeEnd: $timeEnd, locLongitude: $locLongitude, locLatitude: $locLatitude, sports: $sports, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -261,7 +269,7 @@ abstract mixin class _$ComplexApiModelCopyWith<$Res> implements $ComplexApiModel
   factory _$ComplexApiModelCopyWith(_ComplexApiModel value, $Res Function(_ComplexApiModel) _then) = __$ComplexApiModelCopyWithImpl;
 @override @useResult
 $Res call({
- int? id, String complexName, String timeIni, String timeEnd, double? locLongitude, double? locLatitude, DateTime createdAt, DateTime updatedAt
+ int? id, String complexName, String timeIni, String timeEnd, double? locLongitude, double? locLatitude, List<String> sports, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -278,7 +286,7 @@ class __$ComplexApiModelCopyWithImpl<$Res>
 
 /// Create a copy of ComplexApiModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? complexName = null,Object? timeIni = null,Object? timeEnd = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? complexName = null,Object? timeIni = null,Object? timeEnd = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? sports = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_ComplexApiModel(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int?,complexName: null == complexName ? _self.complexName : complexName // ignore: cast_nullable_to_non_nullable
@@ -286,7 +294,8 @@ as String,timeIni: null == timeIni ? _self.timeIni : timeIni // ignore: cast_nul
 as String,timeEnd: null == timeEnd ? _self.timeEnd : timeEnd // ignore: cast_nullable_to_non_nullable
 as String,locLongitude: freezed == locLongitude ? _self.locLongitude : locLongitude // ignore: cast_nullable_to_non_nullable
 as double?,locLatitude: freezed == locLatitude ? _self.locLatitude : locLatitude // ignore: cast_nullable_to_non_nullable
-as double?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as double?,sports: null == sports ? _self._sports : sports // ignore: cast_nullable_to_non_nullable
+as List<String>,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));

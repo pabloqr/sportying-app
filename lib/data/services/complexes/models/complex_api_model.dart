@@ -12,6 +12,7 @@ abstract class ComplexApiModel with _$ComplexApiModel {
     required String timeEnd,
     required double? locLongitude,
     required double? locLatitude,
+    required List<String> sports,
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _ComplexApiModel;

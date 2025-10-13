@@ -11,7 +11,7 @@ import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/domain/models/reservations/time_filter.dart';
 
 class ClientHomeViewModel extends ChangeNotifier {
-  final _log = Logger('ClientDashboardViewModel');
+  final _log = Logger('ClientHomeViewModel');
 
   ClientHomeViewModel({
     required ReservationsRepository reservationRepository,

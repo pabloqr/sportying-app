@@ -12,6 +12,7 @@ import 'package:sportying_app/domain/models/reservations/reservation_status.dart
 import 'package:sportying_app/domain/models/reservations/time_filter.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/header.dart';
+import 'package:sportying_app/features/core/widgets/utils/error_indicator.dart';
 import 'package:sportying_app/features/news/widgets/news_card.dart';
 import 'package:sportying_app/features/reservations/widgets/reservation_card.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_home_viewmodel.dart';
@@ -85,6 +86,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 address: 'Av. Principal 123, Granada',
                 locLongitude: 0,
                 locLatitude: 0,
+                sports: {Sport.tennis, Sport.padel},
                 createdAt: DateTime.now(),
                 updatedAt: DateTime.now(),
               ),
@@ -96,6 +98,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                   address: 'Av. Principal 123, Granada',
                   locLongitude: 0,
                   locLatitude: 0,
+                  sports: {Sport.tennis, Sport.padel},
                   createdAt: DateTime.now(),
                   updatedAt: DateTime.now(),
                 ),
@@ -148,7 +151,6 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 return ComplexCard.small(
                   complex: widget.viewModel.complexes.elementAt(index),
                   rating: Random().nextInt(11) / 2.0,
-                  sports: {Sport.tennis, Sport.padel},
                 );
               },
             ),
@@ -175,56 +177,6 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
             title: 'News title',
             date: DateTime.now().subtract(Duration(hours: Random().nextInt(8761))),
           ),
-        ),
-      ],
-    );
-  }
-}
-
-class ErrorIndicator extends StatelessWidget {
-  const ErrorIndicator({super.key, required this.title, required this.label, required this.onPressed});
-
-  final String title;
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        IntrinsicWidth(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: Row(
-                children: [
-                  Icon(
-                    Symbols.error_outline_rounded,
-                    size: 24,
-                    fill: 0,
-                    weight: 400,
-                    grade: 0,
-                    opticalSize: 24,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(title, style: TextStyle(color: Theme.of(context).colorScheme.error)),
-                ],
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        FilledButton.icon(
-          onPressed: onPressed,
-          style: ButtonStyle(
-            backgroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.errorContainer),
-            foregroundColor: WidgetStatePropertyAll(Theme.of(context).colorScheme.onErrorContainer),
-          ),
-          icon: Icon(Symbols.refresh_rounded, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
-          label: Text(label),
         ),
       ],
     );

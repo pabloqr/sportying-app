@@ -31,9 +31,10 @@ Map<String, dynamic> _$CourtToJson(_Court instance) => <String, dynamic>{
 };
 
 const _$SportEnumMap = {
-  Sport.tennis: 'tennis',
-  Sport.padel: 'padel',
+  Sport.basketball: 'basketball',
   Sport.football: 'football',
+  Sport.padel: 'padel',
+  Sport.tennis: 'tennis',
   Sport.volleyball: 'volleyball',
 };
 

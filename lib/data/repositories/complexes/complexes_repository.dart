@@ -1,7 +1,9 @@
+import 'package:logging/logging.dart';
 import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
 import 'package:sportying_app/data/services/complexes/models/complex_api_model.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
+import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 
 abstract class ComplexesRepository {
@@ -10,6 +12,8 @@ abstract class ComplexesRepository {
 }
 
 class ComplexesRepositoryImpl implements ComplexesRepository {
+  final _log = Logger('ComplexesRepository');
+
   ComplexesRepositoryImpl({required ComplexesRemoteService remoteService}) : _remoteService = remoteService;
 
   final ComplexesRemoteService _remoteService;
@@ -42,6 +46,15 @@ class ComplexesRepositoryImpl implements ComplexesRepository {
                   address: address,
                   locLongitude: complex.locLongitude,
                   locLatitude: complex.locLatitude,
+                  sports: complex.sports
+                      .map(
+                        (value) => Sport.values.firstWhere((sport) {
+                          final String name = sport.name.toLowerCase();
+                          final String jsonName = value.toLowerCase();
+                          return name == jsonName;
+                        }),
+                      )
+                      .toSet(),
                   createdAt: complex.createdAt,
                   updatedAt: complex.updatedAt,
                 );
