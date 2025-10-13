@@ -91,6 +91,8 @@ class AdminTheme extends MaterialTheme {
 class ClientTheme extends MaterialTheme {
   ClientTheme() : super();
 
+  static const primaryDim = Color(0xFFBDAA00);
+
   // Colores base de la paleta clara
   static const Color _primaryLight = Color(0xFFFFEB38);
   static const Color _secondaryLight = Color(0xFF004961);

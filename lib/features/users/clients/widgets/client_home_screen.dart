@@ -135,6 +135,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 264.0),
           child: CarouselView(
+            itemSnapping: true,
             itemExtent: 240.0,
             onTap: (index) {},
             children: List<Widget>.generate(

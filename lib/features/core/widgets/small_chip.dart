@@ -43,11 +43,21 @@ class SmallChip extends StatelessWidget {
         spacing: 4.0,
         children: [
           Icon(icon!, size: 16, fill: 0, weight: 400, grade: 0, opticalSize: 16, color: status.colorOnSurface(context)),
-          Text(label!, style: textTheme.labelSmall?.copyWith(color: status.colorOnSurface(context))),
+          Text(
+            label!,
+            style: textTheme.labelSmall?.copyWith(color: status.colorOnSurface(context)),
+            overflow: TextOverflow.fade,
+            softWrap: false,
+          ),
         ],
       );
     } else if (label != null) {
-      return Text(label!, style: textTheme.labelSmall?.copyWith(color: status.colorOnSurface(context)));
+      return Text(
+        label!,
+        style: textTheme.labelSmall?.copyWith(color: status.colorOnSurface(context)),
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      );
     } else if (icon != null) {
       return Icon(
         icon!,

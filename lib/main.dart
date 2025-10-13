@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Sporty.ing',
       theme: theme.light,
       darkTheme: theme.dark,
-      themeMode: ThemeMode.light,
+      themeMode: ThemeMode.dark,
       routerConfig: router(),
     );
   }

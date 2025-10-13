@@ -13,14 +13,14 @@ extension WidgetStatusColor on WidgetStatus {
       case WidgetStatus.neutralLight:
         return colorScheme.tertiary;
       case WidgetStatus.neutralDark:
-        return colorScheme.tertiary;
+        return colorScheme.tertiaryContainer;
       case WidgetStatus.alert:
         // if (brightness == Brightness.light) {
         //   return MaterialTheme.warning.light.colorContainer;
         // } else {
         //   return MaterialTheme.warning.dark.colorContainer;
         // }
-        return colorScheme.tertiary;
+        return colorScheme.primaryContainer;
       case WidgetStatus.success:
         // if (brightness == Brightness.light) {
         //   return MaterialTheme.success.light.colorContainer;
@@ -41,14 +41,14 @@ extension WidgetStatusColor on WidgetStatus {
       case WidgetStatus.neutralLight:
         return colorScheme.onTertiary;
       case WidgetStatus.neutralDark:
-        return colorScheme.onTertiary;
+        return colorScheme.onTertiaryContainer;
       case WidgetStatus.alert:
         // if (brightness == Brightness.light) {
         //   return MaterialTheme.warning.light.onColorContainer;
         // } else {
         //   return MaterialTheme.warning.dark.onColorContainer;
         // }
-        return colorScheme.onTertiary;
+        return colorScheme.onPrimaryContainer;
       case WidgetStatus.success:
         // if (brightness == Brightness.light) {
         //   return MaterialTheme.success.light.onColorContainer;

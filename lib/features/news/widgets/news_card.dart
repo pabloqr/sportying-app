@@ -45,8 +45,8 @@ class NewsCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(12.0),
-                child: Image.asset(
-                  'assets/images/placeholders/news.jpg',
+                child: Image(
+                  image: AssetImage('assets/images/placeholders/news.jpg'),
                   width: double.infinity,
                   height: imageHeight,
                   fit: BoxFit.cover,
@@ -79,7 +79,10 @@ class NewsCard extends StatelessWidget {
                       spacing: 4.0,
                       children: [
                         TextButton(
-                          style: ButtonStyle(foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary)),
+                          style: ButtonStyle(
+                            overlayColor: WidgetStatePropertyAll(colorScheme.secondary.withAlpha(25)),
+                            foregroundColor: WidgetStatePropertyAll(colorScheme.secondary),
+                          ),
                           onPressed: () {},
                           child: const Text('Read more'),
                         ),
