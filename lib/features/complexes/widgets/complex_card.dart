@@ -330,9 +330,7 @@ class ComplexCard extends StatelessWidget {
     return Row(
       spacing: 4.0,
       children: sports.map((sport) {
-        return Theme.of(context).brightness == Brightness.light
-            ? SmallChip.neutralLight(label: sport.name.toCapitalized())
-            : SmallChip.neutralDark(label: sport.name.toCapitalized());
+        return SmallChip.neutral(label: sport.name.toCapitalized());
       }).toList(),
     );
   }

@@ -8,7 +8,7 @@ extension ReservationStatusExtension on ReservationStatus {
   Widget get smallStatusChip {
     switch (this) {
       case ReservationStatus.scheduled:
-        return SmallChip.neutralLight(label: 'Scheduled');
+        return SmallChip.neutral(label: 'Scheduled');
       case ReservationStatus.weather:
         return SmallChip.alert(label: 'Weather');
       case ReservationStatus.completed:

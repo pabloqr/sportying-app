@@ -170,7 +170,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
           onPressed: () {},
         ),
         ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 400.0),
+          constraints: const BoxConstraints(maxHeight: 300.0),
           child: NewsCard(
             title: 'News title',
             date: DateTime.now().subtract(Duration(hours: Random().nextInt(8761))),

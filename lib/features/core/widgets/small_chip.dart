@@ -9,11 +9,11 @@ class SmallChip extends StatelessWidget {
 
   const SmallChip._({required this.status, this.label, this.icon});
 
-  factory SmallChip.neutralLight({String? label, IconData? icon}) =>
-      SmallChip._(status: WidgetStatus.neutralLight, label: label, icon: icon);
+  factory SmallChip.neutral({String? label, IconData? icon}) =>
+      SmallChip._(status: WidgetStatus.neutral, label: label, icon: icon);
 
-  factory SmallChip.neutralDark({String? label, IconData? icon}) =>
-      SmallChip._(status: WidgetStatus.neutralDark, label: label, icon: icon);
+  factory SmallChip.neutralTranslucent({String? label, IconData? icon}) =>
+      SmallChip._(status: WidgetStatus.neutralTranslucent, label: label, icon: icon);
 
   factory SmallChip.alert({String? label, IconData? icon}) =>
       SmallChip._(status: WidgetStatus.alert, label: label, icon: icon);

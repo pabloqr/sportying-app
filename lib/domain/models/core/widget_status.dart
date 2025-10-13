@@ -1,32 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-// import 'package:sportying_app/features/core/themes/theme_old.dart';
 
-enum WidgetStatus { neutralLight, neutralDark, alert, success, error }
+enum WidgetStatus { neutral, neutralTranslucent, alert, success, error }
 
 extension WidgetStatusColor on WidgetStatus {
   Color colorSurface(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    // final brightness = Theme.of(context).brightness;
+    final brightness = Theme.of(context).brightness;
 
     switch (this) {
-      case WidgetStatus.neutralLight:
-        return colorScheme.tertiary;
-      case WidgetStatus.neutralDark:
-        return colorScheme.tertiaryContainer;
+      case WidgetStatus.neutral:
+        return brightness == Brightness.light ? colorScheme.tertiary : colorScheme.tertiaryContainer;
+      case WidgetStatus.neutralTranslucent:
+        return brightness == Brightness.light ? Colors.white.withAlpha(50) : Colors.black.withAlpha(50);
       case WidgetStatus.alert:
-        // if (brightness == Brightness.light) {
-        //   return MaterialTheme.warning.light.colorContainer;
-        // } else {
-        //   return MaterialTheme.warning.dark.colorContainer;
-        // }
-        return colorScheme.primaryContainer;
+        return colorScheme.primary;
       case WidgetStatus.success:
-        // if (brightness == Brightness.light) {
-        //   return MaterialTheme.success.light.colorContainer;
-        // } else {
-        //   return MaterialTheme.success.dark.colorContainer;
-        // }
         return colorScheme.secondaryContainer;
       case WidgetStatus.error:
         return colorScheme.errorContainer;
@@ -35,26 +24,16 @@ extension WidgetStatusColor on WidgetStatus {
 
   Color colorOnSurface(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    // final brightness = Theme.of(context).brightness;
+    final brightness = Theme.of(context).brightness;
 
     switch (this) {
-      case WidgetStatus.neutralLight:
-        return colorScheme.onTertiary;
-      case WidgetStatus.neutralDark:
-        return colorScheme.onTertiaryContainer;
+      case WidgetStatus.neutral:
+        return brightness == Brightness.light ? colorScheme.onTertiary : colorScheme.onTertiaryContainer;
+      case WidgetStatus.neutralTranslucent:
+        return brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface;
       case WidgetStatus.alert:
-        // if (brightness == Brightness.light) {
-        //   return MaterialTheme.warning.light.onColorContainer;
-        // } else {
-        //   return MaterialTheme.warning.dark.onColorContainer;
-        // }
-        return colorScheme.onPrimaryContainer;
+        return colorScheme.onPrimary;
       case WidgetStatus.success:
-        // if (brightness == Brightness.light) {
-        //   return MaterialTheme.success.light.onColorContainer;
-        // } else {
-        //   return MaterialTheme.success.dark.onColorContainer;
-        // }
         return colorScheme.onSecondaryContainer;
       case WidgetStatus.error:
         return colorScheme.onErrorContainer;
@@ -63,8 +42,8 @@ extension WidgetStatusColor on WidgetStatus {
 
   IconData get icon {
     switch (this) {
-      case WidgetStatus.neutralLight:
-      case WidgetStatus.neutralDark:
+      case WidgetStatus.neutral:
+      case WidgetStatus.neutralTranslucent:
         return Symbols.info_rounded;
       case WidgetStatus.alert:
         return Symbols.warning_rounded;

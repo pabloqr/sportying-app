@@ -152,16 +152,16 @@ class ClientTheme extends MaterialTheme {
       onPrimaryFixedVariant: Color(0xFF5A5100),
 
       // Secondary fixed colors
-      secondaryFixed: Color(0xFFFFE5F3),
+      secondaryFixed: Color(0xFFD6F6FF),
       onSecondaryFixed: _textLight,
-      secondaryFixedDim: Color(0xFFFFB0DC),
-      onSecondaryFixedVariant: Color(0xFF420028),
+      secondaryFixedDim: Color(0xFF7DD5F7),
+      onSecondaryFixedVariant: Color(0xFF003546),
 
       // Tertiary fixed colors
-      tertiaryFixed: Color(0xFFD6F6FF),
+      tertiaryFixed: Color(0xFFFFE5F3),
       onTertiaryFixed: _textLight,
-      tertiaryFixedDim: Color(0xFF7DD5F7),
-      onTertiaryFixedVariant: Color(0xFF003546),
+      tertiaryFixedDim: Color(0xFFFFB0DC),
+      onTertiaryFixedVariant: Color(0xFF420028),
 
       // Surface container colors
       surfaceDim: Color(0xFFDFDDCC),
@@ -233,16 +233,16 @@ class ClientTheme extends MaterialTheme {
       onPrimaryFixedVariant: Color(0xFF5A5100),
 
       // Secondary fixed colors
-      secondaryFixed: Color(0xFFFFE5F3),
-      onSecondaryFixed: Color(0xFF330022),
-      secondaryFixedDim: Color(0xFFFFB0DC),
-      onSecondaryFixedVariant: Color(0xFF420028),
+      secondaryFixed: Color(0xFFD6F6FF),
+      onSecondaryFixed: Color(0xFF001E29),
+      secondaryFixedDim: Color(0xFF7DD5F7),
+      onSecondaryFixedVariant: Color(0xFF003546),
 
       // Tertiary fixed colors
-      tertiaryFixed: Color(0xFFD6F6FF),
-      onTertiaryFixed: Color(0xFF001E29),
-      tertiaryFixedDim: Color(0xFF7DD5F7),
-      onTertiaryFixedVariant: Color(0xFF003546),
+      tertiaryFixed: Color(0xFFFFE5F3),
+      onTertiaryFixed: Color(0xFF330022),
+      tertiaryFixedDim: Color(0xFFFFB0DC),
+      onTertiaryFixedVariant: Color(0xFF420028),
 
       // Surface container colors
       surfaceDim: _backgroundDark,

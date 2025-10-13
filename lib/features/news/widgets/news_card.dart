@@ -33,55 +33,82 @@ class NewsCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    final brightness = Theme.of(context).brightness;
+
     return Card.filled(
       margin: EdgeInsetsGeometry.zero,
+      color: Colors.transparent,
       clipBehavior: Clip.antiAlias,
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          final imageHeight = constraints.maxHeight * 0.5;
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      child: Container(
+        decoration: BoxDecoration(
+          image: const DecorationImage(image: AssetImage('assets/images/placeholders/news.jpg'), fit: BoxFit.cover),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Colors.black.withAlpha(100), Colors.black.withAlpha(210)],
+              stops: const [0.6, 1.0],
+            ),
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            spacing: 8.0,
             children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12.0),
-                child: Image(
-                  image: AssetImage('assets/images/placeholders/news.jpg'),
-                  width: double.infinity,
-                  height: imageHeight,
-                  fit: BoxFit.cover,
+              if (_dateDifference.inDays <= 7)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [SmallChip.alert(label: 'NEW')],
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(16.0),
+              Expanded(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.max,
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 16.0,
+                  spacing: 4.0,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      spacing: 8.0,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 16.0,
                       children: [
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           spacing: 4.0,
                           children: [
-                            Text('News title', style: textTheme.titleLarge),
-                            Text(_getCreationString(), style: textTheme.labelSmall),
+                            Text(
+                              'News title',
+                              style: textTheme.titleLarge?.copyWith(
+                                color: brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface,
+                              ),
+                            ),
+                            SmallChip.neutralTranslucent(label: _getCreationString()),
                           ],
                         ),
-                        if (_dateDifference.inDays <= 7) SmallChip.alert(label: 'NEW'),
+                        Text(
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface,
+                          ),
+                        ),
                       ],
                     ),
-                    Text('Lorem ipsum dolor sit amet, consectetur adipiscing elit.', style: textTheme.bodyMedium),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       spacing: 4.0,
                       children: [
                         TextButton(
                           style: ButtonStyle(
-                            overlayColor: WidgetStatePropertyAll(colorScheme.secondary.withAlpha(25)),
-                            foregroundColor: WidgetStatePropertyAll(colorScheme.secondary),
+                            overlayColor: WidgetStatePropertyAll(
+                              brightness == Brightness.light
+                                  ? colorScheme.secondaryContainer.withAlpha(25)
+                                  : colorScheme.secondary.withAlpha(25),
+                            ),
+                            foregroundColor: WidgetStatePropertyAll(
+                              brightness == Brightness.light ? colorScheme.secondaryContainer : colorScheme.secondary,
+                            ),
                           ),
                           onPressed: () {},
                           child: const Text('Read more'),
@@ -92,8 +119,8 @@ class NewsCard extends StatelessWidget {
                 ),
               ),
             ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }

@@ -152,13 +152,7 @@ class _ReservationCardState extends State<ReservationCard> {
           Positioned.fill(
             child: CustomPaint(painter: _TicketOutlinePainter(color: colorScheme.outline, strokeWidth: 1.0)),
           ),
-          Positioned(
-            left: 16.0,
-            top: -8.0,
-            child: brightness == Brightness.light
-                ? SmallChip.neutralLight(label: 'Scheduled')
-                : SmallChip.neutralDark(label: 'Scheduled'),
-          ),
+          Positioned(left: 16.0, top: -8.0, child: SmallChip.neutral(label: 'Scheduled')),
         ],
       ),
     );

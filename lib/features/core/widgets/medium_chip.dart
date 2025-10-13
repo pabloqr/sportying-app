@@ -8,10 +8,7 @@ class MediumChip extends StatelessWidget {
   const MediumChip._({required this.status, required this.label});
 
   factory MediumChip.neutralSurface({required String label}) =>
-      MediumChip._(status: WidgetStatus.neutralLight, label: label);
-
-  factory MediumChip.neutralCard({required String label}) =>
-      MediumChip._(status: WidgetStatus.neutralDark, label: label);
+      MediumChip._(status: WidgetStatus.neutral, label: label);
 
   factory MediumChip.alert({required String label}) => MediumChip._(status: WidgetStatus.alert, label: label);
 
