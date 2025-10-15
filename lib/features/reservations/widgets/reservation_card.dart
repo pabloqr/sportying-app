@@ -1,30 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
-import 'package:sportying_app/features/core/utils/dashed_line_painter.dart';
+import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/info_section_widget.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
-import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
+import 'package:sportying_app/features/core/widgets/utils/dashed_line_painter.dart';
 
 class ReservationCard extends StatefulWidget {
-  final int? userId;
-  final Reservation reservation;
+  const ReservationCard({super.key, required this.reservation});
 
-  const ReservationCard({super.key, required this.userId, required this.reservation});
+  final Reservation reservation;
 
   @override
   State<ReservationCard> createState() => _ReservationCardState();
 }
 
 class _ReservationCardState extends State<ReservationCard> {
+  final GlobalKey _topSectionKey = GlobalKey();
+  double _notchPosition = 116.0;
+
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _calculateNotchPosition();
+    });
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _calculateNotchPosition() {
+    final RenderBox? renderBox = _topSectionKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox != null) {
+      setState(() {
+        _notchPosition += renderBox.size.height;
+      });
+    }
   }
 
   @override
@@ -35,18 +46,19 @@ class _ReservationCardState extends State<ReservationCard> {
     final brightness = Theme.of(context).brightness;
 
     return Card.filled(
-      margin: EdgeInsets.zero,
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       color: Colors.transparent,
       clipBehavior: Clip.none,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
           ClipPath(
-            clipper: _TicketClipper(),
+            clipper: _TicketClipper(_notchPosition),
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [
                 Container(
+                  key: _topSectionKey,
                   padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
                   color: colorScheme.surfaceContainerHighest,
                   child: Row(
@@ -68,11 +80,11 @@ class _ReservationCardState extends State<ReservationCard> {
                           spacing: 4.0,
                           children: [
                             Text(
-                              'Sports Complex Plaza',
+                              widget.reservation.complex.name,
                               style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
                             ),
                             Text(
-                              'Av. Principal 123, Granada',
+                              widget.reservation.complex.address,
                               style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                             ),
                           ],
@@ -91,7 +103,7 @@ class _ReservationCardState extends State<ReservationCard> {
                         showIcon: false,
                         icon: Symbols.calendar_month_rounded,
                         label: 'Date',
-                        text: 'Mon, 00 Jan 0000',
+                        text: widget.reservation.dateIni.toLongFormattedDate(),
                       ),
                       InfoSectionWidget(
                         leftChildren: [
@@ -99,7 +111,7 @@ class _ReservationCardState extends State<ReservationCard> {
                             showIcon: false,
                             icon: Symbols.location_on_rounded,
                             label: 'Court',
-                            text: 'Court 1',
+                            text: widget.reservation.court.name,
                           ),
                         ],
                         rightChildren: [
@@ -107,7 +119,8 @@ class _ReservationCardState extends State<ReservationCard> {
                             showIcon: false,
                             icon: Symbols.schedule_rounded,
                             label: 'Time',
-                            text: '00:00 - 00:00',
+                            text:
+                                '${widget.reservation.dateIni.toFormattedTime()} - ${widget.reservation.dateEnd.toFormattedTime()}',
                           ),
                         ],
                       ),
@@ -150,9 +163,15 @@ class _ReservationCardState extends State<ReservationCard> {
             ),
           ),
           Positioned.fill(
-            child: CustomPaint(painter: _TicketOutlinePainter(color: colorScheme.outline, strokeWidth: 1.0)),
+            child: CustomPaint(
+              painter: _TicketOutlinePainter(
+                color: colorScheme.outline,
+                strokeWidth: 1.0,
+                notchPosition: _notchPosition,
+              ),
+            ),
           ),
-          Positioned(left: 16.0, top: -8.0, child: SmallChip.neutral(label: 'Scheduled')),
+          Positioned(left: 16.0, top: -8.0, child: widget.reservation.reservationStatus.smallChip),
         ],
       ),
     );
@@ -160,12 +179,15 @@ class _ReservationCardState extends State<ReservationCard> {
 }
 
 class _TicketClipper extends CustomClipper<Path> {
+  _TicketClipper(this.notchPosition);
+
+  final double notchPosition;
+
   @override
   Path getClip(Size size) {
     Path path = Path();
     double cornerRadius = 20.0;
     double notchRadius = 12.0;
-    double notchPosition = 212.0; // Posición del nodo horizontal
 
     // Empezar desde la esquina superior izquierda (con radio)
     path.moveTo(cornerRadius, 0);
@@ -215,18 +237,20 @@ class _TicketClipper extends CustomClipper<Path> {
   }
 
   @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+  bool shouldReclip(_TicketClipper oldClipper) => oldClipper.notchPosition != notchPosition;
 }
 
 class _TicketOutlinePainter extends CustomPainter {
   final Color color;
   final double strokeWidth;
 
-  _TicketOutlinePainter({required this.color, this.strokeWidth = 1.0});
+  final double notchPosition;
+
+  _TicketOutlinePainter({required this.color, this.strokeWidth = 1.0, required this.notchPosition});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final path = _TicketClipper().getClip(size);
+    final path = _TicketClipper(notchPosition).getClip(size);
 
     final paint = Paint()
       ..color = color

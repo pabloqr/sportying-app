@@ -55,8 +55,9 @@ extension DateTimeExtension on DateTime {
   double toDouble() => hour + minute / 60.0;
 
   String toFormattedDate() => DateFormat("dd/MM/yyyy").format(this);
+  String toLongFormattedDate() => DateFormat('EEEE, dd MMM yyyy').format(this);
   String toFormattedTime() => DateFormat("HH:mm").format(this);
-  String toFormattedString() => DateFormat("E, dd/MM/yyyy, HH:mm:ss").format(this);
+  String toFormattedString() => DateFormat("EEE, dd/MM/yyyy, HH:mm:ss").format(this);
 }
 
 extension RangeValuesExtension on RangeValues {

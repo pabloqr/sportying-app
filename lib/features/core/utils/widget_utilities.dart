@@ -9,9 +9,9 @@ class WidgetUtilities {
       final parts = [place.street, place.name, place.locality];
       final address = parts.where((p) => p != null && p.trim().isNotEmpty).join(", ");
 
-      return address.isNotEmpty ? address : 'C/XXXXXXXX XXXXXXXX, 00';
+      return address.isNotEmpty ? address : 'No address provided';
     } catch (e) {
-      return 'C/XXXXXXXX XXXXXXXX, 00';
+      return 'No address provided';
     }
   }
 }

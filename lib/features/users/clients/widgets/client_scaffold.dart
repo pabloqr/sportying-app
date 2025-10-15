@@ -14,8 +14,8 @@ class _Destination {
 }
 
 final List<_Destination> _destinations = [
-  _Destination('/client/explore', 'Explore', Symbols.search_rounded),
   _Destination('/client/home', 'Home', Symbols.home_rounded),
+  _Destination('/client/explore', 'Explore', Symbols.search_rounded),
   _Destination('/client/reservations', 'Reservations', Symbols.calendar_month_rounded),
 ];
 
@@ -31,7 +31,7 @@ class ClientScaffold extends StatelessWidget {
       if (uriPath.startsWith(_destinations[i].route)) return i;
     }
 
-    return 1;
+    return 0;
   }
 
   void _onDestinationSelected(int index, BuildContext context) => navigationShell.goBranch(index);

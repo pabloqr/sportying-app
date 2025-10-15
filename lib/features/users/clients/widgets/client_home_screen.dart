@@ -63,7 +63,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
 
   Widget _buildReservationSubsection() {
     return Column(
-      spacing: 8.0,
+      spacing: 4.0,
       children: [
         Header.subheader(
           subheaderText: 'Upcoming reservation',
@@ -73,10 +73,9 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
           onPressed: () {},
         ),
         if (widget.viewModel.reservation != null)
-          ReservationCard(userId: 6, reservation: widget.viewModel.reservation!)
+          ReservationCard(reservation: widget.viewModel.reservation!)
         else
           ReservationCard(
-            userId: 6,
             reservation: Reservation(
               userId: -1,
               complex: Complex(
@@ -111,7 +110,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
                 updatedAt: DateTime.now(),
               ),
               dateIni: DateTime(2025, 10, 11, 9),
-              dateEnd: DateTime(2025, 10, 11, 9),
+              dateEnd: DateTime(2025, 10, 11, 11),
               status: AvailabilityStatus.empty,
               reservationStatus: ReservationStatus.scheduled,
               timeFilter: TimeFilter.upcoming,

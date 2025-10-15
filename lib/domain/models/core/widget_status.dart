@@ -18,7 +18,7 @@ extension WidgetStatusColor on WidgetStatus {
       case WidgetStatus.success:
         return colorScheme.secondaryContainer;
       case WidgetStatus.error:
-        return colorScheme.errorContainer;
+        return colorScheme.error;
     }
   }
 
@@ -36,7 +36,7 @@ extension WidgetStatusColor on WidgetStatus {
       case WidgetStatus.success:
         return colorScheme.onSecondaryContainer;
       case WidgetStatus.error:
-        return colorScheme.onErrorContainer;
+        return colorScheme.onError;
     }
   }
 

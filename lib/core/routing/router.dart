@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sportying_app/core/routing/routes.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_explore_viewmodel.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_home_viewmodel.dart';
+import 'package:sportying_app/features/users/clients/view_model/client_reservations_viewmodel.dart';
 import 'package:sportying_app/features/users/clients/widgets/client_explore_screen.dart';
 import 'package:sportying_app/features/users/clients/widgets/client_home_screen.dart';
 import 'package:sportying_app/features/users/clients/widgets/client_reservations_screen.dart';
@@ -40,16 +41,6 @@ GoRouter router() => GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: Routes.clientExploreRoute,
-              builder: (context, state) {
-                return ClientExploreScreen(viewModel: ClientExploreViewModel(complexesRepository: context.read()));
-              },
-            ),
-          ],
-        ),
-        StatefulShellBranch(
-          routes: [
-            GoRoute(
               path: Routes.clientDashboardRoute,
               builder: (context, state) {
                 return ClientHomeScreen(
@@ -65,9 +56,21 @@ GoRouter router() => GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
+              path: Routes.clientExploreRoute,
+              builder: (context, state) {
+                return ClientExploreScreen(viewModel: ClientExploreViewModel(complexesRepository: context.read()));
+              },
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
               path: Routes.clientReservationsRoute,
               builder: (context, state) {
-                return ClientReservationsScreen();
+                return ClientReservationsScreen(
+                  viewModel: ClientReservationsViewModel(reservationRepository: context.read()),
+                );
               },
             ),
           ],

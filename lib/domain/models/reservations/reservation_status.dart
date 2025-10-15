@@ -5,7 +5,7 @@ import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
 enum ReservationStatus { scheduled, weather, completed, cancelled }
 
 extension ReservationStatusExtension on ReservationStatus {
-  Widget get smallStatusChip {
+  Widget get smallChip {
     switch (this) {
       case ReservationStatus.scheduled:
         return SmallChip.neutral(label: 'Scheduled');
@@ -18,7 +18,7 @@ extension ReservationStatusExtension on ReservationStatus {
     }
   }
 
-  Widget get mediumStatusChip {
+  Widget get mediumChip {
     switch (this) {
       case ReservationStatus.scheduled:
         return MediumChip.neutralSurface(label: 'Scheduled');
