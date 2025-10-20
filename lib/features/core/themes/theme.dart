@@ -97,7 +97,7 @@ class ClientTheme extends MaterialTheme {
   static const Color _primaryLight = Color(0xFFFFEB38);
   static const Color _secondaryLight = Color(0xFF004961);
   static const Color _tertiaryLight = Color(0xFF570531);
-  static const Color _backgroundLight = Color(0xFFFEFDFB);
+  static const Color _backgroundLight = Color(0xFFF5F3E8);
   static const Color _textLight = Color(0xFF18170C);
 
   static ColorScheme lightScheme() {
@@ -164,13 +164,13 @@ class ClientTheme extends MaterialTheme {
       onTertiaryFixedVariant: Color(0xFF420028),
 
       // Surface container colors
-      surfaceDim: Color(0xFFDFDDCC),
-      surfaceBright: _backgroundLight,
-      surfaceContainerLowest: Colors.white,
-      surfaceContainerLow: Color(0xFFF9F7E6),
-      surfaceContainer: Color(0xFFF3F1E0),
-      surfaceContainerHigh: Color(0xFFEDEBDA),
-      surfaceContainerHighest: Color(0xFFE8E5D5),
+      surfaceDim: Color(0xFFECEADF),
+      surfaceBright: Color(0xFFFFFFFD),
+      surfaceContainerLowest: Color(0xFFFFFFFD),
+      surfaceContainerLow: Color(0xFFFCFAF3),
+      surfaceContainer: Color(0xFFF9F7ED),
+      surfaceContainerHigh: Color(0xFFF7F5EB),
+      surfaceContainerHighest: Color(0xFFF6F4EA),
     );
   }
 
@@ -314,10 +314,28 @@ abstract class MaterialTheme {
     textTheme: textTheme.apply(bodyColor: colorScheme.onSurface, displayColor: colorScheme.onSurface),
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
+    navigationBarTheme: colorScheme.brightness == Brightness.light
+        ? NavigationBarThemeData(
+            backgroundColor: colorScheme.surfaceContainerLowest,
+            indicatorColor: colorScheme.primary,
+            iconTheme: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return IconThemeData(color: colorScheme.onPrimary);
+              }
+              return IconThemeData(color: colorScheme.onSurfaceVariant);
+            }),
+            labelTextStyle: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return TextStyle(color: colorScheme.onPrimary, fontSize: 12, fontWeight: FontWeight.w600);
+              }
+              return TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12);
+            }),
+          )
+        : null,
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       splashColor: colorScheme.secondary.withAlpha(25),
-      backgroundColor: colorScheme.secondaryContainer,
-      foregroundColor: colorScheme.onSecondaryContainer,
+      backgroundColor: colorScheme.primary,
+      foregroundColor: colorScheme.onPrimary,
     ),
   );
 }

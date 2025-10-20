@@ -7,7 +7,7 @@ part of 'reservation.dart';
 // **************************************************************************
 
 _Reservation _$ReservationFromJson(Map<String, dynamic> json) => _Reservation(
-  id: (json['id'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
   userId: json['userId'],
   complex: Complex.fromJson(json['complex'] as Map<String, dynamic>),
   court: Court.fromJson(json['court'] as Map<String, dynamic>),

@@ -39,9 +39,15 @@ class ClientScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(context),
       bottomNavigationBar: _buildBottomNavigationBar(context),
-      body: SafeArea(child: navigationShell),
+      body: SafeArea(
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [_buildAppBar(context)];
+          },
+          body: navigationShell,
+        ),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {},
         label: const Text('Book'),
@@ -50,9 +56,12 @@ class ClientScaffold extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
+  Widget _buildAppBar(BuildContext context) {
+    return SliverAppBar(
+      pinned: true,
+      automaticallyImplyLeading: false,
       title: Text(_destinations[_calculateSelectedIndex(context)].label),
+      flexibleSpace: FlexibleSpaceBar(),
       actions: [_buildAppBarTrailingIcon(context)],
     );
   }

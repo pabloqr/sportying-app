@@ -4,21 +4,39 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 enum WidgetStatus { neutral, neutralTranslucent, alert, success, error }
 
 extension WidgetStatusColor on WidgetStatus {
+  Color color(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
+
+    switch (this) {
+      case WidgetStatus.neutral:
+        return brightness == Brightness.light ? colorScheme.primary : colorScheme.primary;
+      case WidgetStatus.neutralTranslucent:
+        return brightness == Brightness.light ? colorScheme.onSurface : colorScheme.onSurface;
+      case WidgetStatus.alert:
+        return colorScheme.tertiary;
+      case WidgetStatus.success:
+        return colorScheme.secondary;
+      case WidgetStatus.error:
+        return colorScheme.error;
+    }
+  }
+
   Color colorSurface(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
 
     switch (this) {
       case WidgetStatus.neutral:
-        return brightness == Brightness.light ? colorScheme.tertiary : colorScheme.tertiaryContainer;
+        return brightness == Brightness.light ? colorScheme.primaryContainer : colorScheme.primaryContainer;
       case WidgetStatus.neutralTranslucent:
         return brightness == Brightness.light ? Colors.white.withAlpha(50) : Colors.black.withAlpha(50);
       case WidgetStatus.alert:
-        return colorScheme.primary;
+        return colorScheme.tertiaryContainer;
       case WidgetStatus.success:
         return colorScheme.secondaryContainer;
       case WidgetStatus.error:
-        return colorScheme.error;
+        return colorScheme.errorContainer;
     }
   }
 
@@ -28,15 +46,15 @@ extension WidgetStatusColor on WidgetStatus {
 
     switch (this) {
       case WidgetStatus.neutral:
-        return brightness == Brightness.light ? colorScheme.onTertiary : colorScheme.onTertiaryContainer;
+        return brightness == Brightness.light ? colorScheme.onPrimaryContainer : colorScheme.onPrimaryContainer;
       case WidgetStatus.neutralTranslucent:
         return brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface;
       case WidgetStatus.alert:
-        return colorScheme.onPrimary;
+        return colorScheme.onTertiaryContainer;
       case WidgetStatus.success:
         return colorScheme.onSecondaryContainer;
       case WidgetStatus.error:
-        return colorScheme.onError;
+        return colorScheme.onErrorContainer;
     }
   }
 

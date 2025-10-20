@@ -53,12 +53,20 @@ class LabeledInfoWidget extends StatelessWidget {
               MarqueeWidget(
                 child: Text(
                   label,
-                  style: textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                  style: textTheme.labelSmall?.copyWith(
+                    color: brightness == Brightness.light ? colorScheme.outlineVariant : colorScheme.onSurfaceVariant,
+                  ),
                   softWrap: false,
                 ),
               ),
               MarqueeWidget(
-                child: Text(text, style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface), softWrap: false),
+                child: Text(
+                  text,
+                  style: textTheme.bodyLarge?.copyWith(
+                    color: brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface,
+                  ),
+                  softWrap: false,
+                ),
               ),
             ],
           ),

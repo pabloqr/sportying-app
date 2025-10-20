@@ -54,10 +54,14 @@ extension DateTimeExtension on DateTime {
 
   double toDouble() => hour + minute / 60.0;
 
-  String toFormattedDate() => DateFormat("dd/MM/yyyy").format(this);
-  String toLongFormattedDate() => DateFormat('EEEE, dd MMM yyyy').format(this);
-  String toFormattedTime() => DateFormat("HH:mm").format(this);
-  String toFormattedString() => DateFormat("EEE, dd/MM/yyyy, HH:mm:ss").format(this);
+  String toFormattedTime0() => DateFormat('HH:mm').format(this);
+  String toFormattedWeekDay0() => DateFormat('EEE').format(this);
+  String toFormattedMonthDay0() => DateFormat('dd').format(this);
+  String toFormattedMonth0() => DateFormat('MMM').format(this);
+  String toFormattedDate0() => DateFormat('dd/MM/yyyy').format(this);
+  String toFormattedDate1() => DateFormat('EEE, dd MMM').format(this);
+  String toFormattedDate2() => DateFormat('EEEE, dd MMM yyyy').format(this);
+  String toFormattedDate3() => DateFormat('EEE, dd/MM/yyyy, HH:mm:ss').format(this);
 }
 
 extension RangeValuesExtension on RangeValues {

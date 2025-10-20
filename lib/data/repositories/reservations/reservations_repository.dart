@@ -135,6 +135,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
 
                 // Crear la instancia del modelo de la reserva
                 return Reservation(
+                  id: reservation.id ?? 0,
                   userId: reservation.userId,
                   complex: complex,
                   court: court,

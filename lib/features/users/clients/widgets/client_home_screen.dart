@@ -77,6 +77,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         else
           ReservationCard(
             reservation: Reservation(
+              id: 1,
               userId: -1,
               complex: Complex(
                 name: 'Núñez Blanca',

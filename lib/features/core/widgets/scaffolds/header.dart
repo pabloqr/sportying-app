@@ -54,8 +54,8 @@ class Header extends StatelessWidget {
           if (icon != null)
             TextButton.icon(
               style: ButtonStyle(
-                overlayColor: WidgetStatePropertyAll(colorScheme.secondary.withAlpha(25)),
-                foregroundColor: WidgetStatePropertyAll(colorScheme.secondary),
+                overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(25)),
+                foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary),
               ),
               onPressed: onPressed,
               iconAlignment: IconAlignment.end,
@@ -65,8 +65,8 @@ class Header extends StatelessWidget {
           else
             TextButton(
               style: ButtonStyle(
-                overlayColor: WidgetStatePropertyAll(colorScheme.secondary.withAlpha(25)),
-                foregroundColor: WidgetStatePropertyAll(colorScheme.secondary),
+                overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(25)),
+                foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary),
               ),
               onPressed: onPressed,
               child: Text(buttonText ?? 'Text'),

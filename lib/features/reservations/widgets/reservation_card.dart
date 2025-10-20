@@ -3,9 +3,9 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
-import 'package:sportying_app/features/core/widgets/scaffolds/info_section_widget.dart';
-import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
-import 'package:sportying_app/features/core/widgets/utils/dashed_line_painter.dart';
+import 'package:sportying_app/features/core/widgets/visuals/pulsing_dot.dart';
+import 'package:sportying_app/features/core/widgets/visuals/custom_container.dart';
+// import 'package:sportying_app/features/core/widgets/visuals/translucent_container.dart';
 
 class ReservationCard extends StatefulWidget {
   const ReservationCard({super.key, required this.reservation});
@@ -17,250 +17,215 @@ class ReservationCard extends StatefulWidget {
 }
 
 class _ReservationCardState extends State<ReservationCard> {
-  final GlobalKey _topSectionKey = GlobalKey();
-  double _notchPosition = 116.0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _calculateNotchPosition();
-    });
-  }
-
-  void _calculateNotchPosition() {
-    final RenderBox? renderBox = _topSectionKey.currentContext?.findRenderObject() as RenderBox?;
-    if (renderBox != null) {
-      setState(() {
-        _notchPosition += renderBox.size.height;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.of(context).brightness;
-
-    return Card.filled(
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+    return Card(
+      margin: EdgeInsetsGeometry.zero,
       color: Colors.transparent,
-      clipBehavior: Clip.none,
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(28.0)),
+      elevation: 0.0,
+      clipBehavior: Clip.antiAlias,
       child: Stack(
-        clipBehavior: Clip.none,
         children: [
-          ClipPath(
-            clipper: _TicketClipper(_notchPosition),
-            clipBehavior: Clip.antiAlias,
-            child: Column(
-              children: [
-                Container(
-                  key: _topSectionKey,
-                  padding: EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
-                  color: colorScheme.surfaceContainerHighest,
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 16.0,
-                    children: [
-                      Icon(
-                        Symbols.sports_tennis_rounded,
+          Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+                decoration: BoxDecoration(color: widget.reservation.reservationStatus.colorSurface(context)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  spacing: 8.0,
+                  children: [
+                    Row(
+                      spacing: 8.0,
+                      children: [
+                        Icon(
+                          Symbols.sports_tennis_rounded,
+                          size: 32,
+                          fill: 0,
+                          weight: 400,
+                          grade: 0,
+                          opticalSize: 32,
+                          color: colorScheme.onSurface,
+                        ),
+                        Text(
+                          widget.reservation.court.sport.name.toCapitalized(),
+                          style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      spacing: 4.0,
+                      children: [
+                        if (widget.reservation.reservationStatus.isActive)
+                          PulsingDot(color: widget.reservation.reservationStatus.colorOnSurface(context)),
+                        Text(
+                          widget.reservation.reservationStatus.name.toUpperCase(),
+                          style: textTheme.titleSmall?.copyWith(
+                            color: widget.reservation.reservationStatus.colorOnSurface(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1.0),
+              Container(
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+                decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest),
+                child: Column(
+                  spacing: 16.0,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 8.0,
+                      children: [
+                        CustomContainer.filled(
+                          width: 65.0,
+                          color: colorScheme.surfaceContainerHighest,
+                          child: Column(
+                            children: [
+                              Text(
+                                widget.reservation.dateIni.toFormattedWeekDay0().toUpperCase(),
+                                style: textTheme.bodyMedium,
+                              ),
+                              Text(widget.reservation.dateIni.toFormattedMonthDay0(), style: textTheme.titleLarge),
+                              Text(
+                                widget.reservation.dateIni.toFormattedMonth0().toUpperCase(),
+                                style: textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              '${widget.reservation.dateIni.toFormattedTime0()} - ${widget.reservation.dateEnd.toFormattedTime0()}',
+                              style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+                            ),
+                            Row(
+                              spacing: 4.0,
+                              children: [
+                                Icon(
+                                  Symbols.sports_rounded,
+                                  size: 18,
+                                  fill: 0,
+                                  weight: 400,
+                                  grade: 0,
+                                  opticalSize: 18,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                Text(
+                                  widget.reservation.court.name,
+                                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      spacing: 4.0,
+                      children: [
+                        Text(
+                          widget.reservation.complex.name,
+                          style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+                        ),
+                        Row(
+                          spacing: 4.0,
+                          children: [
+                            Icon(
+                              Symbols.location_on_rounded,
+                              size: 18,
+                              fill: 0,
+                              weight: 400,
+                              grade: 0,
+                              opticalSize: 18,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            Text(
+                              widget.reservation.complex.address,
+                              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const Divider(height: 1.0),
+              Container(
+                padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+                decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('00,00€', style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
+                        Row(
+                          children: [
+                            Icon(
+                              Symbols.tag_rounded,
+                              size: 18,
+                              fill: 0,
+                              weight: 400,
+                              grade: 0,
+                              opticalSize: 18,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            Text(
+                              widget.reservation.id.toString().padLeft(8, '0'),
+                              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    TextButton.icon(
+                      style: ButtonStyle(
+                        padding: WidgetStatePropertyAll(const EdgeInsets.fromLTRB(8.0, 4.0, 0.0, 4.0)),
+                        overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(25)),
+                        foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary),
+                      ),
+                      onPressed: () {},
+                      iconAlignment: IconAlignment.end,
+                      icon: Icon(
+                        Symbols.chevron_right_rounded,
                         size: 24,
                         fill: 0,
                         weight: 400,
                         grade: 0,
                         opticalSize: 24,
-                        color: colorScheme.onSurface,
                       ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          spacing: 4.0,
-                          children: [
-                            Text(
-                              widget.reservation.complex.name,
-                              style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
-                            ),
-                            Text(
-                              widget.reservation.complex.address,
-                              style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
-                  color: colorScheme.surfaceContainerLow,
-                  child: Column(
-                    spacing: 4.0,
-                    children: [
-                      LabeledInfoWidget.light(
-                        showIcon: false,
-                        icon: Symbols.calendar_month_rounded,
-                        label: 'Date',
-                        text: widget.reservation.dateIni.toLongFormattedDate(),
-                      ),
-                      InfoSectionWidget(
-                        leftChildren: [
-                          LabeledInfoWidget.light(
-                            showIcon: false,
-                            icon: Symbols.location_on_rounded,
-                            label: 'Court',
-                            text: widget.reservation.court.name,
-                          ),
-                        ],
-                        rightChildren: [
-                          LabeledInfoWidget.light(
-                            showIcon: false,
-                            icon: Symbols.schedule_rounded,
-                            label: 'Time',
-                            text:
-                                '${widget.reservation.dateIni.toFormattedTime()} - ${widget.reservation.dateEnd.toFormattedTime()}',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomPaint(
-                        painter: DashedLinePainter(color: colorScheme.primary),
-                        child: const SizedBox(height: 1),
-                      ),
+                      label: Text('More info'),
                     ),
                   ],
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  color: colorScheme.primary,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('00,00€', style: textTheme.titleLarge?.copyWith(color: colorScheme.onPrimary)),
-                      TextButton(
-                        style: ButtonStyle(
-                          overlayColor: WidgetStatePropertyAll(
-                            brightness == Brightness.light
-                                ? colorScheme.primaryContainer.withAlpha(25)
-                                : colorScheme.onSurface,
-                          ),
-                          foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary),
-                        ),
-                        onPressed: () {},
-                        child: Text('More info'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Positioned.fill(
-            child: CustomPaint(
-              painter: _TicketOutlinePainter(
-                color: colorScheme.outline,
-                strokeWidth: 1.0,
-                notchPosition: _notchPosition,
               ),
+            ],
+          ),
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 4,
+              decoration: BoxDecoration(color: widget.reservation.reservationStatus.colorOnSurface(context)),
             ),
           ),
-          Positioned(left: 16.0, top: -8.0, child: widget.reservation.reservationStatus.smallChip),
         ],
       ),
     );
   }
-}
-
-class _TicketClipper extends CustomClipper<Path> {
-  _TicketClipper(this.notchPosition);
-
-  final double notchPosition;
-
-  @override
-  Path getClip(Size size) {
-    Path path = Path();
-    double cornerRadius = 20.0;
-    double notchRadius = 12.0;
-
-    // Empezar desde la esquina superior izquierda (con radio)
-    path.moveTo(cornerRadius, 0);
-
-    // Línea superior hasta la esquina superior derecha
-    path.lineTo(size.width - cornerRadius, 0);
-
-    // Esquina superior derecha redondeada
-    path.quadraticBezierTo(size.width, 0, size.width, cornerRadius);
-
-    // Lado derecho hasta antes del nodo derecho
-    path.lineTo(size.width, notchPosition - notchRadius);
-
-    // Nodo semicircular derecho
-    path.arcToPoint(
-      Offset(size.width, notchPosition + notchRadius),
-      radius: Radius.circular(notchRadius),
-      clockwise: false,
-    );
-
-    // Continuar por el lado derecho hasta la esquina inferior derecha
-    path.lineTo(size.width, size.height - cornerRadius);
-
-    // Esquina inferior derecha redondeada
-    path.quadraticBezierTo(size.width, size.height, size.width - cornerRadius, size.height);
-
-    // Línea inferior hasta la esquina inferior izquierda
-    path.lineTo(cornerRadius, size.height);
-
-    // Esquina inferior izquierda redondeada
-    path.quadraticBezierTo(0, size.height, 0, size.height - cornerRadius);
-
-    // Lado izquierdo hasta antes del nodo izquierdo
-    path.lineTo(0, notchPosition + notchRadius);
-
-    // Nodo semicircular izquierdo
-    path.arcToPoint(Offset(0, notchPosition - notchRadius), radius: Radius.circular(notchRadius), clockwise: false);
-
-    // Continuar hasta la esquina superior izquierda
-    path.lineTo(0, cornerRadius);
-
-    // Esquina superior izquierda redondeada
-    path.quadraticBezierTo(0, 0, cornerRadius, 0);
-
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(_TicketClipper oldClipper) => oldClipper.notchPosition != notchPosition;
-}
-
-class _TicketOutlinePainter extends CustomPainter {
-  final Color color;
-  final double strokeWidth;
-
-  final double notchPosition;
-
-  _TicketOutlinePainter({required this.color, this.strokeWidth = 1.0, required this.notchPosition});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final path = _TicketClipper(notchPosition).getClip(size);
-
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = strokeWidth
-      ..isAntiAlias = true;
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

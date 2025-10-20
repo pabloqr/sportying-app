@@ -11,8 +11,8 @@ part 'reservation.g.dart';
 @freezed
 abstract class Reservation with _$Reservation {
   const factory Reservation({
-    int? id,
-    required userId,
+    required int id,
+    required int userId,
     required Complex complex,
     required Court court,
     required DateTime dateIni,

@@ -20,7 +20,7 @@ Widget withSystemUiOverlay(BuildContext context, {required Widget child}) {
       statusBarColor: Colors.transparent,
       systemNavigationBarColor: brightness == Brightness.light
           ? colorScheme.surfaceContainer
-          : colorScheme.surfaceContainer,
+          : colorScheme.surfaceContainerLowest,
       systemNavigationBarDividerColor: Colors.transparent,
 
       statusBarIconBrightness: brightness,

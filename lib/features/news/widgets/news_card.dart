@@ -38,6 +38,7 @@ class NewsCard extends StatelessWidget {
     return Card.filled(
       margin: EdgeInsetsGeometry.zero,
       color: Colors.transparent,
+      // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28.0)),
       clipBehavior: Clip.antiAlias,
       child: Container(
         decoration: BoxDecoration(
@@ -100,16 +101,16 @@ class NewsCard extends StatelessWidget {
                       spacing: 4.0,
                       children: [
                         TextButton(
-                          style: ButtonStyle(
-                            overlayColor: WidgetStatePropertyAll(
-                              brightness == Brightness.light
-                                  ? colorScheme.secondaryContainer.withAlpha(25)
-                                  : colorScheme.secondary.withAlpha(25),
-                            ),
-                            foregroundColor: WidgetStatePropertyAll(
-                              brightness == Brightness.light ? colorScheme.secondaryContainer : colorScheme.secondary,
-                            ),
-                          ),
+                          // style: ButtonStyle(
+                          //   overlayColor: WidgetStatePropertyAll(
+                          //     brightness == Brightness.light
+                          //         ? colorScheme.secondaryContainer.withAlpha(25)
+                          //         : colorScheme.secondary.withAlpha(25),
+                          //   ),
+                          //   foregroundColor: WidgetStatePropertyAll(
+                          //     brightness == Brightness.light ? colorScheme.secondaryContainer : colorScheme.secondary,
+                          //   ),
+                          // ),
                           onPressed: () {},
                           child: const Text('Read more'),
                         ),
