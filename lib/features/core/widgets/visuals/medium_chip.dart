@@ -3,27 +3,89 @@ import 'package:sportying_app/domain/models/core/widget_status.dart';
 
 class MediumChip extends StatelessWidget {
   final WidgetStatus status;
-  final String label;
 
-  const MediumChip._({required this.status, required this.label});
+  final bool inverse;
 
-  factory MediumChip.neutralSurface({required String label}) =>
-      MediumChip._(status: WidgetStatus.neutral, label: label);
+  final String? label;
+  final IconData? icon;
 
-  factory MediumChip.alert({required String label}) => MediumChip._(status: WidgetStatus.alert, label: label);
+  const MediumChip._(this.status, this.inverse, this.label, this.icon);
 
-  factory MediumChip.success({required String label}) => MediumChip._(status: WidgetStatus.success, label: label);
+  factory MediumChip.neutral(bool inverse, {String? label, IconData? icon}) =>
+      MediumChip._(WidgetStatus.neutral, inverse, label, icon);
 
-  factory MediumChip.error({required String label}) => MediumChip._(status: WidgetStatus.error, label: label);
+  factory MediumChip.neutralTranslucent(bool inverse, {String? label, IconData? icon}) =>
+      MediumChip._(WidgetStatus.neutralTranslucent, inverse, label, icon);
+
+  factory MediumChip.alert(bool inverse, {String? label, IconData? icon}) =>
+      MediumChip._(WidgetStatus.alert, inverse, label, icon);
+
+  factory MediumChip.success(bool inverse, {String? label, IconData? icon}) =>
+      MediumChip._(WidgetStatus.success, inverse, label, icon);
+
+  factory MediumChip.error(bool inverse, {String? label, IconData? icon}) =>
+      MediumChip._(WidgetStatus.error, inverse, label, icon);
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
-      decoration: BoxDecoration(color: status.colorSurface(context), borderRadius: BorderRadius.circular(8.0)),
-      child: Text(label, style: textTheme.labelMedium?.copyWith(color: status.colorOnSurface(context))),
+      decoration: BoxDecoration(
+        color: inverse ? status.colorOnSurface(context) : status.colorSurface(context),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      child: _buildContent(context),
     );
+  }
+
+  Widget? _buildContent(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    if (label != null && icon != null) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        spacing: 4.0,
+        children: [
+          Icon(
+            icon!,
+            size: 16,
+            fill: 0,
+            weight: 400,
+            grade: 0,
+            opticalSize: 16,
+            color: inverse ? status.colorSurface(context) : status.colorOnSurface(context),
+          ),
+          Text(
+            label!,
+            style: textTheme.labelMedium?.copyWith(
+              color: inverse ? status.colorSurface(context) : status.colorOnSurface(context),
+            ),
+            overflow: TextOverflow.fade,
+            softWrap: false,
+          ),
+        ],
+      );
+    } else if (label != null) {
+      return Text(
+        label!,
+        style: textTheme.labelMedium?.copyWith(
+          color: inverse ? status.colorSurface(context) : status.colorOnSurface(context),
+        ),
+        overflow: TextOverflow.fade,
+        softWrap: false,
+      );
+    } else if (icon != null) {
+      return Icon(
+        icon!,
+        size: 16,
+        fill: 0,
+        weight: 400,
+        grade: 0,
+        opticalSize: 16,
+        color: inverse ? status.colorSurface(context) : status.colorOnSurface(context),
+      );
+    }
+    return null;
   }
 }

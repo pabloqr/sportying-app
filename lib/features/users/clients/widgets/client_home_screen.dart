@@ -136,6 +136,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         ConstrainedBox(
           constraints: const BoxConstraints(maxHeight: 264.0),
           child: CarouselView(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
             itemSnapping: true,
             itemExtent: 240.0,
             onTap: (index) {},

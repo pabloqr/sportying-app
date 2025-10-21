@@ -47,29 +47,29 @@ extension ReservationStatusExtension on ReservationStatus {
     }
   }
 
-  Widget get smallChip {
+  Widget smallChip(bool inverse) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return SmallChip.neutral(label: 'Scheduled');
+        return SmallChip.neutral(inverse, label: 'Scheduled');
       case ReservationStatus.weather:
-        return SmallChip.alert(label: 'Weather');
+        return SmallChip.alert(inverse, label: 'Weather');
       case ReservationStatus.completed:
-        return SmallChip.success(label: 'Completed');
+        return SmallChip.success(inverse, label: 'Completed');
       case ReservationStatus.cancelled:
-        return SmallChip.error(label: 'Cancelled');
+        return SmallChip.error(inverse, label: 'Cancelled');
     }
   }
 
-  Widget get mediumChip {
+  Widget mediumChip(bool inverse) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return MediumChip.neutralSurface(label: 'Scheduled');
+        return MediumChip.neutral(inverse, label: 'Scheduled');
       case ReservationStatus.weather:
-        return MediumChip.alert(label: 'Weather');
+        return MediumChip.alert(inverse, label: 'Weather');
       case ReservationStatus.completed:
-        return MediumChip.success(label: 'Completed');
+        return MediumChip.success(inverse, label: 'Completed');
       case ReservationStatus.cancelled:
-        return MediumChip.error(label: 'Cancelled');
+        return MediumChip.error(inverse, label: 'Cancelled');
     }
   }
 }

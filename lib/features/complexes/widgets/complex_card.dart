@@ -70,7 +70,7 @@ class ComplexCard extends StatelessWidget {
       margin: EdgeInsetsGeometry.zero,
       color: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(28.0),
+        borderRadius: BorderRadius.circular(12.0),
         side: index == currentIndex
             ? BorderSide(color: Theme.of(context).colorScheme.primary, width: 3.0)
             : BorderSide.none,
@@ -124,7 +124,7 @@ class ComplexCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SmallChip.success(label: 'Available'),
+        SmallChip.success(true, label: 'Available'),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -167,7 +167,7 @@ class ComplexCard extends StatelessWidget {
                 spacing: 8.0,
                 children: [
                   // TODO: substitute condition with real condition
-                  if (true) SmallChip.success(label: 'Available'),
+                  if (true) SmallChip.success(true, label: 'Available'),
                 ],
               ),
               _buildSportsRow(context),
@@ -326,7 +326,7 @@ class ComplexCard extends StatelessWidget {
     return Row(
       spacing: 4.0,
       children: complex.sports.map((sport) {
-        return SmallChip.neutral(label: sport.name.toCapitalized());
+        return SmallChip.neutral(false, label: sport.name.toCapitalized());
       }).toList(),
     );
   }

@@ -62,7 +62,7 @@ class NewsCard extends StatelessWidget {
               if (_dateDifference.inDays <= 7)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [SmallChip.alert(label: 'NEW')],
+                  children: [SmallChip.alert(true, label: 'NEW')],
                 ),
               Expanded(
                 child: Column(
@@ -85,7 +85,7 @@ class NewsCard extends StatelessWidget {
                                 color: brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface,
                               ),
                             ),
-                            SmallChip.neutralTranslucent(label: _getCreationString()),
+                            SmallChip.neutralTranslucent(false, label: _getCreationString()),
                           ],
                         ),
                         Text(

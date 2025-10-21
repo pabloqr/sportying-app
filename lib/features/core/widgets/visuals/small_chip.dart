@@ -4,31 +4,36 @@ import 'package:sportying_app/domain/models/core/widget_status.dart';
 class SmallChip extends StatelessWidget {
   final WidgetStatus status;
 
+  final bool inverse;
+
   final String? label;
   final IconData? icon;
 
-  const SmallChip._({required this.status, this.label, this.icon});
+  const SmallChip._(this.status, this.inverse, this.label, this.icon);
 
-  factory SmallChip.neutral({String? label, IconData? icon}) =>
-      SmallChip._(status: WidgetStatus.neutral, label: label, icon: icon);
+  factory SmallChip.neutral(bool inverse, {String? label, IconData? icon}) =>
+      SmallChip._(WidgetStatus.neutral, inverse, label, icon);
 
-  factory SmallChip.neutralTranslucent({String? label, IconData? icon}) =>
-      SmallChip._(status: WidgetStatus.neutralTranslucent, label: label, icon: icon);
+  factory SmallChip.neutralTranslucent(bool inverse, {String? label, IconData? icon}) =>
+      SmallChip._(WidgetStatus.neutralTranslucent, inverse, label, icon);
 
-  factory SmallChip.alert({String? label, IconData? icon}) =>
-      SmallChip._(status: WidgetStatus.alert, label: label, icon: icon);
+  factory SmallChip.alert(bool inverse, {String? label, IconData? icon}) =>
+      SmallChip._(WidgetStatus.alert, inverse, label, icon);
 
-  factory SmallChip.success({String? label, IconData? icon}) =>
-      SmallChip._(status: WidgetStatus.success, label: label, icon: icon);
+  factory SmallChip.success(bool inverse, {String? label, IconData? icon}) =>
+      SmallChip._(WidgetStatus.success, inverse, label, icon);
 
-  factory SmallChip.error({String? label, IconData? icon}) =>
-      SmallChip._(status: WidgetStatus.error, label: label, icon: icon);
+  factory SmallChip.error(bool inverse, {String? label, IconData? icon}) =>
+      SmallChip._(WidgetStatus.error, inverse, label, icon);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(6.0),
-      decoration: BoxDecoration(color: status.colorSurface(context), borderRadius: BorderRadius.circular(8.0)),
+      decoration: BoxDecoration(
+        color: inverse ? status.colorOnSurface(context) : status.colorSurface(context),
+        borderRadius: BorderRadius.circular(8.0),
+      ),
       child: _buildContent(context),
     );
   }
@@ -42,10 +47,20 @@ class SmallChip extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         spacing: 4.0,
         children: [
-          Icon(icon!, size: 16, fill: 0, weight: 400, grade: 0, opticalSize: 16, color: status.colorOnSurface(context)),
+          Icon(
+            icon!,
+            size: 16,
+            fill: 0,
+            weight: 400,
+            grade: 0,
+            opticalSize: 16,
+            color: inverse ? status.colorSurface(context) : status.colorOnSurface(context),
+          ),
           Text(
             label!,
-            style: textTheme.labelSmall?.copyWith(color: status.colorOnSurface(context)),
+            style: textTheme.labelSmall?.copyWith(
+              color: inverse ? status.colorSurface(context) : status.colorOnSurface(context),
+            ),
             overflow: TextOverflow.fade,
             softWrap: false,
           ),
@@ -54,7 +69,9 @@ class SmallChip extends StatelessWidget {
     } else if (label != null) {
       return Text(
         label!,
-        style: textTheme.labelSmall?.copyWith(color: status.colorOnSurface(context)),
+        style: textTheme.labelSmall?.copyWith(
+          color: inverse ? status.colorSurface(context) : status.colorOnSurface(context),
+        ),
         overflow: TextOverflow.fade,
         softWrap: false,
       );
@@ -66,7 +83,7 @@ class SmallChip extends StatelessWidget {
         weight: 400,
         grade: 0,
         opticalSize: 16,
-        color: status.colorOnSurface(context),
+        color: inverse ? status.colorSurface(context) : status.colorOnSurface(context),
       );
     }
     return null;
