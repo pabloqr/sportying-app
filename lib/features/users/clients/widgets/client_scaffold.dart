@@ -39,8 +39,10 @@ class ClientScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       bottomNavigationBar: _buildBottomNavigationBar(context),
       body: SafeArea(
+        bottom: false,
         child: NestedScrollView(
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [_buildAppBar(context)];
@@ -124,18 +126,26 @@ class ClientScaffold extends StatelessWidget {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: _calculateSelectedIndex(context),
-      onDestinationSelected: (index) => _onDestinationSelected(index, context),
-      destinations: _destinations
-          .mapIndexed(
-            (index, location) => NavigationDestination(
-              label: location.label,
-              icon: Icon(location.icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
-              selectedIcon: Icon(location.icon, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
-            ),
-          )
-          .toList(),
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsetsGeometry.fromLTRB(16.0, 0.0, 16.0, 8.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(24.0),
+          child: NavigationBar(
+            selectedIndex: _calculateSelectedIndex(context),
+            onDestinationSelected: (index) => _onDestinationSelected(index, context),
+            destinations: _destinations
+                .mapIndexed(
+                  (index, location) => NavigationDestination(
+                    label: location.label,
+                    icon: Icon(location.icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
+                    selectedIcon: Icon(location.icon, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ),
     );
   }
 }

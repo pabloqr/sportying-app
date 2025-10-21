@@ -333,9 +333,10 @@ abstract class MaterialTheme {
           )
         : null,
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      splashColor: colorScheme.secondary.withAlpha(25),
+      splashColor: colorScheme.onPrimary.withAlpha(25),
       backgroundColor: colorScheme.primary,
       foregroundColor: colorScheme.onPrimary,
+      elevation: 0.0,
     ),
   );
 }

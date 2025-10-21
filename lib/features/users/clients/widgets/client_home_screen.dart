@@ -50,7 +50,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         listenable: widget.viewModel,
         builder: (context, _) {
           return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 88.0),
+            padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 224.0),
             child: Column(
               spacing: 16.0,
               children: [_buildReservationSubsection(context), _buildDiscoverSubsection(), _buildNewsSubsection()],
