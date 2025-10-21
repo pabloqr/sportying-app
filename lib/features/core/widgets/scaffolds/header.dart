@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+enum HeaderContainer { card, none }
+
 enum _HeaderType { subheader, subSubheader }
 
 extension _HeaderTypeExtension on _HeaderType {
@@ -16,42 +18,43 @@ extension _HeaderTypeExtension on _HeaderType {
 }
 
 class Header extends StatelessWidget {
-  final String subheaderText;
-  final bool showButton;
-  final String? buttonText;
+  final HeaderContainer container;
+
+  final String title;
+  final String? buttonLabel;
   final IconData? icon;
   final VoidCallback? onPressed;
 
   final _HeaderType _headerType;
 
-  const Header._(this._headerType, this.subheaderText, this.showButton, this.buttonText, this.icon, this.onPressed);
+  const Header._(this._headerType, this.container, this.title, this.buttonLabel, this.icon, this.onPressed);
 
   factory Header.subheader({
+    required HeaderContainer container,
     required String subheaderText,
-    required bool showButton,
     String? buttonText,
     IconData? icon,
     VoidCallback? onPressed,
-  }) => Header._(_HeaderType.subheader, subheaderText, showButton, buttonText, icon, onPressed);
+  }) => Header._(_HeaderType.subheader, container, subheaderText, buttonText, icon, onPressed);
 
   factory Header.subSubheader({
+    required HeaderContainer container,
     required String subheaderText,
-    required bool showButton,
     String? buttonText,
     IconData? icon,
     VoidCallback? onPressed,
-  }) => Header._(_HeaderType.subSubheader, subheaderText, showButton, buttonText, icon, onPressed);
+  }) => Header._(_HeaderType.subSubheader, container, subheaderText, buttonText, icon, onPressed);
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Row(
+    final content = Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(subheaderText, style: _headerType.textTheme(context)),
-        if (showButton)
-          if (icon != null)
+        Text(title, style: _headerType.textTheme(context)),
+        if (icon != null || buttonLabel != null)
+          if (icon != null && buttonLabel != null)
             TextButton.icon(
               style: ButtonStyle(
                 overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(25)),
@@ -60,18 +63,35 @@ class Header extends StatelessWidget {
               onPressed: onPressed,
               iconAlignment: IconAlignment.end,
               icon: Icon(icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
-              label: Text(buttonText ?? 'Text'),
+              label: Text(buttonLabel ?? 'Text'),
             )
-          else
+          else if (buttonLabel != null)
             TextButton(
               style: ButtonStyle(
                 overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(25)),
                 foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary),
               ),
               onPressed: onPressed,
-              child: Text(buttonText ?? 'Text'),
-            ),
+              child: Text(buttonLabel ?? 'Text'),
+            )
+          else
+            Icon(icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
       ],
     );
+
+    return container == HeaderContainer.card
+        ? Material(
+            color: colorScheme.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(12.0),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onPressed,
+              child: Padding(
+                padding: const EdgeInsetsGeometry.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: content,
+              ),
+            ),
+          )
+        : content;
   }
 }

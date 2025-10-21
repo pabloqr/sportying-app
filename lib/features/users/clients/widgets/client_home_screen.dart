@@ -53,7 +53,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
             padding: EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 88.0),
             child: Column(
               spacing: 16.0,
-              children: [_buildReservationSubsection(), _buildDiscoverSubsection(), _buildNewsSubsection()],
+              children: [_buildReservationSubsection(context), _buildDiscoverSubsection(), _buildNewsSubsection()],
             ),
           );
         },
@@ -61,14 +61,13 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
     );
   }
 
-  Widget _buildReservationSubsection() {
+  Widget _buildReservationSubsection(BuildContext context) {
     return Column(
-      spacing: 4.0,
+      spacing: 16.0,
       children: [
         Header.subheader(
-          subheaderText: 'Upcoming reservation',
-          showButton: true,
-          buttonText: 'See all',
+          container: HeaderContainer.card,
+          subheaderText: 'Reservations',
           icon: Symbols.chevron_right_rounded,
           onPressed: () {},
         ),
@@ -126,12 +125,11 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
 
   Widget _buildDiscoverSubsection() {
     return Column(
-      spacing: 8.0,
+      spacing: 16.0,
       children: [
         Header.subheader(
+          container: HeaderContainer.card,
           subheaderText: 'Discover',
-          showButton: true,
-          buttonText: 'Explore complexes',
           icon: Symbols.chevron_right_rounded,
           onPressed: () {},
         ),
@@ -162,12 +160,11 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
 
   Widget _buildNewsSubsection() {
     return Column(
-      spacing: 8.0,
+      spacing: 16.0,
       children: [
         Header.subheader(
+          container: HeaderContainer.card,
           subheaderText: 'News',
-          showButton: true,
-          buttonText: 'More news',
           icon: Symbols.chevron_right_rounded,
           onPressed: () {},
         ),
