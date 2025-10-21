@@ -85,6 +85,7 @@ class Header extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.0),
             clipBehavior: Clip.antiAlias,
             child: InkWell(
+              overlayColor: WidgetStatePropertyAll(colorScheme.onSurface.withAlpha(25)),
               onTap: onPressed,
               child: Padding(
                 padding: const EdgeInsetsGeometry.symmetric(vertical: 8.0, horizontal: 16.0),
