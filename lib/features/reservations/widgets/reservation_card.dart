@@ -19,7 +19,7 @@ class _ReservationCardState extends State<ReservationCard> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsetsGeometry.zero,
+      margin: const EdgeInsetsGeometry.symmetric(vertical: 4.0),
       color: Colors.transparent,
       // shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(28.0)),
       elevation: 0.0,
