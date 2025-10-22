@@ -8,7 +8,7 @@ enum ReservationStatus { scheduled, weather, completed, cancelled }
 extension ReservationStatusExtension on ReservationStatus {
   bool get isActive => this == ReservationStatus.scheduled || this == ReservationStatus.weather;
 
-  Color color(BuildContext context) {
+  Color colorPrimary(BuildContext context) {
     switch (this) {
       case ReservationStatus.scheduled:
         return WidgetStatus.neutral.colorPrimary(context);
@@ -18,6 +18,19 @@ extension ReservationStatusExtension on ReservationStatus {
         return WidgetStatus.success.colorPrimary(context);
       case ReservationStatus.cancelled:
         return WidgetStatus.error.colorPrimary(context);
+    }
+  }
+
+  Color colorOnPrimary(BuildContext context) {
+    switch (this) {
+      case ReservationStatus.scheduled:
+        return WidgetStatus.neutral.colorOnPrimary(context);
+      case ReservationStatus.weather:
+        return WidgetStatus.alert.colorOnPrimary(context);
+      case ReservationStatus.completed:
+        return WidgetStatus.success.colorOnPrimary(context);
+      case ReservationStatus.cancelled:
+        return WidgetStatus.error.colorOnPrimary(context);
     }
   }
 

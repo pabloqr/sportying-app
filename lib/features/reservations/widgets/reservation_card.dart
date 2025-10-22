@@ -41,7 +41,11 @@ class _ReservationCardState extends State<ReservationCard> {
             bottom: 0,
             child: Container(
               width: 4,
-              decoration: BoxDecoration(color: widget.reservation.reservationStatus.colorOnSurface(context)),
+              decoration: BoxDecoration(
+                color: widget.reservation.reservationStatus == ReservationStatus.scheduled
+                    ? widget.reservation.reservationStatus.colorOnPrimary(context)
+                    : widget.reservation.reservationStatus.colorOnSurface(context),
+              ),
             ),
           ),
         ],
@@ -54,10 +58,14 @@ class _ReservationCardState extends State<ReservationCard> {
     final textTheme = Theme.of(context).textTheme;
 
     return Material(
-      color: widget.reservation.reservationStatus.colorSurface(context),
+      color: widget.reservation.reservationStatus == ReservationStatus.scheduled
+          ? widget.reservation.reservationStatus.colorPrimary(context)
+          : widget.reservation.reservationStatus.colorSurface(context),
       child: InkWell(
         overlayColor: WidgetStatePropertyAll(
-          widget.reservation.reservationStatus.colorOnSurface(context).withAlpha(25),
+          widget.reservation.reservationStatus == ReservationStatus.scheduled
+              ? widget.reservation.reservationStatus.colorOnPrimary(context).withAlpha(25)
+              : widget.reservation.reservationStatus.colorOnSurface(context).withAlpha(25),
         ),
         onTap: () {},
         child: Padding(
@@ -80,7 +88,7 @@ class _ReservationCardState extends State<ReservationCard> {
                   ),
                   Text(
                     widget.reservation.court.sport.name.toCapitalized(),
-                    style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurfaceVariant),
+                    style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
                   ),
                 ],
               ),
@@ -91,11 +99,17 @@ class _ReservationCardState extends State<ReservationCard> {
                     spacing: 4.0,
                     children: [
                       if (widget.reservation.reservationStatus.isActive)
-                        PulsingDot(color: widget.reservation.reservationStatus.colorOnSurface(context)),
+                        PulsingDot(
+                          color: widget.reservation.reservationStatus == ReservationStatus.scheduled
+                              ? widget.reservation.reservationStatus.colorOnPrimary(context)
+                              : widget.reservation.reservationStatus.colorOnSurface(context),
+                        ),
                       Text(
                         widget.reservation.reservationStatus.name.toUpperCase(),
                         style: textTheme.titleSmall?.copyWith(
-                          color: widget.reservation.reservationStatus.colorOnSurface(context),
+                          color: widget.reservation.reservationStatus == ReservationStatus.scheduled
+                              ? widget.reservation.reservationStatus.colorOnPrimary(context)
+                              : widget.reservation.reservationStatus.colorOnSurface(context),
                         ),
                       ),
                     ],
