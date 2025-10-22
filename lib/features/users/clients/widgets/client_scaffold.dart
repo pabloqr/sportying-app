@@ -61,7 +61,6 @@ class ClientScaffold extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       pinned: true,
-      automaticallyImplyLeading: false,
       title: Text(_destinations[_calculateSelectedIndex(context)].label),
       flexibleSpace: FlexibleSpaceBar(),
       actions: [_buildAppBarTrailingIcon(context)],
@@ -129,8 +128,10 @@ class ClientScaffold extends StatelessWidget {
     return SafeArea(
       child: Padding(
         padding: const EdgeInsetsGeometry.fromLTRB(16.0, 0.0, 16.0, 8.0),
-        child: ClipRRect(
+        child: Material(
+          elevation: 3.0,
           borderRadius: BorderRadius.circular(24.0),
+          clipBehavior: Clip.antiAlias,
           child: NavigationBar(
             selectedIndex: _calculateSelectedIndex(context),
             onDestinationSelected: (index) => _onDestinationSelected(index, context),

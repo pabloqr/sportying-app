@@ -337,10 +337,10 @@ abstract class MaterialTheme {
       }),
     ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
+      elevation: 3.0,
       splashColor: colorScheme.onPrimary.withAlpha(25),
       backgroundColor: colorScheme.primary,
       foregroundColor: colorScheme.onPrimary,
-      elevation: 0.0,
     ),
   );
 }
