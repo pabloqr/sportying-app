@@ -57,6 +57,8 @@ class _ReservationCardState extends State<ReservationCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    final brightness = Theme.of(context).brightness;
+
     return Material(
       color: widget.reservation.reservationStatus == ReservationStatus.scheduled
           ? widget.reservation.reservationStatus.colorPrimary(context)
@@ -84,11 +86,21 @@ class _ReservationCardState extends State<ReservationCard> {
                     weight: 400,
                     grade: 0,
                     opticalSize: 28,
-                    color: colorScheme.onSurface,
+                    color:
+                        brightness == Brightness.light ||
+                            widget.reservation.reservationStatus != ReservationStatus.scheduled
+                        ? colorScheme.onSurface
+                        : colorScheme.surface,
                   ),
                   Text(
                     widget.reservation.court.sport.name.toCapitalized(),
-                    style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+                    style: textTheme.titleLarge?.copyWith(
+                      color:
+                          brightness == Brightness.light ||
+                              widget.reservation.reservationStatus != ReservationStatus.scheduled
+                          ? colorScheme.onSurface
+                          : colorScheme.surface,
+                    ),
                   ),
                 ],
               ),
@@ -121,7 +133,11 @@ class _ReservationCardState extends State<ReservationCard> {
                     weight: 400,
                     grade: 0,
                     opticalSize: 24,
-                    color: colorScheme.onSurface,
+                    color:
+                        brightness == Brightness.light ||
+                            widget.reservation.reservationStatus != ReservationStatus.scheduled
+                        ? colorScheme.onSurface
+                        : colorScheme.surface,
                   ),
                 ],
               ),
@@ -136,9 +152,13 @@ class _ReservationCardState extends State<ReservationCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    final brightness = Theme.of(context).brightness;
+
     return Container(
       padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest),
+      decoration: BoxDecoration(
+        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+      ),
       child: Column(
         spacing: 16.0,
         children: [
@@ -224,9 +244,13 @@ class _ReservationCardState extends State<ReservationCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    final brightness = Theme.of(context).brightness;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-      decoration: BoxDecoration(color: colorScheme.surfaceContainerLowest),
+      decoration: BoxDecoration(
+        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

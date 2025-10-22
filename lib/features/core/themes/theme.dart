@@ -314,24 +314,28 @@ abstract class MaterialTheme {
     textTheme: textTheme.apply(bodyColor: colorScheme.onSurface, displayColor: colorScheme.onSurface),
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
-    navigationBarTheme: colorScheme.brightness == Brightness.light
-        ? NavigationBarThemeData(
-            backgroundColor: colorScheme.surfaceContainerLowest,
-            indicatorColor: colorScheme.primary,
-            iconTheme: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return IconThemeData(color: colorScheme.onPrimary);
-              }
-              return IconThemeData(color: colorScheme.onSurfaceVariant);
-            }),
-            labelTextStyle: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return TextStyle(color: colorScheme.onPrimary, fontSize: 12, fontWeight: FontWeight.w600);
-              }
-              return TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12);
-            }),
-          )
-        : null,
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: colorScheme.brightness == Brightness.light
+          ? colorScheme.surfaceContainerLowest
+          : colorScheme.surfaceContainerHigh,
+      indicatorColor: colorScheme.primary,
+      iconTheme: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return IconThemeData(color: colorScheme.onPrimary);
+        }
+        return IconThemeData(color: colorScheme.onSurfaceVariant);
+      }),
+      labelTextStyle: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return TextStyle(
+            color: colorScheme.brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          );
+        }
+        return TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 12);
+      }),
+    ),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       splashColor: colorScheme.onPrimary.withAlpha(25),
       backgroundColor: colorScheme.primary,

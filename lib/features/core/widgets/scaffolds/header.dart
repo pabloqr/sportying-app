@@ -81,7 +81,9 @@ class Header extends StatelessWidget {
 
     return container == HeaderContainer.card
         ? Material(
-            color: colorScheme.surfaceContainerLowest,
+            color: colorScheme.brightness == Brightness.light
+                ? colorScheme.surfaceContainerLowest
+                : colorScheme.surfaceContainerHigh,
             borderRadius: BorderRadius.circular(12.0),
             clipBehavior: Clip.antiAlias,
             child: InkWell(

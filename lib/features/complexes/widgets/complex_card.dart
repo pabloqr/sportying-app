@@ -52,6 +52,8 @@ class ComplexCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ValueListenableBuilder<int>(
       valueListenable: selectedIndex,
       builder: (context, currentIndex, _) {
@@ -59,7 +61,9 @@ class ComplexCard extends StatelessWidget {
             ? _buildSmallCard(context, currentIndex)
             : Card.filled(
                 margin: const EdgeInsetsGeometry.symmetric(vertical: 4.0),
-                color: Theme.of(context).colorScheme.surfaceContainerLowest,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? colorScheme.surfaceContainerLowest
+                    : colorScheme.surfaceContainerHigh,
                 clipBehavior: Clip.antiAlias,
                 child: _buildLargeCard(context),
               );
@@ -122,11 +126,16 @@ class ComplexCard extends StatelessWidget {
   }
 
   Widget _buildSmallCardBody(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomChip.small.success(palette: WidgetPalette.inverse, label: 'Available'),
+        CustomChip.small.success(
+          palette: brightness == Brightness.light ? WidgetPalette.inverse : WidgetPalette.normal,
+          label: 'Available',
+        ),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,6 +160,8 @@ class ComplexCard extends StatelessWidget {
   }
 
   Widget _buildLargeCard(BuildContext context) {
+    final brightness = Theme.of(context).brightness;
+
     return Column(
       children: [
         Container(
@@ -176,7 +187,11 @@ class ComplexCard extends StatelessWidget {
                       child: _buildRating(context),
                     ),
                   // TODO: substitute condition with real condition
-                  if (true) CustomChip.small.success(palette: WidgetPalette.inverse, label: 'Available'),
+                  if (true)
+                    CustomChip.small.success(
+                      palette: brightness == Brightness.light ? WidgetPalette.inverse : WidgetPalette.normal,
+                      label: 'Available',
+                    ),
                 ],
               ),
               _buildSportsRow(context),
@@ -220,10 +235,10 @@ class ComplexCard extends StatelessWidget {
                 overlayColor: WidgetStatePropertyAll(
                   brightness == Brightness.light
                       ? colorScheme.onPrimary.withAlpha(25)
-                      : colorScheme.onPrimary.withAlpha(25),
+                      : colorScheme.primary.withAlpha(25),
                 ),
                 foregroundColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary,
+                  brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary,
                 ),
               ),
               onPressed: () {},
