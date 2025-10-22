@@ -58,7 +58,7 @@ class ComplexCard extends StatelessWidget {
         return size == WidgetSize.small
             ? _buildSmallCard(context, currentIndex)
             : Card.filled(
-                margin: const EdgeInsets.all(4.0),
+                margin: const EdgeInsetsGeometry.symmetric(vertical: 4.0),
                 color: Theme.of(context).colorScheme.surfaceContainerLowest,
                 clipBehavior: Clip.antiAlias,
                 child: _buildLargeCard(context),
@@ -219,11 +219,11 @@ class ComplexCard extends StatelessWidget {
               style: ButtonStyle(
                 overlayColor: WidgetStatePropertyAll(
                   brightness == Brightness.light
-                      ? colorScheme.secondary.withAlpha(25)
-                      : colorScheme.secondary.withAlpha(25),
+                      ? colorScheme.onPrimary.withAlpha(25)
+                      : colorScheme.onPrimary.withAlpha(25),
                 ),
                 foregroundColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light ? colorScheme.secondary : colorScheme.secondary,
+                  brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary,
                 ),
               ),
               onPressed: () {},
@@ -233,14 +233,14 @@ class ComplexCard extends StatelessWidget {
               style: ButtonStyle(
                 overlayColor: WidgetStatePropertyAll(
                   brightness == Brightness.light
-                      ? colorScheme.secondary.withAlpha(25)
-                      : colorScheme.secondary.withAlpha(25),
+                      ? colorScheme.onPrimary.withAlpha(25)
+                      : colorScheme.onPrimary.withAlpha(25),
                 ),
                 backgroundColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light ? colorScheme.secondary : colorScheme.secondary,
+                  brightness == Brightness.light ? colorScheme.primary : colorScheme.primary,
                 ),
                 foregroundColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light ? colorScheme.onSecondary : colorScheme.onSecondary,
+                  brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary,
                 ),
               ),
               onPressed: () {},

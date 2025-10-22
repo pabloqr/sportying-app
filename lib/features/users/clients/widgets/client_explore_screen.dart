@@ -38,7 +38,7 @@ class _ClientExploreScreenState extends State<ClientExploreScreen> {
         listenable: widget.viewModel,
         builder: (context, _) {
           return ListView.builder(
-            padding: const EdgeInsetsGeometry.only(left: 12.0, right: 12.0, bottom: 224.0),
+            padding: const EdgeInsetsGeometry.only(left: 16.0, right: 16.0, bottom: 220.0),
             itemCount: widget.viewModel.complexes.isNotEmpty ? widget.viewModel.complexes.length : 10,
             itemBuilder: (context, index) {
               return ComplexCard.large(
