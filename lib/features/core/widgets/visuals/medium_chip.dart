@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sportying_app/domain/models/core/widget_status.dart';
+import 'package:sportying_app/features/core/utils/widget_status.dart';
 
+@Deprecated('Use [CustomChip] class.')
 class MediumChip extends StatelessWidget {
   final WidgetStatus status;
 

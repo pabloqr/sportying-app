@@ -4,7 +4,7 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 enum WidgetStatus { neutral, neutralTranslucent, alert, success, error }
 
 extension WidgetStatusColor on WidgetStatus {
-  Color color(BuildContext context) {
+  Color colorPrimary(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final brightness = Theme.of(context).brightness;
 
@@ -19,6 +19,24 @@ extension WidgetStatusColor on WidgetStatus {
         return colorScheme.secondary;
       case WidgetStatus.error:
         return colorScheme.error;
+    }
+  }
+
+  Color colorOnPrimary(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
+
+    switch (this) {
+      case WidgetStatus.neutral:
+        return brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary;
+      case WidgetStatus.neutralTranslucent:
+        return brightness == Brightness.light ? colorScheme.surface : colorScheme.surface;
+      case WidgetStatus.alert:
+        return colorScheme.onTertiary;
+      case WidgetStatus.success:
+        return colorScheme.onSecondary;
+      case WidgetStatus.error:
+        return colorScheme.onError;
     }
   }
 

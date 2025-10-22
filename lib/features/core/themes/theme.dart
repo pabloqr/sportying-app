@@ -108,7 +108,7 @@ class ClientTheme extends MaterialTheme {
       primary: _primaryLight,
       surfaceTint: _primaryLight,
       onPrimary: Color(0xFF3C3500),
-      primaryContainer: Color(0xFFFFF7C2),
+      primaryContainer: Color(0xFFfff7ad),
       onPrimaryContainer: Color(0xFF5C5000),
 
       // Secondary colors

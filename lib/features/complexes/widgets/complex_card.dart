@@ -3,10 +3,11 @@ import 'package:flutter/rendering.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
-import 'package:sportying_app/domain/models/core/widget_size.dart';
-import 'package:sportying_app/features/core/themes/theme.dart';
+import 'package:sportying_app/features/core/utils/widget_palette.dart';
+import 'package:sportying_app/features/core/utils/widget_size.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
-import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
+import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
+import 'package:sportying_app/features/core/widgets/visuals/custom_container.dart';
 
 class ComplexCard extends StatelessWidget {
   final WidgetSize size;
@@ -58,6 +59,7 @@ class ComplexCard extends StatelessWidget {
             ? _buildSmallCard(context, currentIndex)
             : Card.filled(
                 margin: const EdgeInsets.all(4.0),
+                color: Theme.of(context).colorScheme.surfaceContainerLowest,
                 clipBehavior: Clip.antiAlias,
                 child: _buildLargeCard(context),
               );
@@ -124,7 +126,7 @@ class ComplexCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SmallChip.success(true, label: 'Available'),
+        CustomChip.small.success(palette: WidgetPalette.inverted, label: 'Available'),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,11 +165,18 @@ class ComplexCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 spacing: 8.0,
                 children: [
+                  if (size != WidgetSize.small)
+                    CustomContainer.translucent(
+                      verticalPadding: 8.0,
+                      horizontalPadding: 12.0,
+                      color: Colors.black,
+                      child: _buildRating(context),
+                    ),
                   // TODO: substitute condition with real condition
-                  if (true) SmallChip.success(true, label: 'Available'),
+                  if (true) CustomChip.small.success(palette: WidgetPalette.inverted, label: 'Available'),
                 ],
               ),
               _buildSportsRow(context),
@@ -253,70 +262,97 @@ class ComplexCard extends StatelessWidget {
 
     final brightness = Theme.of(context).brightness;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          complex.name,
-          style: textTheme.titleLarge?.copyWith(
-            color: size == WidgetSize.small
-                ? brightness == Brightness.light
-                      ? colorScheme.surface
-                      : colorScheme.onSurface
-                : brightness == Brightness.light
-                ? colorScheme.onSurface
-                : colorScheme.onSurface,
-          ),
-          softWrap: false,
-        ),
-        const SizedBox(height: 4.0),
-        ClipRect(
-          child: OverflowBox(
-            alignment: Alignment.centerLeft,
-            maxWidth: double.infinity,
-            fit: OverflowBoxFit.deferToChild,
-            child: Row(
-              spacing: 4.0,
-              children: [
-                Row(
-                  children: List.generate(5, (index) {
-                    IconData icon = Symbols.star_rounded;
-                    double iconFill = 0.0;
+    Widget title = Text(
+      complex.name,
+      style: textTheme.titleLarge?.copyWith(
+        color: size == WidgetSize.small
+            ? brightness == Brightness.light
+                  ? colorScheme.surface
+                  : colorScheme.onSurface
+            : brightness == Brightness.light
+            ? colorScheme.onSurface
+            : colorScheme.onSurface,
+      ),
+      softWrap: false,
+    );
 
-                    if (rating >= index + 0.5) {
-                      iconFill = 1.0;
-                      icon = rating >= index + 1 ? icon : Symbols.star_half_rounded;
-                    }
-
-                    return Icon(
-                      icon,
-                      color: size == WidgetSize.small
-                          ? colorScheme.primary
-                          : brightness == Brightness.light
-                          ? ClientTheme.primaryDim
-                          : colorScheme.primary,
-                      size: 18,
-                      fill: iconFill,
-                      weight: 400,
-                      grade: 0,
-                      opticalSize: 18,
-                    );
-                  }),
+    return size == WidgetSize.small
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              title,
+              const SizedBox(height: 4.0),
+              ClipRect(
+                child: OverflowBox(
+                  alignment: Alignment.centerLeft,
+                  maxWidth: double.infinity,
+                  fit: OverflowBoxFit.deferToChild,
+                  child: _buildRating(context),
                 ),
-                Text(
-                  rating.toString(),
-                  style: textTheme.bodyMedium?.copyWith(
+              ),
+            ],
+          )
+        : title;
+  }
+
+  Widget _buildRating(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final brightness = Theme.of(context).brightness;
+
+    return Row(
+      spacing: 4.0,
+      children: [
+        size == WidgetSize.small
+            ? Row(
+                children: List.generate(5, (index) {
+                  IconData icon = Symbols.star_rounded;
+                  double iconFill = 0.0;
+
+                  if (rating >= index + 0.5) {
+                    iconFill = 1.0;
+                    icon = rating >= index + 1 ? icon : Symbols.star_half_rounded;
+                  }
+
+                  return Icon(
+                    icon,
                     color: size == WidgetSize.small
                         ? colorScheme.primary
                         : brightness == Brightness.light
-                        ? ClientTheme.primaryDim
+                        ? colorScheme.primary
                         : colorScheme.primary,
-                  ),
-                  softWrap: false,
-                ),
-              ],
-            ),
+                    size: 18,
+                    fill: iconFill,
+                    weight: 400,
+                    grade: 0,
+                    opticalSize: 18,
+                  );
+                }),
+              )
+            : Icon(
+                Symbols.star_rounded,
+                color: size == WidgetSize.small
+                    ? colorScheme.primary
+                    : brightness == Brightness.light
+                    ? colorScheme.primary
+                    : colorScheme.primary,
+                size: 18,
+                fill: 1,
+                weight: 400,
+                grade: 0,
+                opticalSize: 18,
+              ),
+        Text(
+          rating.toString(),
+          style: textTheme.bodyMedium?.copyWith(
+            color: size == WidgetSize.small
+                ? colorScheme.primary
+                : brightness == Brightness.light
+                ? colorScheme.primary
+                : colorScheme.primary,
           ),
+          softWrap: false,
         ),
       ],
     );
@@ -326,7 +362,7 @@ class ComplexCard extends StatelessWidget {
     return Row(
       spacing: 4.0,
       children: complex.sports.map((sport) {
-        return SmallChip.neutral(false, label: sport.name.toCapitalized());
+        return CustomChip.small.neutral(palette: WidgetPalette.primary, label: sport.name.toCapitalized());
       }).toList(),
     );
   }
