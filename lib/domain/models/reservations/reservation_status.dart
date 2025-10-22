@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:sportying_app/features/core/utils/widget_palette.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
-import 'package:sportying_app/features/core/widgets/visuals/medium_chip.dart';
-import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
+import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
 
 enum ReservationStatus { scheduled, weather, completed, cancelled }
 
@@ -60,29 +60,29 @@ extension ReservationStatusExtension on ReservationStatus {
     }
   }
 
-  Widget smallChip(bool inverse) {
+  Widget smallChip(WidgetPalette palette) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return SmallChip.neutral(inverse, label: 'Scheduled');
+        return CustomChip.small.neutral(palette: palette, label: 'Scheduled');
       case ReservationStatus.weather:
-        return SmallChip.alert(inverse, label: 'Weather');
+        return CustomChip.small.alert(palette: palette, label: 'Weather');
       case ReservationStatus.completed:
-        return SmallChip.success(inverse, label: 'Completed');
+        return CustomChip.small.success(palette: palette, label: 'Completed');
       case ReservationStatus.cancelled:
-        return SmallChip.error(inverse, label: 'Cancelled');
+        return CustomChip.small.error(palette: palette, label: 'Cancelled');
     }
   }
 
-  Widget mediumChip(bool inverse) {
+  Widget mediumChip(WidgetPalette palette) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return MediumChip.neutral(inverse, label: 'Scheduled');
+        return CustomChip.medium.neutral(palette: palette, label: 'Scheduled');
       case ReservationStatus.weather:
-        return MediumChip.alert(inverse, label: 'Weather');
+        return CustomChip.medium.alert(palette: palette, label: 'Weather');
       case ReservationStatus.completed:
-        return MediumChip.success(inverse, label: 'Completed');
+        return CustomChip.medium.success(palette: palette, label: 'Completed');
       case ReservationStatus.cancelled:
-        return MediumChip.error(inverse, label: 'Cancelled');
+        return CustomChip.medium.error(palette: palette, label: 'Cancelled');
     }
   }
 }

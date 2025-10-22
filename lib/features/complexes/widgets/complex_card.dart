@@ -126,7 +126,7 @@ class ComplexCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomChip.small.success(palette: WidgetPalette.inverted, label: 'Available'),
+        CustomChip.small.success(palette: WidgetPalette.inverse, label: 'Available'),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +176,7 @@ class ComplexCard extends StatelessWidget {
                       child: _buildRating(context),
                     ),
                   // TODO: substitute condition with real condition
-                  if (true) CustomChip.small.success(palette: WidgetPalette.inverted, label: 'Available'),
+                  if (true) CustomChip.small.success(palette: WidgetPalette.inverse, label: 'Available'),
                 ],
               ),
               _buildSportsRow(context),

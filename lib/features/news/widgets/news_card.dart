@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sportying_app/features/core/widgets/visuals/small_chip.dart';
+import 'package:sportying_app/features/core/utils/widget_palette.dart';
+import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
 
 class NewsCard extends StatelessWidget {
   final String title;
@@ -62,7 +63,7 @@ class NewsCard extends StatelessWidget {
               if (_dateDifference.inDays <= 7)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: [SmallChip.alert(true, label: 'NEW')],
+                  children: [CustomChip.small.alert(palette: WidgetPalette.inverse, label: 'NEW')],
                 ),
               Expanded(
                 child: Column(
@@ -85,7 +86,10 @@ class NewsCard extends StatelessWidget {
                                 color: brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface,
                               ),
                             ),
-                            SmallChip.neutralTranslucent(false, label: _getCreationString()),
+                            CustomChip.small.neutralTranslucent(
+                              palette: WidgetPalette.normal,
+                              label: _getCreationString(),
+                            ),
                           ],
                         ),
                         Text(

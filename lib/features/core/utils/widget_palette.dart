@@ -1,1 +1,1 @@
-enum WidgetPalette { normal, inverted, primary }
+enum WidgetPalette { normal, inverse, primary }

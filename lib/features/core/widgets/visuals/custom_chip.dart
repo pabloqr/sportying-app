@@ -42,7 +42,7 @@ class CustomChip extends StatelessWidget {
     switch (palette) {
       case WidgetPalette.normal:
         return status.colorSurface(context);
-      case WidgetPalette.inverted:
+      case WidgetPalette.inverse:
         return status.colorOnSurface(context);
       case WidgetPalette.primary:
         return status.colorPrimary(context);
@@ -53,7 +53,7 @@ class CustomChip extends StatelessWidget {
     switch (palette) {
       case WidgetPalette.normal:
         return status.colorOnSurface(context);
-      case WidgetPalette.inverted:
+      case WidgetPalette.inverse:
         return status.colorSurface(context);
       case WidgetPalette.primary:
         return status.colorOnPrimary(context);
