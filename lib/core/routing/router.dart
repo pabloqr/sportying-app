@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sportying_app/core/routing/routes.dart';
+import 'package:sportying_app/features/reservations/widgets/reservation_process_screen.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_explore_viewmodel.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_home_viewmodel.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_reservations_viewmodel.dart';
@@ -18,9 +19,7 @@ Widget withSystemUiOverlay(BuildContext context, {required Widget child}) {
   return AnnotatedRegion<SystemUiOverlayStyle>(
     value: SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      systemNavigationBarColor: brightness == Brightness.light
-          ? colorScheme.surface
-          : colorScheme.surface,
+      systemNavigationBarColor: brightness == Brightness.light ? colorScheme.surface : colorScheme.surface,
       systemNavigationBarDividerColor: Colors.transparent,
 
       statusBarIconBrightness: brightness,
@@ -77,5 +76,8 @@ GoRouter router() => GoRouter(
         ),
       ],
     ),
+    GoRoute(path: Routes.reservationNewRoute, builder: (context, state) => ReservationProcessScreen()),
+    GoRoute(path: Routes.reservationModifyRoute, builder: (context, state) => const Placeholder()),
+    GoRoute(path: Routes.reservationInfoRoute, builder: (context, state) => const Placeholder()),
   ],
 );

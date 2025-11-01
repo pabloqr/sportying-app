@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import 'package:sportying_app/core/routing/routes.dart';
 import 'package:sportying_app/features/core/widgets/visuals/end_drawer.dart';
 
 class _Destination {
@@ -23,16 +24,6 @@ class ClientScaffold extends StatelessWidget {
 
   final StatefulNavigationShell navigationShell;
 
-  static int _calculateSelectedIndex(BuildContext context) {
-    final String uriPath = GoRouterState.of(context).uri.path;
-
-    for (var i = 0; i < _destinations.length; ++i) {
-      if (uriPath.startsWith(_destinations[i].route)) return i;
-    }
-
-    return 0;
-  }
-
   void _onDestinationSelected(int index, BuildContext context) => navigationShell.goBranch(index);
 
   @override
@@ -51,7 +42,7 @@ class ClientScaffold extends StatelessWidget {
       ),
       endDrawer: EndDrawer(),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {},
+        onPressed: () => context.push(Routes.reservationNewRoute),
         label: const Text('Book'),
         icon: const Icon(Symbols.calendar_add_on_rounded, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
       ),
@@ -61,7 +52,7 @@ class ClientScaffold extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       pinned: true,
-      title: Text(_destinations[_calculateSelectedIndex(context)].label),
+      title: Text(_destinations[navigationShell.currentIndex].label),
       flexibleSpace: FlexibleSpaceBar(),
       actions: [_buildAppBarTrailingIcon(context)],
     );
@@ -131,7 +122,7 @@ class ClientScaffold extends StatelessWidget {
           borderRadius: BorderRadius.circular(24.0),
           clipBehavior: Clip.antiAlias,
           child: NavigationBar(
-            selectedIndex: _calculateSelectedIndex(context),
+            selectedIndex: navigationShell.currentIndex,
             onDestinationSelected: (index) => _onDestinationSelected(index, context),
             destinations: _destinations
                 .mapIndexed(
