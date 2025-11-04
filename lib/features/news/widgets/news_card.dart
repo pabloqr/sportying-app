@@ -37,7 +37,7 @@ class NewsCard extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
 
     return Card.filled(
-      margin: EdgeInsetsGeometry.zero,
+      margin: EdgeInsets.zero,
       color: Colors.transparent,
       // shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28.0)),
       clipBehavior: Clip.antiAlias,

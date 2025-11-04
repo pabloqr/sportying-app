@@ -90,7 +90,7 @@ class Header extends StatelessWidget {
               overlayColor: WidgetStatePropertyAll(colorScheme.onSurface.withAlpha(25)),
               onTap: onPressed,
               child: Padding(
-                padding: const EdgeInsetsGeometry.symmetric(vertical: 8.0, horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: content,
               ),
             ),

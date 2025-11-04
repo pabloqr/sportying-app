@@ -60,7 +60,7 @@ class ComplexCard extends StatelessWidget {
         return size == WidgetSize.small
             ? _buildSmallCard(context, currentIndex)
             : Card.filled(
-                margin: const EdgeInsetsGeometry.symmetric(vertical: 4.0),
+                margin: const EdgeInsets.symmetric(vertical: 4.0),
                 color: Theme.of(context).brightness == Brightness.light
                     ? colorScheme.surfaceContainerLowest
                     : colorScheme.surfaceContainerHigh,
@@ -73,7 +73,7 @@ class ComplexCard extends StatelessWidget {
 
   Widget _buildSmallCard(BuildContext context, int currentIndex) {
     return Card(
-      margin: EdgeInsetsGeometry.zero,
+      margin: EdgeInsets.zero,
       color: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12.0),

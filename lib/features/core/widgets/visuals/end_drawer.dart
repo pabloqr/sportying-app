@@ -31,7 +31,7 @@ class _EndDrawerState extends State<EndDrawer> {
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsetsGeometry.symmetric(vertical: 24.0, horizontal: 16.0),
+              padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
               color: colorScheme.primaryContainer,
               child: Row(
                 children: [
@@ -62,7 +62,7 @@ class _EndDrawerState extends State<EndDrawer> {
             ),
             Expanded(
               child: ListView(
-                padding: const EdgeInsetsGeometry.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 children: [
                   CustomExpansionTile(
                     backgroundColor: brightness == Brightness.light

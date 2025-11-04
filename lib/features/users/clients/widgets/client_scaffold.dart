@@ -116,7 +116,7 @@ class ClientScaffold extends StatelessWidget {
   Widget _buildBottomNavigationBar(BuildContext context) {
     return SafeArea(
       child: Padding(
-        padding: const EdgeInsetsGeometry.fromLTRB(16.0, 0.0, 16.0, 8.0),
+        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
         child: Material(
           elevation: 3.0,
           borderRadius: BorderRadius.circular(24.0),
