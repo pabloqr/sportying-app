@@ -33,7 +33,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       listenable: widget.viewModel.load,
       builder: (context, child) {
         if (widget.viewModel.load.running) {
-          return const Center(child: CircularProgressIndicator());
+          return const SafeArea(child: Center(child: CircularProgressIndicator(year2023: false)));
         }
 
         if (widget.viewModel.load.error) {
