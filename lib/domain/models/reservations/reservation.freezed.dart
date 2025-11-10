@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Reservation {
 
- int get id; dynamic get userId; Complex get complex; Court get court; DateTime get dateIni; DateTime get dateEnd; AvailabilityStatus get status; ReservationStatus get reservationStatus; TimeFilter get timeFilter; DateTime get createdAt; DateTime get updatedAt;
+ int get id; int get userId; Complex get complex; Court get court; DateTime get dateIni; DateTime get dateEnd; AvailabilityStatus get status; ReservationStatus get reservationStatus; TimeFilter get timeFilter; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of Reservation
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,12 +28,12 @@ $ReservationCopyWith<Reservation> get copyWith => _$ReservationCopyWithImpl<Rese
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Reservation&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.userId, userId)&&(identical(other.complex, complex) || other.complex == complex)&&(identical(other.court, court) || other.court == court)&&(identical(other.dateIni, dateIni) || other.dateIni == dateIni)&&(identical(other.dateEnd, dateEnd) || other.dateEnd == dateEnd)&&(identical(other.status, status) || other.status == status)&&(identical(other.reservationStatus, reservationStatus) || other.reservationStatus == reservationStatus)&&(identical(other.timeFilter, timeFilter) || other.timeFilter == timeFilter)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Reservation&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.complex, complex) || other.complex == complex)&&(identical(other.court, court) || other.court == court)&&(identical(other.dateIni, dateIni) || other.dateIni == dateIni)&&(identical(other.dateEnd, dateEnd) || other.dateEnd == dateEnd)&&(identical(other.status, status) || other.status == status)&&(identical(other.reservationStatus, reservationStatus) || other.reservationStatus == reservationStatus)&&(identical(other.timeFilter, timeFilter) || other.timeFilter == timeFilter)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(userId),complex,court,dateIni,dateEnd,status,reservationStatus,timeFilter,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,complex,court,dateIni,dateEnd,status,reservationStatus,timeFilter,createdAt,updatedAt);
 
 @override
 String toString() {
@@ -48,7 +48,7 @@ abstract mixin class $ReservationCopyWith<$Res>  {
   factory $ReservationCopyWith(Reservation value, $Res Function(Reservation) _then) = _$ReservationCopyWithImpl;
 @useResult
 $Res call({
- int id, dynamic userId, Complex complex, Court court, DateTime dateIni, DateTime dateEnd, AvailabilityStatus status, ReservationStatus reservationStatus, TimeFilter timeFilter, DateTime createdAt, DateTime updatedAt
+ int id, int userId, Complex complex, Court court, DateTime dateIni, DateTime dateEnd, AvailabilityStatus status, ReservationStatus reservationStatus, TimeFilter timeFilter, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,11 +65,11 @@ class _$ReservationCopyWithImpl<$Res>
 
 /// Create a copy of Reservation
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = freezed,Object? complex = null,Object? court = null,Object? dateIni = null,Object? dateEnd = null,Object? status = null,Object? reservationStatus = null,Object? timeFilter = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? complex = null,Object? court = null,Object? dateIni = null,Object? dateEnd = null,Object? status = null,Object? reservationStatus = null,Object? timeFilter = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as dynamic,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
+as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as int,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
 as Complex,court: null == court ? _self.court : court // ignore: cast_nullable_to_non_nullable
 as Court,dateIni: null == dateIni ? _self.dateIni : dateIni // ignore: cast_nullable_to_non_nullable
 as DateTime,dateEnd: null == dateEnd ? _self.dateEnd : dateEnd // ignore: cast_nullable_to_non_nullable
@@ -181,7 +181,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  dynamic userId,  Complex complex,  Court court,  DateTime dateIni,  DateTime dateEnd,  AvailabilityStatus status,  ReservationStatus reservationStatus,  TimeFilter timeFilter,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  int userId,  Complex complex,  Court court,  DateTime dateIni,  DateTime dateEnd,  AvailabilityStatus status,  ReservationStatus reservationStatus,  TimeFilter timeFilter,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Reservation() when $default != null:
 return $default(_that.id,_that.userId,_that.complex,_that.court,_that.dateIni,_that.dateEnd,_that.status,_that.reservationStatus,_that.timeFilter,_that.createdAt,_that.updatedAt);case _:
@@ -202,7 +202,7 @@ return $default(_that.id,_that.userId,_that.complex,_that.court,_that.dateIni,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  dynamic userId,  Complex complex,  Court court,  DateTime dateIni,  DateTime dateEnd,  AvailabilityStatus status,  ReservationStatus reservationStatus,  TimeFilter timeFilter,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  int userId,  Complex complex,  Court court,  DateTime dateIni,  DateTime dateEnd,  AvailabilityStatus status,  ReservationStatus reservationStatus,  TimeFilter timeFilter,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Reservation():
 return $default(_that.id,_that.userId,_that.complex,_that.court,_that.dateIni,_that.dateEnd,_that.status,_that.reservationStatus,_that.timeFilter,_that.createdAt,_that.updatedAt);case _:
@@ -222,7 +222,7 @@ return $default(_that.id,_that.userId,_that.complex,_that.court,_that.dateIni,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  dynamic userId,  Complex complex,  Court court,  DateTime dateIni,  DateTime dateEnd,  AvailabilityStatus status,  ReservationStatus reservationStatus,  TimeFilter timeFilter,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  int userId,  Complex complex,  Court court,  DateTime dateIni,  DateTime dateEnd,  AvailabilityStatus status,  ReservationStatus reservationStatus,  TimeFilter timeFilter,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Reservation() when $default != null:
 return $default(_that.id,_that.userId,_that.complex,_that.court,_that.dateIni,_that.dateEnd,_that.status,_that.reservationStatus,_that.timeFilter,_that.createdAt,_that.updatedAt);case _:
@@ -241,7 +241,7 @@ class _Reservation implements Reservation {
   factory _Reservation.fromJson(Map<String, dynamic> json) => _$ReservationFromJson(json);
 
 @override final  int id;
-@override final  dynamic userId;
+@override final  int userId;
 @override final  Complex complex;
 @override final  Court court;
 @override final  DateTime dateIni;
@@ -265,12 +265,12 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Reservation&&(identical(other.id, id) || other.id == id)&&const DeepCollectionEquality().equals(other.userId, userId)&&(identical(other.complex, complex) || other.complex == complex)&&(identical(other.court, court) || other.court == court)&&(identical(other.dateIni, dateIni) || other.dateIni == dateIni)&&(identical(other.dateEnd, dateEnd) || other.dateEnd == dateEnd)&&(identical(other.status, status) || other.status == status)&&(identical(other.reservationStatus, reservationStatus) || other.reservationStatus == reservationStatus)&&(identical(other.timeFilter, timeFilter) || other.timeFilter == timeFilter)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Reservation&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.complex, complex) || other.complex == complex)&&(identical(other.court, court) || other.court == court)&&(identical(other.dateIni, dateIni) || other.dateIni == dateIni)&&(identical(other.dateEnd, dateEnd) || other.dateEnd == dateEnd)&&(identical(other.status, status) || other.status == status)&&(identical(other.reservationStatus, reservationStatus) || other.reservationStatus == reservationStatus)&&(identical(other.timeFilter, timeFilter) || other.timeFilter == timeFilter)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,const DeepCollectionEquality().hash(userId),complex,court,dateIni,dateEnd,status,reservationStatus,timeFilter,createdAt,updatedAt);
+int get hashCode => Object.hash(runtimeType,id,userId,complex,court,dateIni,dateEnd,status,reservationStatus,timeFilter,createdAt,updatedAt);
 
 @override
 String toString() {
@@ -285,7 +285,7 @@ abstract mixin class _$ReservationCopyWith<$Res> implements $ReservationCopyWith
   factory _$ReservationCopyWith(_Reservation value, $Res Function(_Reservation) _then) = __$ReservationCopyWithImpl;
 @override @useResult
 $Res call({
- int id, dynamic userId, Complex complex, Court court, DateTime dateIni, DateTime dateEnd, AvailabilityStatus status, ReservationStatus reservationStatus, TimeFilter timeFilter, DateTime createdAt, DateTime updatedAt
+ int id, int userId, Complex complex, Court court, DateTime dateIni, DateTime dateEnd, AvailabilityStatus status, ReservationStatus reservationStatus, TimeFilter timeFilter, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -302,11 +302,11 @@ class __$ReservationCopyWithImpl<$Res>
 
 /// Create a copy of Reservation
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = freezed,Object? complex = null,Object? court = null,Object? dateIni = null,Object? dateEnd = null,Object? status = null,Object? reservationStatus = null,Object? timeFilter = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? userId = null,Object? complex = null,Object? court = null,Object? dateIni = null,Object? dateEnd = null,Object? status = null,Object? reservationStatus = null,Object? timeFilter = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_Reservation(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,userId: freezed == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
-as dynamic,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
+as int,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
+as int,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
 as Complex,court: null == court ? _self.court : court // ignore: cast_nullable_to_non_nullable
 as Court,dateIni: null == dateIni ? _self.dateIni : dateIni // ignore: cast_nullable_to_non_nullable
 as DateTime,dateEnd: null == dateEnd ? _self.dateEnd : dateEnd // ignore: cast_nullable_to_non_nullable

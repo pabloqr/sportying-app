@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sportying_app/domain/models/complexes/complex.dart';
+import 'package:sportying_app/domain/models/complexes/sport.dart';
+import 'package:sportying_app/domain/models/courts/court.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
+import 'package:sportying_app/features/sports/widgets/sport_card.dart';
 
 class ReservationProcessScreen extends StatefulWidget {
   const ReservationProcessScreen({super.key});
@@ -15,6 +19,11 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
   final _pageController = PageController();
 
   int _currentPage = 0;
+
+  Sport? _sport;
+  Complex? _complex;
+  Court? _court;
+  DateTimeRange? _dateTimeRange;
 
   final List<String> _pages = ['Sport', 'Complex', 'Court', 'Date and time', 'Summary'];
   final List<String> _pagesDetails = [
@@ -166,10 +175,13 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
         controller: _pageController,
         physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (index) => setState(() => _currentPage = index),
-        children: List.generate(
-          _pages.length,
-          (index) => Center(child: Text('Content from page ${_pages[_currentPage]}')),
-        ),
+        children: [
+          _SportPage(),
+          Center(child: Text('Content from page ${_pages[1]}')),
+          Center(child: Text('Content from page ${_pages[2]}')),
+          Center(child: Text('Content from page ${_pages[3]}')),
+          Center(child: Text('Content from page ${_pages[4]}')),
+        ],
       ),
     );
   }
@@ -182,6 +194,35 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
         onPressed: _canContinue() ? _nextPage : null,
         child: Text(_currentPage != _pages.length - 1 ? 'Continue' : 'Confirm reservation'),
       ),
+    );
+  }
+}
+
+class _SportPage extends StatefulWidget {
+  const _SportPage();
+
+  @override
+  State<_SportPage> createState() => _SportPageState();
+}
+
+class _SportPageState extends State<_SportPage> {
+  final ValueNotifier<int> _selectedSportIndex = ValueNotifier(-1);
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      shrinkWrap: true,
+      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 250.0,
+        mainAxisSpacing: 8.0,
+        crossAxisSpacing: 8.0,
+        childAspectRatio: 3 / 2,
+      ),
+      itemCount: Sport.values.length,
+      itemBuilder: (context, index) {
+        return SportCard(sport: Sport.values[index], onTap: () {}, index: index, selectedIndex: _selectedSportIndex);
+      },
     );
   }
 }
