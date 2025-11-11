@@ -3,48 +3,147 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/core/routing/routes.dart';
+import 'package:sportying_app/features/core/utils/destination.dart';
+import 'package:sportying_app/features/core/widgets/utils/animations.dart';
+import 'package:sportying_app/features/core/widgets/visuals/animated_floating_action_button.dart';
+import 'package:sportying_app/features/core/widgets/visuals/animated_navigation_bar.dart';
+import 'package:sportying_app/features/core/widgets/visuals/animated_navigation_rail.dart';
 import 'package:sportying_app/features/core/widgets/visuals/end_drawer.dart';
 
-class _Destination {
-  String route;
-  String label;
-  IconData icon;
-
-  _Destination(this.route, this.label, this.icon);
-}
-
-final List<_Destination> _destinations = [
-  _Destination('/client/home', 'Home', Symbols.home_rounded),
-  _Destination('/client/explore', 'Explore', Symbols.search_rounded),
-  _Destination('/client/reservations', 'Reservations', Symbols.calendar_month_rounded),
+final List<Destination> _destinations = [
+  Destination('/client/home', 'Home', Symbols.home_rounded),
+  Destination('/client/explore', 'Explore', Symbols.search_rounded),
+  Destination('/client/reservations', 'Reservations', Symbols.calendar_month_rounded),
 ];
 
-class ClientScaffold extends StatelessWidget {
+class ClientScaffold extends StatefulWidget {
   const ClientScaffold({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
-  void _onDestinationSelected(int index, BuildContext context) => navigationShell.goBranch(index);
+  @override
+  State<ClientScaffold> createState() => _ClientScaffoldState();
+}
+
+class _ClientScaffoldState extends State<ClientScaffold> with SingleTickerProviderStateMixin {
+  late final _controller = AnimationController(
+    duration: const Duration(milliseconds: 1000),
+    reverseDuration: const Duration(milliseconds: 1250),
+    value: 0,
+    vsync: this,
+  );
+  late final _railAnimation = RailAnimation(parent: _controller);
+  late final _railFabAnimation = RailFabAnimation(parent: _controller);
+  late final _barAnimation = BarAnimation(parent: _controller);
+
+  bool _controllerInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final double width = MediaQuery.of(context).size.width;
+    final AnimationStatus status = _controller.status;
+    if (width > 600) {
+      if (status != AnimationStatus.forward && status != AnimationStatus.completed) {
+        _controller.forward();
+      }
+    } else {
+      if (status != AnimationStatus.reverse && status != AnimationStatus.dismissed) {
+        _controller.reverse();
+      }
+    }
+    if (!_controllerInitialized) {
+      _controllerInitialized = true;
+      _controller.value = width > 600 ? 1 : 0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onDestinationSelected(int index, BuildContext context) => widget.navigationShell.goBranch(index);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      bottomNavigationBar: _buildBottomNavigationBar(context),
-      body: SafeArea(
-        bottom: false,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [_buildAppBar(context)];
-          },
-          body: navigationShell,
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) => Scaffold(
+        extendBody: true,
+        body: SafeArea(
+          bottom: false,
+          child: Row(
+            children: [
+              NavigationRail(
+                selectedIndex: widget.navigationShell.currentIndex,
+                onDestinationSelected: (index) => _onDestinationSelected(index, context),
+                groupAlignment: -0.85,
+                leading: Column(
+                  spacing: 8.0,
+                  children: [
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Symbols.menu_rounded, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
+                    ),
+                    FloatingActionButton(
+                      elevation: 0.0,
+                      onPressed: () => context.push(Routes.reservationNewRoute),
+                      child: const Icon(
+                        Symbols.calendar_add_on_rounded,
+                        size: 24,
+                        fill: 1,
+                        weight: 400,
+                        grade: 0,
+                        opticalSize: 24,
+                      ),
+                    ),
+                  ],
+                ),
+                destinations: _destinations
+                    .mapIndexed(
+                      (index, location) => NavigationRailDestination(
+                        label: Text(location.label),
+                        icon: Icon(location.icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
+                        selectedIcon: Icon(location.icon, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
+                      ),
+                    )
+                    .toList(),
+              ),
+              AnimatedNavigationRail(
+                railAnimation: _railAnimation,
+                railFabAnimation: _railFabAnimation,
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                selectedIndex: widget.navigationShell.currentIndex,
+                onDestinationSelected: (index) => _onDestinationSelected(index, context),
+                destinations: _destinations,
+              ),
+              Expanded(
+                child: NestedScrollView(
+                  headerSliverBuilder: (context, innerBoxIsScrolled) {
+                    return [_buildAppBar(context)];
+                  },
+                  body: widget.navigationShell,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      endDrawer: EndDrawer(),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.push(Routes.reservationNewRoute),
-        label: const Text('Book'),
-        icon: const Icon(Symbols.calendar_add_on_rounded, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
+        endDrawer: const EndDrawer(),
+        bottomNavigationBar: AnimatedNavigationBar.floating(
+          barAnimation: _barAnimation,
+          selectedIndex: widget.navigationShell.currentIndex,
+          onDestinationSelected: (index) => _onDestinationSelected(index, context),
+          destinations: _destinations,
+        ),
+        floatingActionButton: AnimatedFloatingActionButton.extended(
+          animation: _barAnimation,
+          onPressed: () => context.push(Routes.reservationNewRoute),
+          label: const Text('Book'),
+          icon: const Icon(Symbols.calendar_add_on_rounded, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
+        ),
       ),
     );
   }
@@ -52,7 +151,7 @@ class ClientScaffold extends StatelessWidget {
   Widget _buildAppBar(BuildContext context) {
     return SliverAppBar(
       pinned: true,
-      title: Text(_destinations[navigationShell.currentIndex].label),
+      title: Text(_destinations[widget.navigationShell.currentIndex].label),
       flexibleSpace: FlexibleSpaceBar(),
       actions: [_buildAppBarTrailingIcon(context)],
     );
@@ -107,32 +206,6 @@ class ClientScaffold extends StatelessWidget {
             radius: 16.0,
             // TODO: Replace with user's actual avatar or initials
             child: Icon(Icons.person_rounded, size: 18.0, opticalSize: 18.0),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar(BuildContext context) {
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
-        child: Material(
-          elevation: 3.0,
-          borderRadius: BorderRadius.circular(24.0),
-          clipBehavior: Clip.antiAlias,
-          child: NavigationBar(
-            selectedIndex: navigationShell.currentIndex,
-            onDestinationSelected: (index) => _onDestinationSelected(index, context),
-            destinations: _destinations
-                .mapIndexed(
-                  (index, location) => NavigationDestination(
-                    label: location.label,
-                    icon: Icon(location.icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
-                    selectedIcon: Icon(location.icon, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
-                  ),
-                )
-                .toList(),
           ),
         ),
       ),

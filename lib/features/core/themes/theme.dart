@@ -314,7 +314,12 @@ abstract class MaterialTheme {
     textTheme: textTheme.apply(bodyColor: colorScheme.onSurface, displayColor: colorScheme.onSurface),
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
+    navigationRailTheme: NavigationRailThemeData(
+      indicatorColor: colorScheme.primary,
+      selectedIconTheme: IconThemeData(color: colorScheme.onPrimary),
+    ),
     navigationBarTheme: NavigationBarThemeData(
+      elevation: 0.0,
       backgroundColor: colorScheme.brightness == Brightness.light
           ? colorScheme.surfaceContainerLowest
           : colorScheme.surfaceContainerHigh,
