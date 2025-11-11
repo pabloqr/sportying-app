@@ -14,7 +14,7 @@ import 'package:sportying_app/features/users/clients/widgets/client_scaffold.dar
 
 Widget withSystemUiOverlay(BuildContext context, {required Widget child}) {
   final colorScheme = Theme.of(context).colorScheme;
-  final brightness = Theme.of(context).brightness == Brightness.light ? Brightness.dark : Brightness.light;
+  final brightness = Theme.brightnessOf(context) == Brightness.light ? Brightness.dark : Brightness.light;
 
   return AnnotatedRegion<SystemUiOverlayStyle>(
     value: SystemUiOverlayStyle(

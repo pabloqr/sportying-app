@@ -61,7 +61,7 @@ class ComplexCard extends StatelessWidget {
             ? _buildSmallCard(context, currentIndex)
             : Card.filled(
                 margin: const EdgeInsets.symmetric(vertical: 4.0),
-                color: Theme.of(context).brightness == Brightness.light
+                color: Theme.brightnessOf(context) == Brightness.light
                     ? colorScheme.surfaceContainerLowest
                     : colorScheme.surfaceContainerHigh,
                 clipBehavior: Clip.antiAlias,
@@ -126,7 +126,7 @@ class ComplexCard extends StatelessWidget {
   }
 
   Widget _buildSmallCardBody(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,7 +160,7 @@ class ComplexCard extends StatelessWidget {
   }
 
   Widget _buildLargeCard(BuildContext context) {
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Column(
       children: [
@@ -208,7 +208,7 @@ class ComplexCard extends StatelessWidget {
 
   Widget _buildLargeCardBody(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +275,7 @@ class ComplexCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     Widget title = Text(
       complex.name,
@@ -314,7 +314,7 @@ class ComplexCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Row(
       spacing: 4.0,

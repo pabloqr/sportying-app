@@ -23,7 +23,7 @@ class _EndDrawerState extends State<EndDrawer> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return SafeArea(
       child: Drawer(

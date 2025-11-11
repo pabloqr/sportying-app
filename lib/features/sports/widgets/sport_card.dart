@@ -14,7 +14,7 @@ class SportCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return ValueListenableBuilder<int>(
       valueListenable: selectedIndex,

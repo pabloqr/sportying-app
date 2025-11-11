@@ -52,7 +52,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
 
   void _cancelReservation(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     final headerColor = WidgetStatus.alert.colorSurface(context);
     final iconColor = WidgetStatus.alert.colorOnSurface(context);

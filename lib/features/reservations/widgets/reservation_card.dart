@@ -57,7 +57,7 @@ class _ReservationCardState extends State<ReservationCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Material(
       color: widget.reservation.reservationStatus == ReservationStatus.scheduled
@@ -152,7 +152,7 @@ class _ReservationCardState extends State<ReservationCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Container(
       padding: const EdgeInsets.all(16.0),
@@ -244,7 +244,7 @@ class _ReservationCardState extends State<ReservationCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),

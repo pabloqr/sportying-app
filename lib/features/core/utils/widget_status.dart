@@ -6,7 +6,7 @@ enum WidgetStatus { neutral, neutralTranslucent, alert, success, error }
 extension WidgetStatusColor on WidgetStatus {
   Color colorPrimary(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     switch (this) {
       case WidgetStatus.neutral:
@@ -24,7 +24,7 @@ extension WidgetStatusColor on WidgetStatus {
 
   Color colorOnPrimary(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     switch (this) {
       case WidgetStatus.neutral:
@@ -42,7 +42,7 @@ extension WidgetStatusColor on WidgetStatus {
 
   Color colorSurface(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     switch (this) {
       case WidgetStatus.neutral:
@@ -60,7 +60,7 @@ extension WidgetStatusColor on WidgetStatus {
 
   Color colorOnSurface(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     switch (this) {
       case WidgetStatus.neutral:
