@@ -3,6 +3,7 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
+import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_container.dart';
 import 'package:sportying_app/features/core/widgets/visuals/pulsing_dot.dart';
 
@@ -76,33 +77,39 @@ class _ReservationCardState extends State<ReservationCard> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             spacing: 8.0,
             children: [
-              Row(
-                spacing: 8.0,
-                children: [
-                  Icon(
-                    Symbols.sports_tennis_rounded,
-                    size: 28,
-                    fill: 0,
-                    weight: 400,
-                    grade: 0,
-                    opticalSize: 28,
-                    color:
-                        brightness == Brightness.light ||
-                            widget.reservation.reservationStatus != ReservationStatus.scheduled
-                        ? colorScheme.onSurface
-                        : colorScheme.surface,
-                  ),
-                  Text(
-                    widget.reservation.court.sport.name.toCapitalized(),
-                    style: textTheme.titleLarge?.copyWith(
+              Expanded(
+                child: Row(
+                  spacing: 8.0,
+                  children: [
+                    Icon(
+                      Symbols.sports_tennis_rounded,
+                      size: 28,
+                      fill: 0,
+                      weight: 400,
+                      grade: 0,
+                      opticalSize: 28,
                       color:
                           brightness == Brightness.light ||
                               widget.reservation.reservationStatus != ReservationStatus.scheduled
                           ? colorScheme.onSurface
                           : colorScheme.surface,
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: Text(
+                        widget.reservation.court.sport.name.toCapitalized(),
+                        style: textTheme.titleLarge?.copyWith(
+                          color:
+                              brightness == Brightness.light ||
+                                  widget.reservation.reservationStatus != ReservationStatus.scheduled
+                              ? colorScheme.onSurface
+                              : colorScheme.surface,
+                        ),
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
                 spacing: 16.0,
@@ -227,9 +234,13 @@ class _ReservationCardState extends State<ReservationCard> {
                     opticalSize: 18,
                     color: colorScheme.onSurfaceVariant,
                   ),
-                  Text(
-                    widget.reservation.complex.address,
-                    style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                  Expanded(
+                    child: MarqueeWidget(
+                      child: Text(
+                        widget.reservation.complex.address,
+                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                    ),
                   ),
                 ],
               ),

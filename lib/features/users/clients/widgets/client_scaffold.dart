@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
@@ -77,41 +76,6 @@ class _ClientScaffoldState extends State<ClientScaffold> with SingleTickerProvid
           bottom: false,
           child: Row(
             children: [
-              NavigationRail(
-                selectedIndex: widget.navigationShell.currentIndex,
-                onDestinationSelected: (index) => _onDestinationSelected(index, context),
-                groupAlignment: -0.85,
-                leading: Column(
-                  spacing: 8.0,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Symbols.menu_rounded, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
-                    ),
-                    FloatingActionButton(
-                      elevation: 0.0,
-                      onPressed: () => context.push(Routes.reservationNewRoute),
-                      child: const Icon(
-                        Symbols.calendar_add_on_rounded,
-                        size: 24,
-                        fill: 1,
-                        weight: 400,
-                        grade: 0,
-                        opticalSize: 24,
-                      ),
-                    ),
-                  ],
-                ),
-                destinations: _destinations
-                    .mapIndexed(
-                      (index, location) => NavigationRailDestination(
-                        label: Text(location.label),
-                        icon: Icon(location.icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
-                        selectedIcon: Icon(location.icon, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
-                      ),
-                    )
-                    .toList(),
-              ),
               AnimatedNavigationRail(
                 railAnimation: _railAnimation,
                 railFabAnimation: _railFabAnimation,
