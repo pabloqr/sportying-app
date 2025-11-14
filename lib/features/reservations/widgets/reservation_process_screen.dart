@@ -301,7 +301,12 @@ class _SportPageState extends State<_SportPage> {
       ),
       itemCount: Sport.values.length,
       itemBuilder: (context, index) {
-        return SportCard(sport: Sport.values[index], onTap: () {}, index: index, selectedIndex: _selectedSportIndex);
+        return SportCard(
+          sport: Sport.values[index],
+          onTap: () => setState(() => _selectedSportIndex.value = index),
+          index: index,
+          selectedIndex: _selectedSportIndex,
+        );
       },
     );
   }
