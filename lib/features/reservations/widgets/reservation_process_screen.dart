@@ -102,21 +102,17 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          onPressed: () => _currentPage == 0 ? _cancelReservation(context) : _previousPage(),
-          icon: const Icon(Icons.arrow_back_rounded),
-        ),
-        title: Text('New reservation'),
-      ),
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 24.0,
           children: [
-            _buildHeader(context),
-            _buildPagesIndicator(context),
-            _buildPageView(context),
+            Expanded(
+              child: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  return [_buildAppBar(context)];
+                },
+                body: _buildPageView(context),
+              ),
+            ),
             _buildPageControls(context),
           ],
         ),
@@ -124,29 +120,75 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildAppBar(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 8.0,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'STEP ${_currentPage + 1} / ${_pages.length}',
-                style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+    return SliverAppBar(
+      pinned: true,
+      expandedHeight: 168.0,
+      collapsedHeight: 72.0,
+      toolbarHeight: 48.0,
+      backgroundColor: colorScheme.surface,
+      surfaceTintColor: colorScheme.surface,
+      leading: IconButton(onPressed: () => _cancelReservation(context), icon: const Icon(Icons.arrow_back_rounded)),
+      title: Text('New reservation'),
+      flexibleSpace: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCollapsed = constraints.maxHeight <= 112.0; // collapsedHeight + bottomHeight (40.0)
+
+          return FlexibleSpaceBar(
+            centerTitle: false,
+            titlePadding: EdgeInsets.zero,
+            collapseMode: CollapseMode.parallax,
+            title: AnimatedOpacity(
+              opacity: isCollapsed ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 8.0,
+                  children: [
+                    Text(
+                      'STEP ${_currentPage + 1} / ${_pages.length}',
+                      style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                    ),
+                    const Text('·'),
+                    Text(_pages[_currentPage], style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface)),
+                  ],
+                ),
               ),
-              Text(_pages[_currentPage], style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
-            ],
-          ),
-          Text(_pagesDetails[_currentPage], style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
-        ],
+            ),
+            background: Container(
+              padding: const EdgeInsets.fromLTRB(16.0, 48.0, 16.0, 16.0),
+              color: colorScheme.surface,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8.0,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'STEP ${_currentPage + 1} / ${_pages.length}',
+                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                      Text(_pages[_currentPage], style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
+                    ],
+                  ),
+                  Text(
+                    _pagesDetails[_currentPage],
+                    style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
+      bottom: PreferredSize(preferredSize: const Size.fromHeight(32.0), child: _buildPagesIndicator(context)),
     );
   }
 
@@ -156,6 +198,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
       decoration: BoxDecoration(
         boxShadow: _currentPage == _pages.length - 1
             ? [BoxShadow(color: colorScheme.primary.withAlpha(100), blurRadius: 8, spreadRadius: 3)]
@@ -187,12 +230,49 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
   }
 
   Widget _buildPageControls(BuildContext context) {
-    return Container(
-      width: double.infinity,
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: FilledButton(
-        onPressed: _canContinue() ? _nextPage : null,
-        child: Text(_currentPage != _pages.length - 1 ? 'Continue' : 'Confirm reservation'),
+      child: Row(
+        children: [
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 300),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(sizeFactor: animation, axis: Axis.horizontal, child: child),
+              );
+            },
+            child: _currentPage != 0
+                ? SizedBox(
+                    key: const ValueKey('buttonBack'),
+                    width: 120.0,
+                    child: FilledButton(
+                      onPressed: _previousPage,
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Theme.brightnessOf(context) == Brightness.light
+                              ? colorScheme.surfaceContainerLowest
+                              : colorScheme.surfaceContainerHigh,
+                        ),
+                        foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
+                      ),
+                      child: const Text("Back"),
+                    ),
+                  )
+                : const SizedBox(key: ValueKey('buttonEmpty'), width: 0.0),
+          ),
+          if (_currentPage != 0) const SizedBox(width: 8.0),
+          Expanded(
+            child: FilledButton(
+              onPressed: _canContinue() ? _nextPage : null,
+              child: Text(_currentPage != _pages.length - 1 ? 'Continue' : 'Confirm reservation'),
+            ),
+          ),
+        ],
       ),
     );
   }
