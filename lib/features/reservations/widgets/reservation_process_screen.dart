@@ -35,7 +35,12 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
   ];
 
   bool _canContinue() {
-    return true;
+    switch (_currentPage) {
+      case 0:
+        return _sport != null;
+      default:
+        return true;
+    }
   }
 
   void _previousPage() {
@@ -219,7 +224,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
         physics: const NeverScrollableScrollPhysics(),
         onPageChanged: (index) => setState(() => _currentPage = index),
         children: [
-          _SportPage(),
+          _SportPage(initialSport: _sport, onSportSelected: (sport) => setState(() => _sport = sport)),
           Center(child: Text('Content from page ${_pages[1]}')),
           Center(child: Text('Content from page ${_pages[2]}')),
           Center(child: Text('Content from page ${_pages[3]}')),
@@ -279,7 +284,10 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
 }
 
 class _SportPage extends StatefulWidget {
-  const _SportPage();
+  const _SportPage({required this.initialSport, required this.onSportSelected});
+
+  final Sport? initialSport;
+  final ValueChanged<Sport> onSportSelected;
 
   @override
   State<_SportPage> createState() => _SportPageState();
@@ -287,6 +295,28 @@ class _SportPage extends StatefulWidget {
 
 class _SportPageState extends State<_SportPage> {
   final ValueNotifier<int> _selectedSportIndex = ValueNotifier(-1);
+
+  @override
+  void initState() {
+    super.initState();
+
+    _selectedSportIndex.value = widget.initialSport != null ? Sport.values.indexOf(widget.initialSport!) : -1;
+  }
+
+  @override
+  void didUpdateWidget(covariant _SportPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final newIndex = widget.initialSport != null ? Sport.values.indexOf(widget.initialSport!) : -1;
+    if (newIndex != _selectedSportIndex.value) _selectedSportIndex.value = newIndex;
+  }
+
+  @override
+  void dispose() {
+    _selectedSportIndex.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -303,7 +333,10 @@ class _SportPageState extends State<_SportPage> {
       itemBuilder: (context, index) {
         return SportCard(
           sport: Sport.values[index],
-          onTap: () => setState(() => _selectedSportIndex.value = index),
+          onTap: () {
+            setState(() => _selectedSportIndex.value = index);
+            widget.onSportSelected(Sport.values[index]);
+          },
           index: index,
           selectedIndex: _selectedSportIndex,
         );
