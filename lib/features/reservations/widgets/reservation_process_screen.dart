@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
+import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
@@ -15,10 +16,15 @@ class ReservationProcessScreen extends StatefulWidget {
   State<ReservationProcessScreen> createState() => _ReservationProcessScreenState();
 }
 
-class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
+class _ReservationProcessScreenState extends State<ReservationProcessScreen> with SingleTickerProviderStateMixin {
   final _pageController = PageController();
+  late AnimationController _headerAnimationController;
 
   int _currentPage = 0;
+  int _displayPage = 0;
+  double _slideProgress = 0.0; // -1.0 a 1.0
+
+  double _expandedHeight = 168.0;
 
   Sport? _sport;
   Complex? _complex;
@@ -33,6 +39,117 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
     'Select date and time to complete your reservation.',
     'Check your selection and confirm your reservation.',
   ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _headerAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+
+    // Listener del PageController para sincronizar animaciones
+    _pageController.addListener(_onPageScroll);
+
+    // Calcular altura inicial después del primer frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateExpandedHeight();
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.removeListener(_onPageScroll);
+    _pageController.dispose();
+    _headerAnimationController.dispose();
+
+    super.dispose();
+  }
+
+  void _updateExpandedHeight() {
+    if (!mounted) return;
+
+    final textTheme = Theme.of(context).textTheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Calcular el ancho disponible para el texto (considerando paddings)
+    final availableWidth = screenWidth - 32.0; // 16.0 padding left + 16.0 padding right
+
+    // Altura fija de los elementos
+    const topPadding = 48.0;
+    const bottomPadding = 16.0;
+    const stepIndicatorHeight = 20.0; // Aproximado para bodyMedium
+    const stepNameHeight = 28.0; // Aproximado para titleLarge
+    const bottomHeight = 32.0;
+
+    // Calcular altura del texto de descripción usando TextPainter
+    final descriptionStyle = textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
+
+    final textSpan = TextSpan(text: _pagesDetails[_displayPage], style: descriptionStyle);
+
+    final textPainter = TextPainter(
+      text: textSpan,
+      textDirection: TextDirection.ltr,
+      maxLines: null, // Sin límite de líneas
+    );
+
+    textPainter.layout(maxWidth: availableWidth);
+    final descriptionHeight = textPainter.height;
+
+    // Calcular altura total expandida
+    final calculatedHeight =
+        topPadding + stepIndicatorHeight + stepNameHeight + descriptionHeight + bottomPadding + bottomHeight;
+
+    // Establecer altura mínima y máxima
+    const minHeight = 168.0;
+    const maxHeight = 300.0;
+
+    setState(() {
+      _expandedHeight = calculatedHeight.clamp(minHeight, maxHeight);
+    });
+  }
+
+  void _onPageScroll() {
+    if (!_pageController.hasClients) return;
+
+    final page = _pageController.page ?? 0.0;
+    final pageInt = page.round();
+    final progress = page - pageInt; // -0.5 a 0.5
+
+    setState(() {
+      // Actualizar página actual
+      if (_currentPage != pageInt) {
+        _currentPage = pageInt;
+      }
+
+      // Determinar qué página mostrar en el header
+      final previousDisplayPage = _displayPage;
+      if (progress.abs() >= 0.5) {
+        _displayPage = progress > 0 ? pageInt + 1 : pageInt - 1;
+        _displayPage = _displayPage.clamp(0, _pages.length - 1);
+      } else {
+        _displayPage = pageInt;
+      }
+
+      // Si cambió la página mostrada, recalcular altura
+      if (previousDisplayPage != _displayPage) {
+        _updateExpandedHeight();
+      }
+
+      // Calcular el progreso del slide (-1.0 a 1.0)
+      if (progress >= 0) {
+        if (progress < 0.5) {
+          _slideProgress = progress * 2; // 0.0 a 1.0
+        } else {
+          _slideProgress = (progress - 1.0) * 2; // -1.0 a 0.0
+        }
+      } else {
+        if (progress > -0.5) {
+          _slideProgress = progress * 2; // 0.0 a -1.0
+        } else {
+          _slideProgress = (progress + 1.0) * 2; // 1.0 a 0.0
+        }
+      }
+    });
+  }
 
   bool _canContinue() {
     switch (_currentPage) {
@@ -131,7 +248,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
 
     return SliverAppBar(
       pinned: true,
-      expandedHeight: 168.0,
+      expandedHeight: _expandedHeight, // Original: 168.0
       collapsedHeight: 72.0,
       toolbarHeight: 48.0,
       backgroundColor: colorScheme.surface,
@@ -146,54 +263,122 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> {
             centerTitle: false,
             titlePadding: EdgeInsets.zero,
             collapseMode: CollapseMode.parallax,
-            title: AnimatedOpacity(
-              opacity: isCollapsed ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOut,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  spacing: 8.0,
-                  children: [
-                    Text(
-                      'STEP ${_currentPage + 1} / ${_pages.length}',
-                      style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
-                    ),
-                    const Text('·'),
-                    Text(_pages[_currentPage], style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface)),
-                  ],
-                ),
-              ),
-            ),
+            title: isCollapsed
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),
+                    child: _buildCollapsedHeader(context, textTheme, colorScheme),
+                  )
+                : null,
             background: Container(
               padding: const EdgeInsets.fromLTRB(16.0, 48.0, 16.0, 16.0),
               color: colorScheme.surface,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 8.0,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'STEP ${_currentPage + 1} / ${_pages.length}',
-                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                      ),
-                      Text(_pages[_currentPage], style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
-                    ],
-                  ),
-                  Text(
-                    _pagesDetails[_currentPage],
-                    style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                  ),
-                ],
-              ),
+              child: _buildExpandedHeader(context, textTheme, colorScheme),
             ),
           );
         },
       ),
       bottom: PreferredSize(preferredSize: const Size.fromHeight(32.0), child: _buildPagesIndicator(context)),
+    );
+  }
+
+  Widget _buildCollapsedHeader(BuildContext context, TextTheme textTheme, ColorScheme colorScheme) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 8.0,
+      children: [
+        Row(
+          spacing: 4.0,
+          children: [
+            Text('STEP', style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+            ClipRect(
+              child: Transform.translate(
+                offset: Offset(_slideProgress * -15, 0),
+                child: Opacity(
+                  opacity: (1.0 - _slideProgress.abs()).clamp(0.0, 1.0),
+                  child: Text(
+                    '${_displayPage + 1}',
+                    style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                  ),
+                ),
+              ),
+            ),
+            Text('/ ${_pages.length}', style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+          ],
+        ),
+        const Text('·'),
+        Expanded(
+          child: ClipRect(
+            child: Transform.translate(
+              offset: Offset(_slideProgress * -30, 0),
+              child: Opacity(
+                opacity: (1.0 - _slideProgress.abs()).clamp(0.0, 1.0),
+                child: Text(
+                  _pages[_displayPage],
+                  style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildExpandedHeader(BuildContext context, TextTheme textTheme, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8.0,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              spacing: 4.0,
+              children: [
+                Text('STEP', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+                ClipRect(
+                  child: Transform.translate(
+                    offset: Offset(_slideProgress * -15, 0),
+                    child: Opacity(
+                      opacity: (1.0 - _slideProgress.abs()).clamp(0.0, 1.0),
+                      child: Text(
+                        '${_displayPage + 1}',
+                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                      ),
+                    ),
+                  ),
+                ),
+                Text('/ ${_pages.length}', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+              ],
+            ),
+            ClipRect(
+              child: Transform.translate(
+                offset: Offset(_slideProgress * -30, 0),
+                child: Opacity(
+                  opacity: (1.0 - _slideProgress.abs()).clamp(0.0, 1.0),
+                  child: Text(
+                    _pages[_displayPage],
+                    style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        ClipRect(
+          child: Transform.translate(
+            offset: Offset(_slideProgress * -20, 0), // Slide sutil de 20px
+            child: Opacity(
+              opacity: (1.0 - _slideProgress.abs() * 0.8).clamp(0.0, 1.0), // Fade más sutil
+              child: Text(
+                _pagesDetails[_displayPage],
+                style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
