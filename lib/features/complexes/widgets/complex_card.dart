@@ -3,14 +3,116 @@ import 'package:flutter/rendering.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
+import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/features/core/utils/widget_palette.dart';
-import 'package:sportying_app/features/core/utils/widget_size.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_container.dart';
 
+//--------------------------------------------------------------------------------------------------------------------//
+// CONSTANTS
+//--------------------------------------------------------------------------------------------------------------------//
+
+/// Opacity applied to non-selected cards in carousel mode
+const double _kNonSelectedOpacity = 0.6;
+
+/// Border width for selected cards in carousel mode
+const double _kSelectedBorderWidth = 3.0;
+
+/// Gradient stops for carousel card overlay
+const List<double> _kCarouselGradientStops = [0.4, 1.0];
+
+/// Gradient stops for shader mask in carousel
+const List<double> _kShaderMaskStops = [0.85, 1.0];
+
+/// Alpha values for gradient overlay
+const int _kGradientStartAlpha = 25;
+const int _kGradientEndAlpha = 150;
+
+/// Image container height for display cards
+const double _kImageHeight = 200.0;
+
+/// Star icon size
+const double _kStarIconSize = 18.0;
+
+/// Button overlay alpha
+const int _kButtonOverlayAlpha = 25;
+
+//--------------------------------------------------------------------------------------------------------------------//
+// ENUMS
+//--------------------------------------------------------------------------------------------------------------------//
+
+enum _ComplexCardType { carousel, tile, card }
+
+//--------------------------------------------------------------------------------------------------------------------//
+// WIDGETS
+//--------------------------------------------------------------------------------------------------------------------//
+
+/// A card widget that displays complex information in different layouts.
+///
+/// Supports three display modes:
+/// - [ComplexCard.carousel]: Horizontal carousel with image background
+/// - [ComplexCard.tile]: Compact tile layout (ready for custom implementation)
+/// - [ComplexCard.card]: Full card layout with detailed information
 class ComplexCard extends StatelessWidget {
-  final WidgetSize size;
+  final _ComplexCardType _type;
+  final Complex complex;
+  final double rating;
+  final int? index;
+  final ValueNotifier<int> selectedIndex;
+
+  const ComplexCard._(this._type, this.complex, this.rating, this.index, this.selectedIndex);
+
+  factory ComplexCard.carousel({
+    required Complex complex,
+    required double rating,
+    int? index,
+    ValueNotifier<int>? selectedIndex,
+  }) {
+    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
+    return ComplexCard._(_ComplexCardType.carousel, complex, rating, index, notifier);
+  }
+
+  factory ComplexCard.tile({
+    required Complex complex,
+    required double rating,
+    int? index,
+    ValueNotifier<int>? selectedIndex,
+  }) {
+    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
+    return ComplexCard._(_ComplexCardType.tile, complex, rating, index, notifier);
+  }
+
+  factory ComplexCard.card({
+    required Complex complex,
+    required double rating,
+    int? index,
+    ValueNotifier<int>? selectedIndex,
+  }) {
+    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
+    return ComplexCard._(_ComplexCardType.card, complex, rating, index, notifier);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    switch (_type) {
+      case _ComplexCardType.carousel:
+        return _ComplexCarouselCard(complex: complex, rating: rating, index: index, selectedIndex: selectedIndex);
+      case _ComplexCardType.tile:
+        return _ComplexTileCard(complex: complex, rating: rating);
+      case _ComplexCardType.card:
+        return _ComplexDisplayCard(complex: complex, rating: rating);
+    }
+  }
+}
+
+class _ComplexCarouselCard extends StatelessWidget {
+  const _ComplexCarouselCard({
+    required this.complex,
+    required this.rating,
+    required this.index,
+    required this.selectedIndex,
+  });
 
   final Complex complex;
   final double rating;
@@ -18,367 +120,459 @@ class ComplexCard extends StatelessWidget {
   final int? index;
   final ValueNotifier<int> selectedIndex;
 
-  const ComplexCard._(this.size, this.complex, this.rating, this.index, this.selectedIndex);
-
-  factory ComplexCard.small({
-    required Complex complex,
-    required double rating,
-    int? index,
-    ValueNotifier<int>? selectedIndex,
-  }) {
-    ValueNotifier<int> notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(WidgetSize.small, complex, rating, index, notifier);
-  }
-
-  factory ComplexCard.medium({
-    required Complex complex,
-    required double rating,
-    int? index,
-    ValueNotifier<int>? selectedIndex,
-  }) {
-    ValueNotifier<int> notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(WidgetSize.medium, complex, rating, index, notifier);
-  }
-
-  factory ComplexCard.large({
-    required Complex complex,
-    required double rating,
-    int? index,
-    ValueNotifier<int>? selectedIndex,
-  }) {
-    ValueNotifier<int> notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(WidgetSize.large, complex, rating, index, notifier);
-  }
-
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return ValueListenableBuilder<int>(
       valueListenable: selectedIndex,
       builder: (context, currentIndex, _) {
-        return size == WidgetSize.small
-            ? _buildSmallCard(context, currentIndex)
-            : Card.filled(
-                margin: const EdgeInsets.symmetric(vertical: 4.0),
-                color: Theme.brightnessOf(context) == Brightness.light
-                    ? colorScheme.surfaceContainerLowest
-                    : colorScheme.surfaceContainerHigh,
-                clipBehavior: Clip.antiAlias,
-                child: _buildLargeCard(context),
-              );
+        final isSelected = index == currentIndex;
+        final hasSelection = selectedIndex.value != -1;
+        final opacity = hasSelection && !isSelected ? _kNonSelectedOpacity : 1.0;
+
+        return Card(
+          margin: EdgeInsets.zero,
+          color: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+            side: isSelected
+                ? BorderSide(color: Theme.of(context).colorScheme.primary, width: _kSelectedBorderWidth)
+                : BorderSide.none,
+          ),
+          clipBehavior: Clip.none,
+          child: Opacity(opacity: opacity, child: _buildContent(context)),
+        );
       },
     );
   }
 
-  Widget _buildSmallCard(BuildContext context, int currentIndex) {
-    return Card(
-      margin: EdgeInsets.zero,
-      color: Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-        side: index == currentIndex
-            ? BorderSide(color: Theme.of(context).colorScheme.primary, width: 3.0)
-            : BorderSide.none,
-      ),
-      clipBehavior: Clip.none,
-      child: Opacity(
-        opacity: selectedIndex.value != -1 && index != currentIndex ? 0.6 : 1.0,
-        child: _buildSmallCardContent(context),
-      ),
-    );
-  }
-
-  Widget _buildSmallCardContent(BuildContext context) {
+  Widget _buildContent(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
 
     return Container(
-      decoration: BoxDecoration(
-        image: const DecorationImage(image: AssetImage('assets/images/placeholders/court.jpg'), fit: BoxFit.cover),
+      decoration: const BoxDecoration(
+        image: DecorationImage(image: AssetImage('assets/images/placeholders/court.jpg'), fit: BoxFit.cover),
       ),
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Colors.black.withAlpha(25), Colors.black.withAlpha(150)],
-            stops: const [0.4, 1.0],
+            colors: [Colors.black.withAlpha(_kGradientStartAlpha), Colors.black.withAlpha(_kGradientEndAlpha)],
+            stops: _kCarouselGradientStops,
           ),
         ),
         padding: const EdgeInsets.all(16.0),
         child: SizedBox(
           width: double.infinity,
           child: ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [colorScheme.surface, colorScheme.surface.withAlpha(0)],
-                stops: [0.85, 1.0],
-              ).createShader(bounds);
-            },
+            shaderCallback: (bounds) => LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [colorScheme.surface, colorScheme.surface.withAlpha(0)],
+              stops: _kShaderMaskStops,
+            ).createShader(bounds),
             blendMode: BlendMode.dstIn,
-            child: _buildSmallCardBody(context),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // TODO: Replace with actual condition
+                if (true) _AvailabilityChip(brightness: brightness),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: 12.0,
+                  children: [_buildTitle(context, brightness), _buildSportsRow(context)],
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildSmallCardBody(BuildContext context) {
-    final brightness = Theme.brightnessOf(context);
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomChip.small.success(
-          palette: brightness == Brightness.light ? WidgetPalette.inverse : WidgetPalette.normal,
-          label: 'Available',
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          spacing: 12.0,
-          children: [
-            _buildHeader(context),
-            SizedBox(
-              width: double.infinity,
-              child: ClipRect(
-                child: OverflowBox(
-                  alignment: Alignment.centerLeft,
-                  maxWidth: double.infinity,
-                  fit: OverflowBoxFit.deferToChild,
-                  child: _buildSportsRow(context),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLargeCard(BuildContext context) {
-    final brightness = Theme.brightnessOf(context);
-
-    return Column(
-      children: [
-        Container(
-          height: 200.0,
-          decoration: BoxDecoration(
-            image: const DecorationImage(image: AssetImage('assets/images/placeholders/court.jpg'), fit: BoxFit.cover),
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          alignment: AlignmentGeometry.topCenter,
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                spacing: 8.0,
-                children: [
-                  if (size != WidgetSize.small)
-                    CustomContainer.translucent(
-                      verticalPadding: 8.0,
-                      horizontalPadding: 12.0,
-                      color: Colors.black,
-                      child: _buildRating(context),
-                    ),
-                  // TODO: substitute condition with real condition
-                  if (true)
-                    CustomChip.small.success(
-                      palette: brightness == Brightness.light ? WidgetPalette.inverse : WidgetPalette.normal,
-                      label: 'Available',
-                    ),
-                ],
-              ),
-              _buildSportsRow(context),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SizedBox(width: double.infinity, child: _buildLargeCardBody(context)),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLargeCardBody(BuildContext context) {
+  Widget _buildTitle(BuildContext context, Brightness brightness) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.brightnessOf(context);
+    final textTheme = Theme.of(context).textTheme;
+    final titleColor = brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 16.0,
       children: [
-        _buildHeader(context),
-        Column(
-          spacing: 8.0,
-          children: [
-            LabeledInfoWidget.dark(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
-            LabeledInfoWidget.dark(
-              icon: Symbols.schedule_rounded,
-              label: 'Schedule',
-              text: '${complex.timeIni} - ${complex.timeEnd}',
+        Text(complex.name, style: textTheme.titleLarge?.copyWith(color: titleColor), softWrap: false),
+        const SizedBox(height: 4.0),
+        ClipRect(
+          child: OverflowBox(
+            alignment: Alignment.centerLeft,
+            maxWidth: double.infinity,
+            fit: OverflowBoxFit.deferToChild,
+            child: _ComplexRatingWidget(
+              colorScheme: colorScheme,
+              textTheme: textTheme,
+              rating: rating,
+              showStars: true,
             ),
-          ],
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          spacing: 4.0,
-          children: [
-            TextButton(
-              style: ButtonStyle(
-                overlayColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light
-                      ? colorScheme.onPrimary.withAlpha(25)
-                      : colorScheme.primary.withAlpha(25),
-                ),
-                foregroundColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary,
-                ),
-              ),
-              onPressed: () {},
-              child: const Text('More info'),
-            ),
-            FilledButton(
-              style: ButtonStyle(
-                overlayColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light
-                      ? colorScheme.onPrimary.withAlpha(25)
-                      : colorScheme.onPrimary.withAlpha(25),
-                ),
-                backgroundColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light ? colorScheme.primary : colorScheme.primary,
-                ),
-                foregroundColor: WidgetStatePropertyAll(
-                  brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary,
-                ),
-              ),
-              onPressed: () {},
-              child: const Text('Book court'),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return _buildTitle(context);
-  }
-
-  Widget _buildTitle(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    final brightness = Theme.brightnessOf(context);
-
-    Widget title = Text(
-      complex.name,
-      style: textTheme.titleLarge?.copyWith(
-        color: size == WidgetSize.small
-            ? brightness == Brightness.light
-                  ? colorScheme.surface
-                  : colorScheme.onSurface
-            : brightness == Brightness.light
-            ? colorScheme.onSurface
-            : colorScheme.onSurface,
-      ),
-      softWrap: false,
-    );
-
-    return size == WidgetSize.small
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              title,
-              const SizedBox(height: 4.0),
-              ClipRect(
-                child: OverflowBox(
-                  alignment: Alignment.centerLeft,
-                  maxWidth: double.infinity,
-                  fit: OverflowBoxFit.deferToChild,
-                  child: _buildRating(context),
-                ),
-              ),
-            ],
-          )
-        : title;
-  }
-
-  Widget _buildRating(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    final brightness = Theme.brightnessOf(context);
-
-    return Row(
-      spacing: 4.0,
-      children: [
-        size == WidgetSize.small
-            ? Row(
-                children: List.generate(5, (index) {
-                  IconData icon = Symbols.star_rounded;
-                  double iconFill = 0.0;
-
-                  if (rating >= index + 0.5) {
-                    iconFill = 1.0;
-                    icon = rating >= index + 1 ? icon : Symbols.star_half_rounded;
-                  }
-
-                  return Icon(
-                    icon,
-                    color: size == WidgetSize.small
-                        ? colorScheme.primary
-                        : brightness == Brightness.light
-                        ? colorScheme.primary
-                        : colorScheme.primary,
-                    size: 18,
-                    fill: iconFill,
-                    weight: 400,
-                    grade: 0,
-                    opticalSize: 18,
-                  );
-                }),
-              )
-            : Icon(
-                Symbols.star_rounded,
-                color: size == WidgetSize.small
-                    ? colorScheme.primary
-                    : brightness == Brightness.light
-                    ? colorScheme.primary
-                    : colorScheme.primary,
-                size: 18,
-                fill: 1,
-                weight: 400,
-                grade: 0,
-                opticalSize: 18,
-              ),
-        Text(
-          rating.toString(),
-          style: textTheme.bodyMedium?.copyWith(
-            color: size == WidgetSize.small
-                ? colorScheme.primary
-                : brightness == Brightness.light
-                ? colorScheme.primary
-                : colorScheme.primary,
           ),
-          softWrap: false,
         ),
       ],
     );
   }
 
   Widget _buildSportsRow(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ClipRect(
+        child: OverflowBox(
+          alignment: Alignment.centerLeft,
+          maxWidth: double.infinity,
+          fit: OverflowBoxFit.deferToChild,
+          child: _ComplexSportsRow(sports: complex.sports),
+        ),
+      ),
+    );
+  }
+}
+
+class _ComplexTileCard extends StatelessWidget {
+  const _ComplexTileCard({required this.complex, required this.rating});
+
+  final Complex complex;
+  final double rating;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
+
+    // TODO: Implement custom tile layout
+    return Card.filled(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          _ComplexImageContainer(
+            colorScheme: colorScheme,
+            brightness: brightness,
+            height: _kImageHeight,
+            rating: rating,
+            sports: complex.sports,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(width: double.infinity, child: _buildBody(context, brightness, colorScheme)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, Brightness brightness, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16.0,
+      children: [
+        _buildTitle(context),
+        _buildInfo(),
+        _ComplexActionButtons(colorScheme: colorScheme, brightness: brightness, onMoreInfo: () {}, onBookCourt: () {}),
+      ],
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Text(complex.name, style: textTheme.titleLarge, softWrap: false);
+  }
+
+  Widget _buildInfo() {
+    return Column(
+      spacing: 8.0,
+      children: [
+        LabeledInfoWidget.dark(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
+        LabeledInfoWidget.dark(
+          icon: Symbols.schedule_rounded,
+          label: 'Schedule',
+          text: '${complex.timeIni} - ${complex.timeEnd}',
+        ),
+      ],
+    );
+  }
+}
+
+class _ComplexDisplayCard extends StatelessWidget {
+  const _ComplexDisplayCard({required this.complex, required this.rating});
+
+  final Complex complex;
+  final double rating;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
+
+    return Card.filled(
+      margin: const EdgeInsets.symmetric(vertical: 4.0),
+      color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          _ComplexImageContainer(
+            colorScheme: colorScheme,
+            brightness: brightness,
+            height: _kImageHeight,
+            rating: rating,
+            sports: complex.sports,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SizedBox(width: double.infinity, child: _buildBody(context, brightness, colorScheme)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, Brightness brightness, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 16.0,
+      children: [
+        _buildTitle(context),
+        _buildInfo(),
+        _ComplexActionButtons(colorScheme: colorScheme, brightness: brightness, onMoreInfo: () {}, onBookCourt: () {}),
+      ],
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return Text(complex.name, style: textTheme.titleLarge, softWrap: false);
+  }
+
+  Widget _buildInfo() {
+    return Column(
+      spacing: 8.0,
+      children: [
+        LabeledInfoWidget.dark(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
+        LabeledInfoWidget.dark(
+          icon: Symbols.schedule_rounded,
+          label: 'Schedule',
+          text: '${complex.timeIni} - ${complex.timeEnd}',
+        ),
+      ],
+    );
+  }
+}
+
+/// Displays the availability status chip
+class _AvailabilityChip extends StatelessWidget {
+  const _AvailabilityChip({required this.brightness});
+
+  final Brightness brightness;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = brightness == Brightness.light ? WidgetPalette.inverse : WidgetPalette.normal;
+
+    return CustomChip.small.success(palette: palette, label: 'Available');
+  }
+}
+
+/// Displays the rating with stars and numeric value
+class _ComplexRatingWidget extends StatelessWidget {
+  const _ComplexRatingWidget({
+    required this.colorScheme,
+    required this.textTheme,
+    required this.rating,
+    required this.showStars,
+  });
+
+  final ColorScheme colorScheme;
+  final TextTheme textTheme;
+
+  final double rating;
+  final bool showStars;
+
+  @override
+  Widget build(BuildContext context) {
     return Row(
       spacing: 4.0,
-      children: complex.sports.map((sport) {
+      children: [
+        if (showStars) _buildStars() else _buildSingleStar(),
+        Text(rating.toString(), style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary), softWrap: false),
+      ],
+    );
+  }
+
+  Widget _buildStars() {
+    return Row(
+      children: List.generate(5, (index) {
+        final iconData = _getStarIcon(index);
+        final iconFill = _getStarFill(index);
+
+        return Icon(
+          iconData,
+          color: colorScheme.primary,
+          size: _kStarIconSize,
+          fill: iconFill,
+          weight: 400,
+          grade: 0,
+          opticalSize: _kStarIconSize,
+        );
+      }),
+    );
+  }
+
+  Widget _buildSingleStar() {
+    return Icon(
+      Symbols.star_rounded,
+      color: colorScheme.primary,
+      size: _kStarIconSize,
+      fill: 1,
+      weight: 400,
+      grade: 0,
+      opticalSize: _kStarIconSize,
+    );
+  }
+
+  IconData _getStarIcon(int index) {
+    if (rating >= index + 1) return Symbols.star_rounded;
+    if (rating >= index + 0.5) return Symbols.star_half_rounded;
+    return Symbols.star_rounded;
+  }
+
+  double _getStarFill(int index) {
+    return rating >= index + 0.5 ? 1.0 : 0.0;
+  }
+}
+
+/// Displays the sports chips row
+class _ComplexSportsRow extends StatelessWidget {
+  final Set<Sport> sports;
+
+  const _ComplexSportsRow({required this.sports});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 4.0,
+      children: sports.map((sport) {
         return CustomChip.small.neutral(palette: WidgetPalette.primary, label: sport.name.toCapitalized());
       }).toList(),
     );
+  }
+}
+
+/// Image container with rating and sports overlay
+class _ComplexImageContainer extends StatelessWidget {
+  const _ComplexImageContainer({
+    required this.colorScheme,
+    required this.brightness,
+    required this.height,
+    required this.rating,
+    required this.sports,
+  });
+
+  final ColorScheme colorScheme;
+  final Brightness brightness;
+
+  final double height;
+
+  final double rating;
+  final Set<Sport> sports;
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      height: height,
+      decoration: BoxDecoration(
+        image: const DecorationImage(image: AssetImage('assets/images/placeholders/court.jpg'), fit: BoxFit.cover),
+        borderRadius: BorderRadius.circular(12.0),
+      ),
+      alignment: AlignmentGeometry.topCenter,
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            spacing: 8.0,
+            children: [
+              CustomContainer.translucent(
+                verticalPadding: 8.0,
+                horizontalPadding: 12.0,
+                color: Colors.black,
+                child: _ComplexRatingWidget(
+                  rating: rating,
+                  showStars: false,
+                  colorScheme: colorScheme,
+                  textTheme: textTheme,
+                ),
+              ),
+              // TODO: Replace with actual condition
+              if (true) _AvailabilityChip(brightness: brightness),
+            ],
+          ),
+          _ComplexSportsRow(sports: sports),
+        ],
+      ),
+    );
+  }
+}
+
+/// Action buttons for the card (More info and Book court)
+class _ComplexActionButtons extends StatelessWidget {
+  const _ComplexActionButtons({
+    required this.colorScheme,
+    required this.brightness,
+    required this.onMoreInfo,
+    required this.onBookCourt,
+  });
+
+  final ColorScheme colorScheme;
+  final Brightness brightness;
+
+  final VoidCallback onMoreInfo;
+  final VoidCallback onBookCourt;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      spacing: 4.0,
+      children: [
+        TextButton(
+          style: ButtonStyle(
+            overlayColor: WidgetStatePropertyAll(_getTextButtonOverlayColor()),
+            foregroundColor: WidgetStatePropertyAll(_getTextButtonForegroundColor()),
+          ),
+          onPressed: onMoreInfo,
+          child: const Text('More info'),
+        ),
+        FilledButton(
+          style: ButtonStyle(
+            overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(_kButtonOverlayAlpha)),
+            backgroundColor: WidgetStatePropertyAll(colorScheme.primary),
+            foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary),
+          ),
+          onPressed: onBookCourt,
+          child: const Text('Book court'),
+        ),
+      ],
+    );
+  }
+
+  Color _getTextButtonOverlayColor() {
+    return brightness == Brightness.light
+        ? colorScheme.onPrimary.withAlpha(_kButtonOverlayAlpha)
+        : colorScheme.primary.withAlpha(_kButtonOverlayAlpha);
+  }
+
+  Color _getTextButtonForegroundColor() {
+    return brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
   }
 }

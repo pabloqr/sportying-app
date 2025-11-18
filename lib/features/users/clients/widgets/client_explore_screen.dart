@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
-import 'package:sportying_app/features/core/widgets/utils/error_indicator.dart';
+import 'package:sportying_app/features/core/widgets/visuals/error_indicator.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_explore_viewmodel.dart';
 
 class ClientExploreScreen extends StatefulWidget {
@@ -41,7 +41,7 @@ class _ClientExploreScreenState extends State<ClientExploreScreen> {
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 220.0),
             itemCount: widget.viewModel.complexes.isNotEmpty ? widget.viewModel.complexes.length : 10,
             itemBuilder: (context, index) {
-              return ComplexCard.large(
+              return ComplexCard.card(
                 complex: widget.viewModel.complexes.elementAt(index),
                 rating: Random().nextInt(11) / 2.0,
               );
