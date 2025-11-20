@@ -57,14 +57,11 @@ class NewsCard extends StatelessWidget {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             spacing: 8.0,
             children: [
-              if (_dateDifference.inDays <= 7)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [CustomChip.small.alert(palette: WidgetPalette.inverse, label: 'NEW')],
-                ),
+              if (_dateDifference.inDays <= 7) _RecencyChip(),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -86,10 +83,7 @@ class NewsCard extends StatelessWidget {
                                 color: brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface,
                               ),
                             ),
-                            CustomChip.small.neutralTranslucent(
-                              palette: WidgetPalette.normal,
-                              label: _getCreationString(),
-                            ),
+                            CustomChip.small.translucent(palette: WidgetPalette.normal, label: _getCreationString()),
                           ],
                         ),
                         Text(
@@ -128,5 +122,16 @@ class NewsCard extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class _RecencyChip extends StatelessWidget {
+  const _RecencyChip();
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = Theme.brightnessOf(context) == Brightness.light ? WidgetPalette.inverse : WidgetPalette.normal;
+
+    return CustomChip.medium.alert(palette: palette, label: 'NEW');
   }
 }

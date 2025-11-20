@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportying_app/features/core/widgets/utils/error_indicator.dart';
+import 'package:sportying_app/features/core/widgets/visuals/error_indicator.dart';
 import 'package:sportying_app/features/reservations/widgets/reservation_card.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_reservations_viewmodel.dart';
 

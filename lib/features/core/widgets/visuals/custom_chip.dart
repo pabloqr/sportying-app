@@ -4,15 +4,17 @@ import 'package:sportying_app/features/core/utils/widget_size.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 
 class CustomChip extends StatelessWidget {
+  const CustomChip._(this.size, this.status, this.palette, this.icon, this.filledIcon, this.label);
+
   final WidgetSize size;
   final WidgetStatus status;
 
   final WidgetPalette palette;
 
   final IconData? icon;
-  final String? label;
+  final bool? filledIcon;
 
-  const CustomChip._(this.size, this.status, this.palette, this.icon, this.label);
+  final String? label;
 
   static ChipBuilder get small => ChipBuilder(WidgetSize.small);
   static ChipBuilder get medium => ChipBuilder(WidgetSize.medium);
@@ -94,7 +96,7 @@ class CustomChip extends StatelessWidget {
           Icon(
             icon!,
             size: _getIconSize(),
-            fill: 0,
+            fill: filledIcon ?? false ? 1 : 0,
             weight: 400,
             grade: 0,
             opticalSize: _getIconSize(),
@@ -109,7 +111,7 @@ class CustomChip extends StatelessWidget {
       return Icon(
         icon!,
         size: _getIconSize(),
-        fill: 0,
+        fill: filledIcon ?? false ? 1 : 0,
         weight: 400,
         grade: 0,
         opticalSize: _getIconSize(),
@@ -125,23 +127,23 @@ class ChipBuilder {
 
   const ChipBuilder(this.size);
 
-  CustomChip neutral({required WidgetPalette palette, IconData? icon, String? label}) {
-    return CustomChip._(size, WidgetStatus.neutral, palette, icon, label);
+  CustomChip neutral({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
+    return CustomChip._(size, WidgetStatus.neutral, palette, icon, filledIcon, label);
   }
 
-  CustomChip neutralTranslucent({required WidgetPalette palette, IconData? icon, String? label}) {
-    return CustomChip._(size, WidgetStatus.neutralTranslucent, palette, icon, label);
+  CustomChip translucent({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
+    return CustomChip._(size, WidgetStatus.translucent, palette, icon, filledIcon, label);
   }
 
-  CustomChip alert({required WidgetPalette palette, IconData? icon, String? label}) {
-    return CustomChip._(size, WidgetStatus.alert, palette, icon, label);
+  CustomChip alert({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
+    return CustomChip._(size, WidgetStatus.alert, palette, icon, filledIcon, label);
   }
 
-  CustomChip success({required WidgetPalette palette, IconData? icon, String? label}) {
-    return CustomChip._(size, WidgetStatus.success, palette, icon, label);
+  CustomChip success({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
+    return CustomChip._(size, WidgetStatus.success, palette, icon, filledIcon, label);
   }
 
-  CustomChip error({required WidgetPalette palette, IconData? icon, String? label}) {
-    return CustomChip._(size, WidgetStatus.error, palette, icon, label);
+  CustomChip error({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
+    return CustomChip._(size, WidgetStatus.error, palette, icon, filledIcon, label);
   }
 }

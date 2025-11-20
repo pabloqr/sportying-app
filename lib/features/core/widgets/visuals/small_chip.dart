@@ -16,7 +16,7 @@ class SmallChip extends StatelessWidget {
       SmallChip._(WidgetStatus.neutral, inverse, label, icon);
 
   factory SmallChip.neutralTranslucent(bool inverse, {String? label, IconData? icon}) =>
-      SmallChip._(WidgetStatus.neutralTranslucent, inverse, label, icon);
+      SmallChip._(WidgetStatus.translucent, inverse, label, icon);
 
   factory SmallChip.alert(bool inverse, {String? label, IconData? icon}) =>
       SmallChip._(WidgetStatus.alert, inverse, label, icon);

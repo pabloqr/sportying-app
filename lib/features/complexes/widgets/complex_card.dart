@@ -6,8 +6,8 @@ import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/features/core/utils/widget_palette.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
+import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
-import 'package:sportying_app/features/core/widgets/visuals/custom_container.dart';
 
 //--------------------------------------------------------------------------------------------------------------------//
 // CONSTANTS
@@ -178,7 +178,7 @@ class _ComplexCarouselCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // TODO: Replace with actual condition
-                if (true) _AvailabilityChip(brightness: brightness),
+                if (true) _AvailabilityChip(),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -257,6 +257,7 @@ class _ComplexTileCard extends StatelessWidget {
             colorScheme: colorScheme,
             brightness: brightness,
             height: _kImageHeight,
+            schedule: '${complex.timeIni} - ${complex.timeEnd}',
             rating: rating,
             sports: complex.sports,
           ),
@@ -316,50 +317,78 @@ class _ComplexDisplayCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4.0),
       color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          _ComplexImageContainer(
-            colorScheme: colorScheme,
-            brightness: brightness,
-            height: _kImageHeight,
-            rating: rating,
-            sports: complex.sports,
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(width: double.infinity, child: _buildBody(context, brightness, colorScheme)),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          spacing: 16.0,
+          children: [
+            _buildTitle(context),
+            _ComplexImageContainer(
+              colorScheme: colorScheme,
+              brightness: brightness,
+              height: _kImageHeight,
+              schedule: '${complex.timeIni} - ${complex.timeEnd}',
+              rating: rating,
+              sports: complex.sports,
+            ),
+            _buildInfo(context),
+            _ComplexActionButtons(
+              colorScheme: colorScheme,
+              brightness: brightness,
+              onMoreInfo: () {},
+              onBookCourt: () {},
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context, Brightness brightness, ColorScheme colorScheme) {
+  Widget _buildTitle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 16.0,
+      spacing: 4.0,
       children: [
-        _buildTitle(context),
-        _buildInfo(),
-        _ComplexActionButtons(colorScheme: colorScheme, brightness: brightness, onMoreInfo: () {}, onBookCourt: () {}),
+        Text(complex.name, style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
+        Row(
+          spacing: 4.0,
+          children: [
+            Icon(
+              Symbols.location_on_rounded,
+              size: 18,
+              fill: 0,
+              weight: 400,
+              grade: 0,
+              opticalSize: 18,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            Expanded(
+              child: MarqueeWidget(
+                child: Text(
+                  complex.address,
+                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                ),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _buildTitle(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Text(complex.name, style: textTheme.titleLarge, softWrap: false);
-  }
-
-  Widget _buildInfo() {
-    return Column(
-      spacing: 8.0,
+  Widget _buildInfo(BuildContext context) {
+    return Row(
+      spacing: 4.0,
       children: [
-        LabeledInfoWidget.dark(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
-        LabeledInfoWidget.dark(
-          icon: Symbols.schedule_rounded,
-          label: 'Schedule',
-          text: '${complex.timeIni} - ${complex.timeEnd}',
+        Expanded(
+          child: LabeledInfoWidget.dark(
+            icon: Symbols.schedule_rounded,
+            label: 'Today\'s schedule',
+            text: '${complex.timeIni} - ${complex.timeEnd}',
+          ),
         ),
       ],
     );
@@ -368,15 +397,13 @@ class _ComplexDisplayCard extends StatelessWidget {
 
 /// Displays the availability status chip
 class _AvailabilityChip extends StatelessWidget {
-  const _AvailabilityChip({required this.brightness});
-
-  final Brightness brightness;
+  const _AvailabilityChip();
 
   @override
   Widget build(BuildContext context) {
-    final palette = brightness == Brightness.light ? WidgetPalette.inverse : WidgetPalette.normal;
+    final palette = Theme.brightnessOf(context) == Brightness.light ? WidgetPalette.inverse : WidgetPalette.normal;
 
-    return CustomChip.small.success(palette: palette, label: 'Available');
+    return CustomChip.medium.success(palette: palette, label: 'Available');
   }
 }
 
@@ -471,6 +498,7 @@ class _ComplexImageContainer extends StatelessWidget {
     required this.colorScheme,
     required this.brightness,
     required this.height,
+    required this.schedule,
     required this.rating,
     required this.sports,
   });
@@ -480,13 +508,12 @@ class _ComplexImageContainer extends StatelessWidget {
 
   final double height;
 
+  final String schedule;
   final double rating;
   final Set<Sport> sports;
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
     return Container(
       height: height,
       decoration: BoxDecoration(
@@ -497,24 +524,19 @@ class _ComplexImageContainer extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             spacing: 8.0,
             children: [
-              CustomContainer.translucent(
-                verticalPadding: 8.0,
-                horizontalPadding: 12.0,
-                color: Colors.black,
-                child: _ComplexRatingWidget(
-                  rating: rating,
-                  showStars: false,
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                ),
+              if (true) _AvailabilityChip(),
+              CustomChip.medium.translucent(
+                palette: WidgetPalette.primary,
+                icon: Symbols.star_rounded,
+                filledIcon: true,
+                label: rating.toString(),
               ),
-              // TODO: Replace with actual condition
-              if (true) _AvailabilityChip(brightness: brightness),
             ],
           ),
           _ComplexSportsRow(sports: sports),

@@ -16,7 +16,7 @@ class MediumChip extends StatelessWidget {
       MediumChip._(WidgetStatus.neutral, inverse, label, icon);
 
   factory MediumChip.neutralTranslucent(bool inverse, {String? label, IconData? icon}) =>
-      MediumChip._(WidgetStatus.neutralTranslucent, inverse, label, icon);
+      MediumChip._(WidgetStatus.translucent, inverse, label, icon);
 
   factory MediumChip.alert(bool inverse, {String? label, IconData? icon}) =>
       MediumChip._(WidgetStatus.alert, inverse, label, icon);

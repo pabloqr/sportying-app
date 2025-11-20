@@ -39,12 +39,12 @@ class LabeledInfoWidget extends StatelessWidget {
         if (showIcon)
           Icon(
             icon,
-            size: 24,
+            size: 18,
             fill: filledIcon ? 1.0 : 0.0,
             weight: 400,
             grade: 0,
-            opticalSize: 24,
-            color: colorScheme.onSurface,
+            opticalSize: 18,
+            color: brightness == Brightness.light ? colorScheme.outlineVariant : colorScheme.onSurfaceVariant,
           ),
         Expanded(
           child: Column(
