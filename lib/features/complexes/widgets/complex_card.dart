@@ -208,12 +208,7 @@ class _ComplexCarouselCard extends StatelessWidget {
             alignment: Alignment.centerLeft,
             maxWidth: double.infinity,
             fit: OverflowBoxFit.deferToChild,
-            child: _ComplexRatingWidget(
-              colorScheme: colorScheme,
-              textTheme: textTheme,
-              rating: rating,
-              showStars: true,
-            ),
+            child: _ComplexRatingWidget(rating: rating, showStars: true),
           ),
         ),
       ],
@@ -254,8 +249,6 @@ class _ComplexTileCard extends StatelessWidget {
       child: Column(
         children: [
           _ComplexImageContainer(
-            colorScheme: colorScheme,
-            brightness: brightness,
             height: _kImageHeight,
             schedule: '${complex.timeIni} - ${complex.timeEnd}',
             rating: rating,
@@ -277,7 +270,7 @@ class _ComplexTileCard extends StatelessWidget {
       children: [
         _buildTitle(context),
         _buildInfo(),
-        _ComplexActionButtons(colorScheme: colorScheme, brightness: brightness, onMoreInfo: () {}, onBookCourt: () {}),
+        _ComplexActionButtons(onMoreInfo: () {}, onBookCourt: () {}),
       ],
     );
   }
@@ -324,20 +317,13 @@ class _ComplexDisplayCard extends StatelessWidget {
           children: [
             _buildTitle(context),
             _ComplexImageContainer(
-              colorScheme: colorScheme,
-              brightness: brightness,
               height: _kImageHeight,
               schedule: '${complex.timeIni} - ${complex.timeEnd}',
               rating: rating,
               sports: complex.sports,
             ),
             _buildInfo(context),
-            _ComplexActionButtons(
-              colorScheme: colorScheme,
-              brightness: brightness,
-              onMoreInfo: () {},
-              onBookCourt: () {},
-            ),
+            _ComplexActionButtons(onMoreInfo: () {}, onBookCourt: () {}),
           ],
         ),
       ),
@@ -409,31 +395,28 @@ class _AvailabilityChip extends StatelessWidget {
 
 /// Displays the rating with stars and numeric value
 class _ComplexRatingWidget extends StatelessWidget {
-  const _ComplexRatingWidget({
-    required this.colorScheme,
-    required this.textTheme,
-    required this.rating,
-    required this.showStars,
-  });
-
-  final ColorScheme colorScheme;
-  final TextTheme textTheme;
+  const _ComplexRatingWidget({required this.rating, required this.showStars});
 
   final double rating;
   final bool showStars;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
     return Row(
       spacing: 4.0,
       children: [
-        if (showStars) _buildStars() else _buildSingleStar(),
+        if (showStars) _buildStars(context) else _buildSingleStar(context),
         Text(rating.toString(), style: textTheme.bodyMedium?.copyWith(color: colorScheme.primary), softWrap: false),
       ],
     );
   }
 
-  Widget _buildStars() {
+  Widget _buildStars(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       children: List.generate(5, (index) {
         final iconData = _getStarIcon(index);
@@ -452,7 +435,9 @@ class _ComplexRatingWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildSingleStar() {
+  Widget _buildSingleStar(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Icon(
       Symbols.star_rounded,
       color: colorScheme.primary,
@@ -495,16 +480,11 @@ class _ComplexSportsRow extends StatelessWidget {
 /// Image container with rating and sports overlay
 class _ComplexImageContainer extends StatelessWidget {
   const _ComplexImageContainer({
-    required this.colorScheme,
-    required this.brightness,
     required this.height,
     required this.schedule,
     required this.rating,
     required this.sports,
   });
-
-  final ColorScheme colorScheme;
-  final Brightness brightness;
 
   final double height;
 
@@ -548,29 +528,23 @@ class _ComplexImageContainer extends StatelessWidget {
 
 /// Action buttons for the card (More info and Book court)
 class _ComplexActionButtons extends StatelessWidget {
-  const _ComplexActionButtons({
-    required this.colorScheme,
-    required this.brightness,
-    required this.onMoreInfo,
-    required this.onBookCourt,
-  });
-
-  final ColorScheme colorScheme;
-  final Brightness brightness;
+  const _ComplexActionButtons({required this.onMoreInfo, required this.onBookCourt});
 
   final VoidCallback onMoreInfo;
   final VoidCallback onBookCourt;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       spacing: 4.0,
       children: [
         TextButton(
           style: ButtonStyle(
-            overlayColor: WidgetStatePropertyAll(_getTextButtonOverlayColor()),
-            foregroundColor: WidgetStatePropertyAll(_getTextButtonForegroundColor()),
+            overlayColor: WidgetStatePropertyAll(_getTextButtonOverlayColor(context)),
+            foregroundColor: WidgetStatePropertyAll(_getTextButtonForegroundColor(context)),
           ),
           onPressed: onMoreInfo,
           child: const Text('More info'),
@@ -588,13 +562,17 @@ class _ComplexActionButtons extends StatelessWidget {
     );
   }
 
-  Color _getTextButtonOverlayColor() {
-    return brightness == Brightness.light
+  Color _getTextButtonOverlayColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Theme.brightnessOf(context) == Brightness.light
         ? colorScheme.onPrimary.withAlpha(_kButtonOverlayAlpha)
         : colorScheme.primary.withAlpha(_kButtonOverlayAlpha);
   }
 
-  Color _getTextButtonForegroundColor() {
-    return brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
+  Color _getTextButtonForegroundColor(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Theme.brightnessOf(context) == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
   }
 }
