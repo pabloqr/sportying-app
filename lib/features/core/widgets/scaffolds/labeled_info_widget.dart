@@ -12,21 +12,21 @@ class LabeledInfoWidget extends StatelessWidget {
 
   const LabeledInfoWidget._(this.brightness, this.showIcon, this.icon, this.filledIcon, this.label, this.text);
 
-  factory LabeledInfoWidget.light({
-    bool showIcon = true,
-    IconData? icon,
-    bool filledIcon = false,
-    required String label,
-    required String text,
-  }) => LabeledInfoWidget._(Brightness.light, showIcon, icon, filledIcon, label, text);
-
-  factory LabeledInfoWidget.dark({
+  factory LabeledInfoWidget.normal({
     bool showIcon = true,
     IconData? icon,
     bool filledIcon = false,
     required String label,
     required String text,
   }) => LabeledInfoWidget._(Brightness.dark, showIcon, icon, filledIcon, label, text);
+
+  factory LabeledInfoWidget.inverse({
+    bool showIcon = true,
+    IconData? icon,
+    bool filledIcon = false,
+    required String label,
+    required String text,
+  }) => LabeledInfoWidget._(Brightness.light, showIcon, icon, filledIcon, label, text);
 
   @override
   Widget build(BuildContext context) {
