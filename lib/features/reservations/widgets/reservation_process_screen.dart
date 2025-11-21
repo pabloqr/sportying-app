@@ -281,6 +281,33 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     );
   }
 
+  Widget? _buildSearchControls(BuildContext context) {
+    if (_currentPage == 3 || _currentPage == 4) return null;
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return SliverAppBar(
+      automaticallyImplyLeading: false,
+      automaticallyImplyActions: false,
+      floating: true,
+      title: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 480.0),
+        child: SearchAnchor.bar(
+          barBackgroundColor: WidgetStatePropertyAll(
+            Theme.brightnessOf(context) == Brightness.light
+                ? colorScheme.surfaceContainerLowest
+                : colorScheme.surfaceContainerHigh,
+          ),
+          barElevation: WidgetStatePropertyAll(0.0),
+          suggestionsBuilder: (context, controller) => List.generate(
+            Sport.values.length,
+            (index) => ListTile(title: Text(Sport.values[index].name.toCapitalized())),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCollapsedHeader(BuildContext context, TextTheme textTheme, ColorScheme colorScheme) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
