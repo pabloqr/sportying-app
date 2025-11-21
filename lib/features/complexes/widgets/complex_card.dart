@@ -29,8 +29,11 @@ const List<double> _kShaderMaskStops = [0.85, 1.0];
 const int _kGradientStartAlpha = 25;
 const int _kGradientEndAlpha = 150;
 
-/// Image container height for display cards
-const double _kImageHeight = 200.0;
+/// Image container height for tiles
+const double _kTileImageSize = 96.0;
+
+/// Image container height for cards
+const double _kCardImageHeight = 200.0;
 
 /// Star icon size
 const double _kStarIconSize = 18.0;
@@ -56,12 +59,16 @@ enum _ComplexCardType { carousel, tile, card }
 /// - [ComplexCard.card]: Full card layout with detailed information
 class ComplexCard extends StatelessWidget {
   final _ComplexCardType _type;
+
   final Complex complex;
   final double rating;
+
   final int? index;
   final ValueNotifier<int> selectedIndex;
 
-  const ComplexCard._(this._type, this.complex, this.rating, this.index, this.selectedIndex);
+  final VoidCallback? onTap;
+
+  const ComplexCard._(this._type, this.complex, this.rating, this.index, this.selectedIndex, this.onTap);
 
   factory ComplexCard.carousel({
     required Complex complex,
@@ -70,7 +77,7 @@ class ComplexCard extends StatelessWidget {
     ValueNotifier<int>? selectedIndex,
   }) {
     final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.carousel, complex, rating, index, notifier);
+    return ComplexCard._(_ComplexCardType.carousel, complex, rating, index, notifier, null);
   }
 
   factory ComplexCard.tile({
@@ -78,9 +85,10 @@ class ComplexCard extends StatelessWidget {
     required double rating,
     int? index,
     ValueNotifier<int>? selectedIndex,
+    VoidCallback? onTap,
   }) {
     final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.tile, complex, rating, index, notifier);
+    return ComplexCard._(_ComplexCardType.tile, complex, rating, index, notifier, onTap);
   }
 
   factory ComplexCard.card({
@@ -90,7 +98,7 @@ class ComplexCard extends StatelessWidget {
     ValueNotifier<int>? selectedIndex,
   }) {
     final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.card, complex, rating, index, notifier);
+    return ComplexCard._(_ComplexCardType.card, complex, rating, index, notifier, null);
   }
 
   @override
@@ -99,7 +107,13 @@ class ComplexCard extends StatelessWidget {
       case _ComplexCardType.carousel:
         return _ComplexCarouselCard(complex: complex, rating: rating, index: index, selectedIndex: selectedIndex);
       case _ComplexCardType.tile:
-        return _ComplexTileCard(complex: complex, rating: rating);
+        return _ComplexTileCard(
+          complex: complex,
+          rating: rating,
+          index: index,
+          selectedIndex: selectedIndex,
+          onTap: onTap,
+        );
       case _ComplexCardType.card:
         return _ComplexDisplayCard(complex: complex, rating: rating);
     }
@@ -147,7 +161,7 @@ class _ComplexCarouselCard extends StatelessWidget {
 
   Widget _buildContent(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Container(
       decoration: const BoxDecoration(
@@ -231,64 +245,117 @@ class _ComplexCarouselCard extends StatelessWidget {
 }
 
 class _ComplexTileCard extends StatelessWidget {
-  const _ComplexTileCard({required this.complex, required this.rating});
+  const _ComplexTileCard({
+    required this.complex,
+    required this.rating,
+    required this.index,
+    required this.selectedIndex,
+    required this.onTap,
+  });
 
   final Complex complex;
   final double rating;
 
+  final int? index;
+  final ValueNotifier<int> selectedIndex;
+
+  final VoidCallback? onTap;
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
-    // TODO: Implement custom tile layout
-    return Card.filled(
-      margin: const EdgeInsets.symmetric(vertical: 4.0),
-      color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
-      clipBehavior: Clip.antiAlias,
+    return ValueListenableBuilder(
+      valueListenable: selectedIndex,
+      builder: (context, currentIndex, _) {
+        final isSelected = index == currentIndex;
+
+        return Card.filled(
+          margin: const EdgeInsets.symmetric(vertical: 4.0),
+          elevation: isSelected ? 3.0 : 0.0,
+          color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+          clipBehavior: Clip.antiAlias,
+          child: _buildContent(context, isSelected),
+        );
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, bool isSelected) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return InkWell(
+      onTap: onTap,
+      overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(25)),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16.0),
+        color: isSelected
+            ? colorScheme.primary
+            : Theme.brightnessOf(context) == Brightness.light
+            ? colorScheme.surfaceContainerLowest
+            : colorScheme.surfaceContainerHigh,
+        child: Row(
+          spacing: 16.0,
+          children: [
+            _ComplexImageContainer(width: _kTileImageSize, height: _kTileImageSize, borderRadius: 8.0),
+            _buildBody(context, isSelected),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, bool isSelected) {
+    return Expanded(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 8.0,
         children: [
-          _ComplexImageContainer(
-            height: _kImageHeight,
-            schedule: '${complex.timeIni} - ${complex.timeEnd}',
-            rating: rating,
-            sports: complex.sports,
+          _ComplexTitle(
+            brightness: Theme.brightnessOf(context) == Brightness.light || !isSelected
+                ? Brightness.light
+                : Brightness.dark,
+            name: complex.name,
+            address: complex.address,
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SizedBox(width: double.infinity, child: _buildBody(context, brightness, colorScheme)),
-          ),
+          _buildInfo(context, isSelected),
         ],
       ),
     );
   }
 
-  Widget _buildBody(BuildContext context, Brightness brightness, ColorScheme colorScheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 16.0,
-      children: [
-        _buildTitle(context),
-        _buildInfo(),
-        _ComplexActionButtons(onMoreInfo: () {}, onBookCourt: () {}),
-      ],
-    );
-  }
+  Widget _buildInfo(BuildContext context, bool isSelected) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
 
-  Widget _buildTitle(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return Text(complex.name, style: textTheme.titleLarge, softWrap: false);
-  }
-
-  Widget _buildInfo() {
-    return Column(
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       spacing: 8.0,
       children: [
-        LabeledInfoWidget.dark(icon: Symbols.location_on_rounded, label: 'Address', text: complex.address),
-        LabeledInfoWidget.dark(
-          icon: Symbols.schedule_rounded,
-          label: 'Schedule',
-          text: '${complex.timeIni} - ${complex.timeEnd}',
+        CustomChip.medium.neutral(
+          palette: isSelected
+              ? brightness == Brightness.light
+                    ? WidgetPalette.inverse
+                    : WidgetPalette.normal
+              : WidgetPalette.primary,
+          icon: Symbols.star_rounded,
+          filledIcon: true,
+          label: rating.toString(),
+        ),
+        Expanded(
+          child: brightness == Brightness.light || !isSelected
+              ? LabeledInfoWidget.normal(
+                  icon: Symbols.schedule_rounded,
+                  label: 'Schedule',
+                  text: '${complex.timeIni} - ${complex.timeEnd}',
+                )
+              : LabeledInfoWidget.inverse(
+                  icon: Symbols.schedule_rounded,
+                  label: 'Schedule',
+                  text: '${complex.timeIni} - ${complex.timeEnd}',
+                ),
         ),
       ],
     );
@@ -304,7 +371,7 @@ class _ComplexDisplayCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.of(context).brightness;
+    final brightness = Theme.brightnessOf(context);
 
     return Card.filled(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
@@ -315,12 +382,29 @@ class _ComplexDisplayCard extends StatelessWidget {
         child: Column(
           spacing: 16.0,
           children: [
-            _buildTitle(context),
+            _ComplexTitle(name: complex.name, address: complex.address),
             _ComplexImageContainer(
-              height: _kImageHeight,
-              schedule: '${complex.timeIni} - ${complex.timeEnd}',
-              rating: rating,
-              sports: complex.sports,
+              height: _kCardImageHeight,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    spacing: 8.0,
+                    children: [
+                      if (true) _AvailabilityChip(),
+                      CustomChip.medium.translucent(
+                        palette: WidgetPalette.primary,
+                        icon: Symbols.star_rounded,
+                        filledIcon: true,
+                        label: rating.toString(),
+                      ),
+                    ],
+                  ),
+                  _ComplexSportsRow(sports: complex.sports),
+                ],
+              ),
             ),
             _buildInfo(context),
             _ComplexActionButtons(onMoreInfo: () {}, onBookCourt: () {}),
@@ -330,7 +414,32 @@ class _ComplexDisplayCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTitle(BuildContext context) {
+  Widget _buildInfo(BuildContext context) {
+    return Row(
+      spacing: 4.0,
+      children: [
+        Expanded(
+          child: LabeledInfoWidget.normal(
+            icon: Symbols.schedule_rounded,
+            label: 'Schedule',
+            text: '${complex.timeIni} - ${complex.timeEnd}',
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ComplexTitle extends StatelessWidget {
+  const _ComplexTitle({this.brightness = Brightness.light, required this.name, required this.address});
+
+  final Brightness? brightness;
+
+  final String name;
+  final String address;
+
+  @override
+  Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -338,7 +447,12 @@ class _ComplexDisplayCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 4.0,
       children: [
-        Text(complex.name, style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
+        Text(
+          name,
+          style: textTheme.titleLarge?.copyWith(
+            color: brightness == Brightness.light ? colorScheme.onSurface : colorScheme.surface,
+          ),
+        ),
         Row(
           spacing: 4.0,
           children: [
@@ -349,13 +463,15 @@ class _ComplexDisplayCard extends StatelessWidget {
               weight: 400,
               grade: 0,
               opticalSize: 18,
-              color: colorScheme.onSurfaceVariant,
+              color: brightness == Brightness.light ? colorScheme.onSurfaceVariant : colorScheme.outlineVariant,
             ),
             Expanded(
               child: MarqueeWidget(
                 child: Text(
-                  complex.address,
-                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                  address,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: brightness == Brightness.light ? colorScheme.onSurfaceVariant : colorScheme.outlineVariant,
+                  ),
                 ),
               ),
             ),
@@ -364,19 +480,31 @@ class _ComplexDisplayCard extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _buildInfo(BuildContext context) {
-    return Row(
-      spacing: 4.0,
-      children: [
-        Expanded(
-          child: LabeledInfoWidget.dark(
-            icon: Symbols.schedule_rounded,
-            label: 'Today\'s schedule',
-            text: '${complex.timeIni} - ${complex.timeEnd}',
-          ),
-        ),
-      ],
+/// Image container with rating and sports overlay
+class _ComplexImageContainer extends StatelessWidget {
+  const _ComplexImageContainer({this.width, this.height, this.borderRadius, this.child});
+
+  final double? width;
+  final double? height;
+
+  final double? borderRadius;
+
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        image: const DecorationImage(image: AssetImage('assets/images/placeholders/court.jpg'), fit: BoxFit.cover),
+        borderRadius: BorderRadius.circular(borderRadius ?? 12.0),
+      ),
+      alignment: AlignmentGeometry.topCenter,
+      padding: const EdgeInsets.all(16.0),
+      child: child,
     );
   }
 }
@@ -473,55 +601,6 @@ class _ComplexSportsRow extends StatelessWidget {
       children: sports.map((sport) {
         return CustomChip.small.neutral(palette: WidgetPalette.primary, label: sport.name.toCapitalized());
       }).toList(),
-    );
-  }
-}
-
-/// Image container with rating and sports overlay
-class _ComplexImageContainer extends StatelessWidget {
-  const _ComplexImageContainer({
-    required this.height,
-    required this.schedule,
-    required this.rating,
-    required this.sports,
-  });
-
-  final double height;
-
-  final String schedule;
-  final double rating;
-  final Set<Sport> sports;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: height,
-      decoration: BoxDecoration(
-        image: const DecorationImage(image: AssetImage('assets/images/placeholders/court.jpg'), fit: BoxFit.cover),
-        borderRadius: BorderRadius.circular(12.0),
-      ),
-      alignment: AlignmentGeometry.topCenter,
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            spacing: 8.0,
-            children: [
-              if (true) _AvailabilityChip(),
-              CustomChip.medium.translucent(
-                palette: WidgetPalette.primary,
-                icon: Symbols.star_rounded,
-                filledIcon: true,
-                label: rating.toString(),
-              ),
-            ],
-          ),
-          _ComplexSportsRow(sports: sports),
-        ],
-      ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
@@ -8,6 +9,8 @@ import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
 import 'package:sportying_app/features/sports/widgets/sport_card.dart';
+
+final _topPadding = 16.0;
 
 class ReservationProcessScreen extends StatefulWidget {
   const ReservationProcessScreen({super.key});
@@ -155,6 +158,8 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     switch (_currentPage) {
       case 0:
         return _sport != null;
+      case 1:
+        return _complex != null;
       default:
         return true;
     }
@@ -230,7 +235,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
             Expanded(
               child: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
-                  return [_buildAppBar(context)];
+                  return [_buildAppBar(context), ?_buildSearchControls(context)];
                 },
                 body: _buildPageView(context),
               ),
@@ -430,19 +435,17 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   }
 
   Widget _buildPageView(BuildContext context) {
-    return Expanded(
-      child: PageView(
-        controller: _pageController,
-        physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: (index) => setState(() => _currentPage = index),
-        children: [
-          _SportPage(initialSport: _sport, onSportSelected: (sport) => setState(() => _sport = sport)),
-          Center(child: Text('Content from page ${_pages[1]}')),
-          Center(child: Text('Content from page ${_pages[2]}')),
-          Center(child: Text('Content from page ${_pages[3]}')),
-          Center(child: Text('Content from page ${_pages[4]}')),
-        ],
-      ),
+    return PageView(
+      controller: _pageController,
+      physics: const NeverScrollableScrollPhysics(),
+      onPageChanged: (index) => setState(() => _currentPage = index),
+      children: [
+        _SportPage(initialSport: _sport, onSportSelected: (sport) => setState(() => _sport = sport)),
+        _ComplexPage(initialComplex: _complex, onComplexSelected: (complex) => setState(() => _complex = complex)),
+        Center(child: Text('Content from page ${_pages[2]}')),
+        Center(child: Text('Content from page ${_pages[3]}')),
+        Center(child: Text('Content from page ${_pages[4]}')),
+      ],
     );
   }
 
@@ -533,7 +536,7 @@ class _SportPageState extends State<_SportPage> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: EdgeInsets.fromLTRB(16.0, _topPadding, 16.0, 0.0),
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 250.0,
@@ -551,6 +554,75 @@ class _SportPageState extends State<_SportPage> {
           },
           index: index,
           selectedIndex: _selectedSportIndex,
+        );
+      },
+    );
+  }
+}
+
+class _ComplexPage extends StatefulWidget {
+  const _ComplexPage({required this.initialComplex, required this.onComplexSelected});
+
+  final Complex? initialComplex;
+  final ValueChanged<Complex> onComplexSelected;
+
+  @override
+  State<_ComplexPage> createState() => _ComplexPageState();
+}
+
+class _ComplexPageState extends State<_ComplexPage> {
+  final ValueNotifier<int> _selectedComplexIndex = ValueNotifier(-1);
+
+  @override
+  void initState() {
+    super.initState();
+
+    _selectedComplexIndex.value = widget.initialComplex != null ? widget.initialComplex?.id ?? -1 : -1;
+  }
+
+  @override
+  void didUpdateWidget(covariant _ComplexPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final newIndex = widget.initialComplex != null ? widget.initialComplex?.id ?? -1 : -1;
+    if (newIndex != _selectedComplexIndex.value) _selectedComplexIndex.value = newIndex;
+  }
+
+  @override
+  void dispose() {
+    _selectedComplexIndex.dispose();
+
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(16.0, _topPadding - 4.0, 16.0, 0.0),
+      itemCount: 10,
+      itemBuilder: (context, index) {
+        Complex complex = Complex(
+          id: index,
+          name: 'Complex $index',
+          timeIni: '09:00',
+          timeEnd: '23:00',
+          address: 'C/Principal, $index, Granada',
+          locLongitude: 0,
+          locLatitude: 0,
+          sports: {Sport.tennis, Sport.football},
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        return ComplexCard.tile(
+          complex: complex,
+          rating: 4.5,
+          index: index,
+          selectedIndex: _selectedComplexIndex,
+          onTap: () {
+            setState(() => _selectedComplexIndex.value = index);
+            widget.onComplexSelected(complex);
+          },
         );
       },
     );

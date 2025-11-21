@@ -312,6 +312,7 @@ abstract class MaterialTheme {
     brightness: colorScheme.brightness,
     colorScheme: colorScheme,
     textTheme: textTheme.apply(bodyColor: colorScheme.onSurface, displayColor: colorScheme.onSurface),
+    textSelectionTheme: TextSelectionThemeData(cursorColor: colorScheme.outline),
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
     navigationRailTheme: NavigationRailThemeData(
