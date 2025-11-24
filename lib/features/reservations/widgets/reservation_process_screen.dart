@@ -22,6 +22,8 @@ class ReservationProcessScreen extends StatefulWidget {
 
 class _ReservationProcessScreenState extends State<ReservationProcessScreen> with SingleTickerProviderStateMixin {
   final _pageController = PageController();
+  final _scrollController = ScrollController();
+
   late AnimationController _headerAnimationController;
 
   int _currentPage = 0;
@@ -136,6 +138,11 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
       // Si cambió la página mostrada, recalcular altura
       if (previousDisplayPage != _displayPage) {
         _updateExpandedHeight();
+
+        // Resetear scroll
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(0, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
+        }
       }
 
       // Calcular el progreso del slide (-1.0 a 1.0)
@@ -235,6 +242,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
           children: [
             Expanded(
               child: NestedScrollView(
+                controller: _scrollController,
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
                   return [_buildAppBar(context), ?_buildSearchControls(context)];
                 },
