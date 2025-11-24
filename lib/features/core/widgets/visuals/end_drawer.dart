@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:sportying_app/features/core/widgets/scaffolds/custom_expansion_tile.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/custom_expandable_list_tile.dart';
 
 class EndDrawer extends StatefulWidget {
   const EndDrawer({super.key});
@@ -76,14 +76,14 @@ class _EndDrawerState extends State<EndDrawer> {
                     leading: Symbols.person_rounded,
                     title: 'Account',
                     children: [
-                      CustomExpansionListTile(icon: Symbols.edit_rounded, label: 'Edit profile', onTap: () {}),
-                      CustomExpansionListTile(icon: Symbols.payments_rounded, label: 'My payments', onTap: () {}),
-                      CustomExpansionListTile(
+                      CustomExpandableListTile(icon: Symbols.edit_rounded, label: 'Edit profile', onTap: () {}),
+                      CustomExpandableListTile(icon: Symbols.payments_rounded, label: 'My payments', onTap: () {}),
+                      CustomExpandableListTile(
                         icon: Symbols.notifications_rounded,
                         label: 'Notifications',
                         onTap: () {},
                       ),
-                      CustomExpansionListTile(icon: Symbols.settings_rounded, label: 'Settings', onTap: () {}),
+                      CustomExpandableListTile(icon: Symbols.settings_rounded, label: 'Settings', onTap: () {}),
                     ],
                   ),
                   const SizedBox(height: 8),
@@ -99,9 +99,9 @@ class _EndDrawerState extends State<EndDrawer> {
                     leading: Symbols.help_rounded,
                     title: 'Support',
                     children: [
-                      CustomExpansionListTile(icon: Symbols.support_agent_rounded, label: 'Help', onTap: () {}),
-                      CustomExpansionListTile(icon: Symbols.question_answer_rounded, label: 'FAQ', onTap: () {}),
-                      CustomExpansionListTile(icon: Symbols.info_rounded, label: 'About this app', onTap: () {}),
+                      CustomExpandableListTile(icon: Symbols.support_agent_rounded, label: 'Help', onTap: () {}),
+                      CustomExpandableListTile(icon: Symbols.question_answer_rounded, label: 'FAQ', onTap: () {}),
+                      CustomExpandableListTile(icon: Symbols.info_rounded, label: 'About this app', onTap: () {}),
                     ],
                   ),
                   const SizedBox(height: 8),

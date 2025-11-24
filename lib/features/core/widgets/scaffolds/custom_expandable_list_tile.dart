@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class CustomExpansionListTile extends StatelessWidget {
-  const CustomExpansionListTile({super.key, required this.icon, required this.label, this.onTap});
+class CustomExpandableListTile extends StatelessWidget {
+  const CustomExpandableListTile({super.key, required this.icon, required this.label, this.onTap});
 
   final IconData icon;
   final String label;
@@ -33,7 +33,7 @@ class CustomExpansionListTile extends StatelessWidget {
 class CustomExpansionTile extends StatefulWidget {
   final IconData? leading;
   final String title;
-  final List<CustomExpansionListTile> children;
+  final List<CustomExpandableListTile> children;
   final Color backgroundColor;
   final Color textColor;
   final Color iconColor;

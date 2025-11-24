@@ -4,7 +4,7 @@ import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
 import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
-import 'package:sportying_app/features/core/widgets/visuals/custom_container.dart';
+import 'package:sportying_app/features/core/widgets/visuals/date_container.dart';
 import 'package:sportying_app/features/core/widgets/visuals/pulsing_dot.dart';
 
 class ReservationCard extends StatefulWidget {
@@ -174,7 +174,7 @@ class _ReservationCardState extends State<ReservationCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 8.0,
             children: [
-              CustomContainer.filled(
+              DateContainer(
                 width: 65.0,
                 color: colorScheme.surfaceContainerHighest,
                 child: Column(
