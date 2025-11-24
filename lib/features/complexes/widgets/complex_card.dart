@@ -5,6 +5,7 @@ import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/features/core/utils/widget_palette.dart';
+import 'package:sportying_app/features/core/utils/widget_side.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
 import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
@@ -60,6 +61,8 @@ enum _ComplexCardType { carousel, tile, card }
 class ComplexCard extends StatelessWidget {
   final _ComplexCardType _type;
 
+  final WidgetSide? fullRadiusSide;
+
   final Complex complex;
   final double rating;
 
@@ -68,7 +71,15 @@ class ComplexCard extends StatelessWidget {
 
   final VoidCallback? onTap;
 
-  const ComplexCard._(this._type, this.complex, this.rating, this.index, this.selectedIndex, this.onTap);
+  const ComplexCard._(
+    this._type,
+    this.fullRadiusSide,
+    this.complex,
+    this.rating,
+    this.index,
+    this.selectedIndex,
+    this.onTap,
+  );
 
   factory ComplexCard.carousel({
     required Complex complex,
@@ -77,10 +88,11 @@ class ComplexCard extends StatelessWidget {
     ValueNotifier<int>? selectedIndex,
   }) {
     final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.carousel, complex, rating, index, notifier, null);
+    return ComplexCard._(_ComplexCardType.carousel, null, complex, rating, index, notifier, null);
   }
 
   factory ComplexCard.tile({
+    WidgetSide fullRadiusSide = WidgetSide.none,
     required Complex complex,
     required double rating,
     int? index,
@@ -88,7 +100,7 @@ class ComplexCard extends StatelessWidget {
     VoidCallback? onTap,
   }) {
     final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.tile, complex, rating, index, notifier, onTap);
+    return ComplexCard._(_ComplexCardType.tile, fullRadiusSide, complex, rating, index, notifier, onTap);
   }
 
   factory ComplexCard.card({
@@ -98,7 +110,7 @@ class ComplexCard extends StatelessWidget {
     ValueNotifier<int>? selectedIndex,
   }) {
     final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.card, complex, rating, index, notifier, null);
+    return ComplexCard._(_ComplexCardType.card, null, complex, rating, index, notifier, null);
   }
 
   @override
@@ -108,6 +120,7 @@ class ComplexCard extends StatelessWidget {
         return _ComplexCarouselCard(complex: complex, rating: rating, index: index, selectedIndex: selectedIndex);
       case _ComplexCardType.tile:
         return _ComplexTileCard(
+          fullRadiusSide: fullRadiusSide!,
           complex: complex,
           rating: rating,
           index: index,
@@ -246,12 +259,15 @@ class _ComplexCarouselCard extends StatelessWidget {
 
 class _ComplexTileCard extends StatelessWidget {
   const _ComplexTileCard({
+    this.fullRadiusSide = WidgetSide.none,
     required this.complex,
     required this.rating,
     required this.index,
     required this.selectedIndex,
     required this.onTap,
   });
+
+  final WidgetSide fullRadiusSide;
 
   final Complex complex;
   final double rating;
@@ -261,20 +277,36 @@ class _ComplexTileCard extends StatelessWidget {
 
   final VoidCallback? onTap;
 
+  static BorderRadius _calculateBorderRadius(WidgetSide side) {
+    if (side == WidgetSide.all) return BorderRadius.circular(12.0);
+    if (side == WidgetSide.none) return BorderRadius.circular(4.0);
+
+    final top = side == WidgetSide.top;
+    final bottom = side == WidgetSide.bottom;
+
+    return BorderRadius.vertical(top: Radius.circular(top ? 12.0 : 4.0), bottom: Radius.circular(bottom ? 12.0 : 4.0));
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.brightnessOf(context);
 
     return ValueListenableBuilder(
       valueListenable: selectedIndex,
       builder: (context, currentIndex, _) {
         final isSelected = index == currentIndex;
 
-        return Card.filled(
-          margin: const EdgeInsets.symmetric(vertical: 4.0),
-          elevation: isSelected ? 3.0 : 0.0,
-          color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          margin: const EdgeInsets.symmetric(vertical: 1.0),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? colorScheme.primary
+                : Theme.brightnessOf(context) == Brightness.light
+                ? colorScheme.surfaceContainerLowest
+                : colorScheme.surfaceContainerHigh,
+            borderRadius: _calculateBorderRadius(isSelected ? WidgetSide.all : fullRadiusSide),
+          ),
           clipBehavior: Clip.antiAlias,
           child: _buildContent(context, isSelected),
         );
@@ -285,23 +317,20 @@ class _ComplexTileCard extends StatelessWidget {
   Widget _buildContent(BuildContext context, bool isSelected) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return InkWell(
-      onTap: onTap,
-      overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(25)),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16.0),
-        color: isSelected
-            ? colorScheme.primary
-            : Theme.brightnessOf(context) == Brightness.light
-            ? colorScheme.surfaceContainerLowest
-            : colorScheme.surfaceContainerHigh,
-        child: Row(
-          spacing: 16.0,
-          children: [
-            _ComplexImageContainer(width: _kTileImageSize, height: _kTileImageSize, borderRadius: 8.0),
-            _buildBody(context, isSelected),
-          ],
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        onTap: onTap,
+        overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(12)),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            spacing: 16.0,
+            children: [
+              _ComplexImageContainer(width: _kTileImageSize, height: _kTileImageSize, borderRadius: 8.0),
+              _buildBody(context, isSelected),
+            ],
+          ),
         ),
       ),
     );
@@ -327,7 +356,6 @@ class _ComplexTileCard extends StatelessWidget {
   }
 
   Widget _buildInfo(BuildContext context, bool isSelected) {
-    final colorScheme = Theme.of(context).colorScheme;
     final brightness = Theme.brightnessOf(context);
 
     return Row(

@@ -5,6 +5,7 @@ import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
+import 'package:sportying_app/features/core/utils/widget_side.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
@@ -533,6 +534,23 @@ class _SportPageState extends State<_SportPage> {
     super.dispose();
   }
 
+  static WidgetSide _calculateBorderRadius(int index) {
+    if (Sport.values.length < 3) {
+      if (index == 0) return WidgetSide.left;
+      if (index == 1) return WidgetSide.right;
+    }
+
+    if (index == 0) return WidgetSide.topLeft;
+    if (index == 1) return WidgetSide.topRight;
+
+    if (index == Sport.values.length - 2 && Sport.values.length.isEven) return WidgetSide.bottomLeft;
+    if (index == Sport.values.length - 1) {
+      return Sport.values.length.isEven ? WidgetSide.bottomRight : WidgetSide.bottomLeft;
+    }
+
+    return WidgetSide.none;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
@@ -540,13 +558,14 @@ class _SportPageState extends State<_SportPage> {
       shrinkWrap: true,
       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 250.0,
-        mainAxisSpacing: 8.0,
-        crossAxisSpacing: 8.0,
+        mainAxisSpacing: 2.0,
+        crossAxisSpacing: 2.0,
         childAspectRatio: 3 / 2,
       ),
       itemCount: Sport.values.length,
       itemBuilder: (context, index) {
         return SportCard(
+          fullRadiusSide: _calculateBorderRadius(index),
           sport: Sport.values[index],
           onTap: () {
             setState(() => _selectedSportIndex.value = index);
@@ -595,10 +614,17 @@ class _ComplexPageState extends State<_ComplexPage> {
     super.dispose();
   }
 
+  static WidgetSide _calculateBorderRadius(int index, int length) {
+    if (index == 0) return length > 1 ? WidgetSide.top : WidgetSide.all;
+    if (index == length - 1) return WidgetSide.bottom;
+
+    return WidgetSide.none;
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16.0, _topPadding - 4.0, 16.0, 0.0),
+      padding: EdgeInsets.fromLTRB(16.0, _topPadding - 1.0, 16.0, 0.0),
       itemCount: 10,
       itemBuilder: (context, index) {
         Complex complex = Complex(
@@ -615,6 +641,7 @@ class _ComplexPageState extends State<_ComplexPage> {
         );
 
         return ComplexCard.tile(
+          fullRadiusSide: _calculateBorderRadius(index, 10),
           complex: complex,
           rating: 4.5,
           index: index,
