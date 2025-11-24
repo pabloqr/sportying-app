@@ -30,18 +30,8 @@ class CustomExpandableListTile extends StatelessWidget {
   }
 }
 
-class CustomExpansionTile extends StatefulWidget {
-  final IconData? leading;
-  final String title;
-  final List<CustomExpandableListTile> children;
-  final Color backgroundColor;
-  final Color textColor;
-  final Color iconColor;
-  final Color separatorColor;
-  final bool isExpanded;
-  final ValueChanged<bool>? onExpansionChanged;
-
-  const CustomExpansionTile({
+class CustomExpandableList extends StatefulWidget {
+  const CustomExpandableList({
     super.key,
     this.leading,
     required this.title,
@@ -54,11 +44,23 @@ class CustomExpansionTile extends StatefulWidget {
     this.onExpansionChanged,
   });
 
+  final IconData? leading;
+  final String title;
+  final List<CustomExpandableListTile> children;
+
+  final Color backgroundColor;
+  final Color textColor;
+  final Color iconColor;
+  final Color separatorColor;
+
+  final bool isExpanded;
+  final ValueChanged<bool>? onExpansionChanged;
+
   @override
-  State<CustomExpansionTile> createState() => _CustomExpansionTileState();
+  State<CustomExpandableList> createState() => _CustomExpandableListState();
 }
 
-class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTickerProviderStateMixin {
+class _CustomExpandableListState extends State<CustomExpandableList> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _iconTurns;
   late Animation<double> _heightFactor;
@@ -79,7 +81,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
   }
 
   @override
-  void didUpdateWidget(CustomExpansionTile oldWidget) {
+  void didUpdateWidget(CustomExpandableList oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.isExpanded != oldWidget.isExpanded) {
       setState(() {
@@ -159,7 +161,7 @@ class _CustomExpansionTileState extends State<CustomExpansionTile> with SingleTi
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      for (int i = 0; i < widget.children.length; i++) ...[
+                      for (int i = 0; i < widget.children.length; ++i) ...[
                         Container(height: 2.0, color: widget.separatorColor),
                         ClipRRect(
                           borderRadius: i == widget.children.length - 1

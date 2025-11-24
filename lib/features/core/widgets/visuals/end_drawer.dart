@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:sportying_app/features/core/widgets/scaffolds/custom_expandable_list_tile.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/custom_expandable_list.dart';
 
 class EndDrawer extends StatefulWidget {
   const EndDrawer({super.key});
@@ -64,7 +64,7 @@ class _EndDrawerState extends State<EndDrawer> {
               child: ListView(
                 padding: const EdgeInsets.all(16.0),
                 children: [
-                  CustomExpansionTile(
+                  CustomExpandableList(
                     backgroundColor: brightness == Brightness.light
                         ? colorScheme.surfaceContainerLowest
                         : colorScheme.surfaceContainerHigh,
@@ -87,7 +87,7 @@ class _EndDrawerState extends State<EndDrawer> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  CustomExpansionTile(
+                  CustomExpandableList(
                     backgroundColor: brightness == Brightness.light
                         ? colorScheme.surfaceContainerLowest
                         : colorScheme.surfaceContainerHigh,
