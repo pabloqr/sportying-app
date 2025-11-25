@@ -4,12 +4,14 @@ import 'package:sportying_app/features/core/utils/widget_size.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 
 class CustomChip extends StatelessWidget {
-  const CustomChip._(this.size, this.status, this.palette, this.icon, this.filledIcon, this.label);
+  const CustomChip._(this.size, this.status, this.palette, this.leading, this.icon, this.filledIcon, this.label);
 
   final WidgetSize size;
   final WidgetStatus status;
 
   final WidgetPalette palette;
+
+  final Widget? leading;
 
   final IconData? icon;
   final bool? filledIcon;
@@ -87,21 +89,24 @@ class CustomChip extends StatelessWidget {
   Widget? _buildContent(BuildContext context) {
     final iconColor = _getOnSurfaceColor(context);
 
-    if (label != null && icon != null) {
+    if (label != null && (leading != null || icon != null)) {
       return Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         spacing: 4.0,
         children: [
-          Icon(
-            icon!,
-            size: _getIconSize(),
-            fill: filledIcon ?? false ? 1 : 0,
-            weight: 400,
-            grade: 0,
-            opticalSize: _getIconSize(),
-            color: iconColor,
-          ),
+          if (leading != null)
+            leading!
+          else
+            Icon(
+              icon!,
+              size: _getIconSize(),
+              fill: filledIcon ?? false ? 1 : 0,
+              weight: 400,
+              grade: 0,
+              opticalSize: _getIconSize(),
+              color: iconColor,
+            ),
           Text(label!, style: _getTextStyle(context), overflow: TextOverflow.fade, softWrap: false),
         ],
       );
@@ -127,23 +132,41 @@ class ChipBuilder {
 
   const ChipBuilder(this.size);
 
-  CustomChip neutral({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
-    return CustomChip._(size, WidgetStatus.neutral, palette, icon, filledIcon, label);
+  CustomChip neutral({
+    required WidgetPalette palette,
+    Widget? leading,
+    IconData? icon,
+    bool? filledIcon,
+    String? label,
+  }) {
+    return CustomChip._(size, WidgetStatus.neutral, palette, leading, icon, filledIcon, label);
   }
 
-  CustomChip translucent({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
-    return CustomChip._(size, WidgetStatus.translucent, palette, icon, filledIcon, label);
+  CustomChip translucent({
+    required WidgetPalette palette,
+    Widget? leading,
+    IconData? icon,
+    bool? filledIcon,
+    String? label,
+  }) {
+    return CustomChip._(size, WidgetStatus.translucent, palette, leading, icon, filledIcon, label);
   }
 
-  CustomChip alert({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
-    return CustomChip._(size, WidgetStatus.alert, palette, icon, filledIcon, label);
+  CustomChip alert({required WidgetPalette palette, Widget? leading, IconData? icon, bool? filledIcon, String? label}) {
+    return CustomChip._(size, WidgetStatus.alert, palette, leading, icon, filledIcon, label);
   }
 
-  CustomChip success({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
-    return CustomChip._(size, WidgetStatus.success, palette, icon, filledIcon, label);
+  CustomChip success({
+    required WidgetPalette palette,
+    Widget? leading,
+    IconData? icon,
+    bool? filledIcon,
+    String? label,
+  }) {
+    return CustomChip._(size, WidgetStatus.success, palette, leading, icon, filledIcon, label);
   }
 
-  CustomChip error({required WidgetPalette palette, IconData? icon, bool? filledIcon, String? label}) {
-    return CustomChip._(size, WidgetStatus.error, palette, icon, filledIcon, label);
+  CustomChip error({required WidgetPalette palette, Widget? leading, IconData? icon, bool? filledIcon, String? label}) {
+    return CustomChip._(size, WidgetStatus.error, palette, leading, icon, filledIcon, label);
   }
 }
