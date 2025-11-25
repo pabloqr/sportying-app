@@ -118,7 +118,7 @@ class _ReservationCardState extends State<ReservationCard> {
                     spacing: 4.0,
                     children: [
                       if (widget.reservation.reservationStatus.isActive)
-                        PulsingDot(
+                        PulsingDot.medium(
                           color: widget.reservation.reservationStatus == ReservationStatus.scheduled
                               ? widget.reservation.reservationStatus.colorOnPrimary(context)
                               : widget.reservation.reservationStatus.colorOnSurface(context),

@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:sportying_app/features/core/utils/widget_size.dart';
 
 class PulsingDot extends StatefulWidget {
-  final Color color;
+  const PulsingDot._(this.size, {required this.color});
 
-  const PulsingDot({super.key, required this.color});
+  factory PulsingDot.small({required Color color}) => PulsingDot._(WidgetSize.small, color: color);
+  factory PulsingDot.medium({required Color color}) => PulsingDot._(WidgetSize.medium, color: color);
+  factory PulsingDot.large({required Color color}) => PulsingDot._(WidgetSize.large, color: color);
+
+  final WidgetSize size;
+
+  final Color color;
 
   @override
   State<PulsingDot> createState() => _PulsingDotState();
@@ -36,23 +43,56 @@ class _PulsingDotState extends State<PulsingDot> with SingleTickerProviderStateM
     super.dispose();
   }
 
+  double get _containerSize {
+    switch (widget.size) {
+      case WidgetSize.small:
+        return 18.0;
+      case WidgetSize.medium:
+        return 24.0;
+      case WidgetSize.large:
+        return 24.0;
+    }
+  }
+
+  double get _dotSize {
+    switch (widget.size) {
+      case WidgetSize.small:
+        return 6.0;
+      case WidgetSize.medium:
+        return 8.0;
+      case WidgetSize.large:
+        return 8.0;
+    }
+  }
+
+  double get _blurRadius {
+    switch (widget.size) {
+      case WidgetSize.small:
+        return 3.0;
+      case WidgetSize.medium:
+        return 4.0;
+      case WidgetSize.large:
+        return 4.0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 24,
-      height: 24,
+      width: _containerSize,
+      height: _containerSize,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // Onda expansiva (ripple effect)
+          // Onda expansiva
           AnimatedBuilder(
             animation: _controller,
             builder: (context, child) {
               return Transform.scale(
                 scale: _scaleAnimation.value,
                 child: Container(
-                  width: 8,
-                  height: 8,
+                  width: _dotSize,
+                  height: _dotSize,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: widget.color.withAlpha((_opacityAnimation.value * 0.6).round()),
@@ -69,12 +109,14 @@ class _PulsingDotState extends State<PulsingDot> with SingleTickerProviderStateM
               return Transform.scale(
                 scale: pulseValue,
                 child: Container(
-                  width: 8,
-                  height: 8,
+                  width: _dotSize,
+                  height: _dotSize,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: widget.color,
-                    boxShadow: [BoxShadow(color: widget.color.withAlpha(100), blurRadius: 4, spreadRadius: 0)],
+                    boxShadow: [
+                      BoxShadow(color: widget.color.withAlpha(100), blurRadius: _blurRadius, spreadRadius: 0),
+                    ],
                   ),
                 ),
               );
