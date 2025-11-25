@@ -4,11 +4,13 @@ import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
+import 'package:sportying_app/domain/models/courts/court_status.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/utils/widget_side.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
+import 'package:sportying_app/features/courts/widgets/court_card.dart';
 import 'package:sportying_app/features/sports/widgets/sport_card.dart';
 
 final _topPadding = 16.0;
@@ -168,6 +170,8 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
         return _sport != null;
       case 1:
         return _complex != null;
+      case 2:
+        return _court != null;
       default:
         return true;
     }
@@ -451,7 +455,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
       children: [
         _SportPage(initialSport: _sport, onSportSelected: (sport) => setState(() => _sport = sport)),
         _ComplexPage(initialComplex: _complex, onComplexSelected: (complex) => setState(() => _complex = complex)),
-        Center(child: Text('Content from page ${_pages[2]}')),
+        _CourtPage(initialCourt: _court, onCourtSelected: (court) => setState(() => _court = court)),
         Center(child: Text('Content from page ${_pages[3]}')),
         Center(child: Text('Content from page ${_pages[4]}')),
       ],
@@ -657,6 +661,92 @@ class _ComplexPageState extends State<_ComplexPage> {
           onTap: () {
             setState(() => _selectedComplexIndex.value = index);
             widget.onComplexSelected(complex);
+          },
+        );
+      },
+    );
+  }
+}
+
+class _CourtPage extends StatefulWidget {
+  const _CourtPage({required this.initialCourt, required this.onCourtSelected});
+
+  final Court? initialCourt;
+  final ValueChanged<Court> onCourtSelected;
+
+  @override
+  State<_CourtPage> createState() => _CourtPageState();
+}
+
+class _CourtPageState extends State<_CourtPage> {
+  final ValueNotifier<int> _selectedCourtIndex = ValueNotifier(-1);
+
+  @override
+  void initState() {
+    super.initState();
+
+    _selectedCourtIndex.value = widget.initialCourt != null ? widget.initialCourt?.id ?? -1 : -1;
+  }
+
+  @override
+  void didUpdateWidget(covariant _CourtPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final newIndex = widget.initialCourt != null ? widget.initialCourt?.id ?? -1 : -1;
+    if (newIndex != _selectedCourtIndex.value) _selectedCourtIndex.value = newIndex;
+  }
+
+  @override
+  void dispose() {
+    _selectedCourtIndex.dispose();
+
+    super.dispose();
+  }
+
+  static WidgetSide _calculateBorderRadius(int index, int length) {
+    if (index == 0) return length > 1 ? WidgetSide.top : WidgetSide.all;
+    if (index == length - 1) return WidgetSide.bottom;
+
+    return WidgetSide.none;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.fromLTRB(16.0, _topPadding - 1.0, 16.0, 0.0),
+      itemCount: 10,
+      itemBuilder: (context, index) {
+        Court court = Court(
+          id: index,
+          complex: Complex(
+            id: index,
+            name: 'Complex $index',
+            timeIni: '09:00',
+            timeEnd: '23:00',
+            address: 'C/Principal, $index, Granada',
+            locLongitude: 0,
+            locLatitude: 0,
+            sports: {Sport.tennis, Sport.football},
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+          sport: Sport.tennis,
+          name: 'Court $index',
+          description: 'Court $index is a place where you can do some sport.',
+          maxPeople: 4,
+          status: CourtStatus.open,
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        return CourtCard.tile(
+          fullRadiusSide: _calculateBorderRadius(index, 10),
+          court: court,
+          index: index,
+          selectedIndex: _selectedCourtIndex,
+          onTap: () {
+            setState(() => _selectedCourtIndex.value = index);
+            widget.onCourtSelected(court);
           },
         );
       },
