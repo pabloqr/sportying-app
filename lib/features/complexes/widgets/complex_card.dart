@@ -301,7 +301,7 @@ class _ComplexTileCard extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 1.0),
           decoration: BoxDecoration(
             color: isSelected
-                ? colorScheme.primary
+                ? colorScheme.primaryContainer
                 : Theme.brightnessOf(context) == Brightness.light
                 ? colorScheme.surfaceContainerLowest
                 : colorScheme.surfaceContainerHigh,
@@ -315,13 +315,10 @@ class _ComplexTileCard extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, bool isSelected) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
         onTap: onTap,
-        overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(12)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -342,13 +339,7 @@ class _ComplexTileCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         spacing: 8.0,
         children: [
-          _ComplexTitle(
-            brightness: Theme.brightnessOf(context) == Brightness.light || !isSelected
-                ? Brightness.light
-                : Brightness.dark,
-            name: complex.name,
-            address: complex.address,
-          ),
+          _ComplexTitle(brightness: Brightness.light, name: complex.name, address: complex.address),
           _buildInfo(context, isSelected),
         ],
       ),
@@ -356,34 +347,22 @@ class _ComplexTileCard extends StatelessWidget {
   }
 
   Widget _buildInfo(BuildContext context, bool isSelected) {
-    final brightness = Theme.brightnessOf(context);
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       spacing: 8.0,
       children: [
         CustomChip.medium.neutral(
-          palette: isSelected
-              ? brightness == Brightness.light
-                    ? WidgetPalette.inverse
-                    : WidgetPalette.normal
-              : WidgetPalette.primary,
+          palette: WidgetPalette.primary,
           icon: Symbols.star_rounded,
           filledIcon: true,
           label: rating.toString(),
         ),
         Expanded(
-          child: brightness == Brightness.light || !isSelected
-              ? LabeledInfoWidget.normal(
-                  icon: Symbols.schedule_rounded,
-                  label: 'Schedule',
-                  text: '${complex.timeIni} - ${complex.timeEnd}',
-                )
-              : LabeledInfoWidget.inverse(
-                  icon: Symbols.schedule_rounded,
-                  label: 'Schedule',
-                  text: '${complex.timeIni} - ${complex.timeEnd}',
-                ),
+          child: LabeledInfoWidget.normal(
+            icon: Symbols.schedule_rounded,
+            label: 'Schedule',
+            text: '${complex.timeIni} - ${complex.timeEnd}',
+          ),
         ),
       ],
     );

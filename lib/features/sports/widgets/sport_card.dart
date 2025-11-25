@@ -57,7 +57,7 @@ class SportCard extends StatelessWidget {
           margin: EdgeInsets.zero,
           decoration: BoxDecoration(
             color: isSelected
-                ? colorScheme.primary
+                ? colorScheme.primaryContainer
                 : Theme.brightnessOf(context) == Brightness.light
                 ? colorScheme.surfaceContainerLowest
                 : colorScheme.surfaceContainerHigh,
@@ -71,29 +71,19 @@ class SportCard extends StatelessWidget {
   }
 
   Widget _buildContent(BuildContext context, bool isSelected) {
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
     return Material(
       type: MaterialType.transparency,
       child: InkWell(
         onTap: onTap,
-        overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(12)),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             spacing: 8.0,
             children: [
-              Icon(
-                sport.icon,
-                size: 24,
-                fill: 0,
-                weight: 400,
-                grade: 0,
-                opticalSize: 24,
-                color: isSelected ? colorScheme.onPrimary : null,
-              ),
+              Icon(sport.icon, size: 24, fill: 0, weight: 400, grade: 0, opticalSize: 24),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,10 +91,7 @@ class SportCard extends StatelessWidget {
                 children: [
                   Text(
                     sport.name.toCapitalized(),
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: isSelected ? colorScheme.onPrimary : null,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
+                    style: textTheme.bodyMedium?.copyWith(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
                   ),
                   if (numCourts != null)
                     CustomChip.small.success(palette: WidgetPalette.primary, label: '$numCourts Courts'),
