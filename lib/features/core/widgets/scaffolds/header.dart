@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 enum HeaderContainer { card, none }
 
-enum _HeaderType { subheader, subSubheader }
+enum _HeaderType { subheader, subsubheader }
 
 extension _HeaderTypeExtension on _HeaderType {
   TextStyle? textTheme(BuildContext context) {
@@ -11,13 +11,31 @@ extension _HeaderTypeExtension on _HeaderType {
     switch (this) {
       case _HeaderType.subheader:
         return textTheme.titleMedium?.copyWith(fontSize: 18.0);
-      case _HeaderType.subSubheader:
+      case _HeaderType.subsubheader:
         return textTheme.titleSmall;
     }
   }
 }
 
 class Header extends StatelessWidget {
+  const Header.subheader({
+    super.key,
+    required this.container,
+    required this.title,
+    this.buttonLabel,
+    this.icon,
+    this.onPressed,
+  }) : _headerType = _HeaderType.subheader;
+
+  const Header.subSubheader({
+    super.key,
+    required this.container,
+    required this.title,
+    this.buttonLabel,
+    this.icon,
+    this.onPressed,
+  }) : _headerType = _HeaderType.subsubheader;
+
   final HeaderContainer container;
 
   final String title;
@@ -26,24 +44,6 @@ class Header extends StatelessWidget {
   final VoidCallback? onPressed;
 
   final _HeaderType _headerType;
-
-  const Header._(this._headerType, this.container, this.title, this.buttonLabel, this.icon, this.onPressed);
-
-  factory Header.subheader({
-    required HeaderContainer container,
-    required String subheaderText,
-    String? buttonText,
-    IconData? icon,
-    VoidCallback? onPressed,
-  }) => Header._(_HeaderType.subheader, container, subheaderText, buttonText, icon, onPressed);
-
-  factory Header.subSubheader({
-    required HeaderContainer container,
-    required String subheaderText,
-    String? buttonText,
-    IconData? icon,
-    VoidCallback? onPressed,
-  }) => Header._(_HeaderType.subSubheader, container, subheaderText, buttonText, icon, onPressed);
 
   @override
   Widget build(BuildContext context) {
@@ -89,10 +89,7 @@ class Header extends StatelessWidget {
             child: InkWell(
               overlayColor: WidgetStatePropertyAll(colorScheme.onSurface.withAlpha(25)),
               onTap: onPressed,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                child: content,
-              ),
+              child: Padding(padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0), child: content),
             ),
           )
         : content;

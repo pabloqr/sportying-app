@@ -58,6 +58,28 @@ enum _CourtCardType { carousel, tile, card }
 /// - [CourtCard.tile]: Compact tile layout (ready for custom implementation)
 /// - [CourtCard.card]: Full card layout with detailed information
 class CourtCard extends StatelessWidget {
+  CourtCard.carousel({super.key, required this.court, this.index, ValueNotifier<int>? selectedIndex})
+    : _type = _CourtCardType.carousel,
+      fullRadiusSide = null,
+      selectedIndex = selectedIndex ?? ValueNotifier<int>(-1),
+      onTap = null;
+
+  CourtCard.tile({
+    super.key,
+    this.fullRadiusSide = WidgetSide.none,
+    required this.court,
+    this.index,
+    ValueNotifier<int>? selectedIndex,
+    this.onTap,
+  }) : _type = _CourtCardType.tile,
+       selectedIndex = selectedIndex ?? ValueNotifier<int>(-1);
+
+  CourtCard.card({super.key, required this.court, this.index, ValueNotifier<int>? selectedIndex})
+    : _type = _CourtCardType.card,
+      fullRadiusSide = null,
+      selectedIndex = selectedIndex ?? ValueNotifier<int>(-1),
+      onTap = null;
+
   final _CourtCardType _type;
 
   final WidgetSide? fullRadiusSide;
@@ -68,29 +90,6 @@ class CourtCard extends StatelessWidget {
   final ValueNotifier<int> selectedIndex;
 
   final VoidCallback? onTap;
-
-  const CourtCard._(this._type, this.fullRadiusSide, this.court, this.index, this.selectedIndex, this.onTap);
-
-  factory CourtCard.carousel({required Court court, int? index, ValueNotifier<int>? selectedIndex}) {
-    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return CourtCard._(_CourtCardType.carousel, null, court, index, notifier, null);
-  }
-
-  factory CourtCard.tile({
-    WidgetSide fullRadiusSide = WidgetSide.none,
-    required Court court,
-    int? index,
-    ValueNotifier<int>? selectedIndex,
-    VoidCallback? onTap,
-  }) {
-    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return CourtCard._(_CourtCardType.tile, fullRadiusSide, court, index, notifier, onTap);
-  }
-
-  factory CourtCard.card({required Court court, int? index, ValueNotifier<int>? selectedIndex}) {
-    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return CourtCard._(_CourtCardType.card, null, court, index, notifier, null);
-  }
 
   @override
   Widget build(BuildContext context) {

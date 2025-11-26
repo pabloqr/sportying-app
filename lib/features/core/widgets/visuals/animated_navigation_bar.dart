@@ -14,18 +14,13 @@ class AnimatedNavigationBar extends StatelessWidget {
     this.floatingBar = false,
   });
 
-  factory AnimatedNavigationBar.floating({
-    required BarAnimation barAnimation,
-    required int selectedIndex,
-    ValueChanged<int>? onDestinationSelected,
-    required List<Destination> destinations,
-  }) => AnimatedNavigationBar(
-    floatingBar: true,
-    barAnimation: barAnimation,
-    selectedIndex: selectedIndex,
-    onDestinationSelected: onDestinationSelected,
-    destinations: destinations,
-  );
+  const AnimatedNavigationBar.floating({
+    super.key,
+    required this.barAnimation,
+    required this.selectedIndex,
+    this.onDestinationSelected,
+    required this.destinations,
+  }) : floatingBar = true;
 
   final BarAnimation barAnimation;
 

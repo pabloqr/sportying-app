@@ -59,7 +59,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       children: [
         Header.subheader(
           container: HeaderContainer.card,
-          subheaderText: 'Reservations',
+          title: 'Reservations',
           icon: Symbols.chevron_right_rounded,
           onPressed: () {},
         ),
@@ -77,7 +77,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       children: [
         Header.subheader(
           container: HeaderContainer.card,
-          subheaderText: 'Discover',
+          title: 'Discover',
           icon: Symbols.chevron_right_rounded,
           onPressed: () {},
         ),
@@ -113,7 +113,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
       children: [
         Header.subheader(
           container: HeaderContainer.card,
-          subheaderText: 'News',
+          title: 'News',
           icon: Symbols.chevron_right_rounded,
           onPressed: () {},
         ),

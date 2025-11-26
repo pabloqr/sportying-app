@@ -59,6 +59,39 @@ enum _ComplexCardType { carousel, tile, card }
 /// - [ComplexCard.tile]: Compact tile layout (ready for custom implementation)
 /// - [ComplexCard.card]: Full card layout with detailed information
 class ComplexCard extends StatelessWidget {
+  ComplexCard.carousel({
+    super.key,
+    required this.complex,
+    required this.rating,
+    this.index,
+    ValueNotifier<int>? selectedIndex,
+  }) : _type = _ComplexCardType.carousel,
+       fullRadiusSide = null,
+       selectedIndex = selectedIndex ?? ValueNotifier<int>(-1),
+       onTap = null;
+
+  ComplexCard.tile({
+    super.key,
+    this.fullRadiusSide = WidgetSide.none,
+    required this.complex,
+    required this.rating,
+    this.index,
+    ValueNotifier<int>? selectedIndex,
+    this.onTap,
+  }) : _type = _ComplexCardType.tile,
+       selectedIndex = selectedIndex ?? ValueNotifier<int>(-1);
+
+  ComplexCard.card({
+    super.key,
+    required this.complex,
+    required this.rating,
+    this.index,
+    ValueNotifier<int>? selectedIndex,
+  }) : _type = _ComplexCardType.card,
+       fullRadiusSide = null,
+       selectedIndex = selectedIndex ?? ValueNotifier<int>(-1),
+       onTap = null;
+
   final _ComplexCardType _type;
 
   final WidgetSide? fullRadiusSide;
@@ -70,48 +103,6 @@ class ComplexCard extends StatelessWidget {
   final ValueNotifier<int> selectedIndex;
 
   final VoidCallback? onTap;
-
-  const ComplexCard._(
-    this._type,
-    this.fullRadiusSide,
-    this.complex,
-    this.rating,
-    this.index,
-    this.selectedIndex,
-    this.onTap,
-  );
-
-  factory ComplexCard.carousel({
-    required Complex complex,
-    required double rating,
-    int? index,
-    ValueNotifier<int>? selectedIndex,
-  }) {
-    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.carousel, null, complex, rating, index, notifier, null);
-  }
-
-  factory ComplexCard.tile({
-    WidgetSide fullRadiusSide = WidgetSide.none,
-    required Complex complex,
-    required double rating,
-    int? index,
-    ValueNotifier<int>? selectedIndex,
-    VoidCallback? onTap,
-  }) {
-    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.tile, fullRadiusSide, complex, rating, index, notifier, onTap);
-  }
-
-  factory ComplexCard.card({
-    required Complex complex,
-    required double rating,
-    int? index,
-    ValueNotifier<int>? selectedIndex,
-  }) {
-    final notifier = selectedIndex ?? ValueNotifier<int>(-1);
-    return ComplexCard._(_ComplexCardType.card, null, complex, rating, index, notifier, null);
-  }
 
   @override
   Widget build(BuildContext context) {

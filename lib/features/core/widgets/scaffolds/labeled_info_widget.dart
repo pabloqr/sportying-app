@@ -2,6 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
 
 class LabeledInfoWidget extends StatelessWidget {
+  const LabeledInfoWidget.normal({
+    super.key,
+    this.showIcon = true,
+    this.icon,
+    this.filledIcon = false,
+    required this.label,
+    required this.text,
+  }) : brightness = Brightness.dark;
+
+  const LabeledInfoWidget.inverse({
+    super.key,
+    this.showIcon = true,
+    this.icon,
+    this.filledIcon = false,
+    required this.label,
+    required this.text,
+  }) : brightness = Brightness.light;
+
   final Brightness brightness;
 
   final bool showIcon;
@@ -9,24 +27,6 @@ class LabeledInfoWidget extends StatelessWidget {
   final bool filledIcon;
   final String label;
   final String text;
-
-  const LabeledInfoWidget._(this.brightness, this.showIcon, this.icon, this.filledIcon, this.label, this.text);
-
-  factory LabeledInfoWidget.normal({
-    bool showIcon = true,
-    IconData? icon,
-    bool filledIcon = false,
-    required String label,
-    required String text,
-  }) => LabeledInfoWidget._(Brightness.dark, showIcon, icon, filledIcon, label, text);
-
-  factory LabeledInfoWidget.inverse({
-    bool showIcon = true,
-    IconData? icon,
-    bool filledIcon = false,
-    required String label,
-    required String text,
-  }) => LabeledInfoWidget._(Brightness.light, showIcon, icon, filledIcon, label, text);
 
   @override
   Widget build(BuildContext context) {

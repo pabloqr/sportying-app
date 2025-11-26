@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:sportying_app/features/core/utils/widget_size.dart';
 
 class PulsingDot extends StatefulWidget {
-  const PulsingDot._(this.size, {required this.color});
-
-  factory PulsingDot.small({required Color color}) => PulsingDot._(WidgetSize.small, color: color);
-  factory PulsingDot.medium({required Color color}) => PulsingDot._(WidgetSize.medium, color: color);
-  factory PulsingDot.large({required Color color}) => PulsingDot._(WidgetSize.large, color: color);
+  const PulsingDot.small({super.key, required this.color}) : size = WidgetSize.small;
+  const PulsingDot.medium({super.key, required this.color}) : size = WidgetSize.medium;
+  const PulsingDot.large({super.key, required this.color}) : size = WidgetSize.large;
 
   final WidgetSize size;
 
