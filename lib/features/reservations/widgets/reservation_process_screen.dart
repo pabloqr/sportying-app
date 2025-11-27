@@ -557,7 +557,11 @@ class _SportPageState extends State<_SportPage> {
       itemCount: Sport.values.length,
       itemBuilder: (context, index, crossAxisCount) {
         return SportCard(
-          fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(Sport.values.length, index, crossAxisCount),
+          fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(
+            Sport.values.length,
+            index,
+            crossAxisCount: crossAxisCount,
+          ),
           sport: Sport.values[index],
           onTap: () {
             setState(() => _selectedSportIndex.value = index);
@@ -606,13 +610,6 @@ class _ComplexPageState extends State<_ComplexPage> {
     super.dispose();
   }
 
-  static WidgetSide _calculateBorderRadius(int index, int length) {
-    if (index == 0) return length > 1 ? WidgetSide.top : WidgetSide.all;
-    if (index == length - 1) return WidgetSide.bottom;
-
-    return WidgetSide.none;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -633,7 +630,7 @@ class _ComplexPageState extends State<_ComplexPage> {
         );
 
         return ComplexCard.tile(
-          fullRadiusSide: _calculateBorderRadius(index, 10),
+          fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
           complex: complex,
           rating: 4.5,
           index: index,
@@ -683,13 +680,6 @@ class _CourtPageState extends State<_CourtPage> {
     super.dispose();
   }
 
-  static WidgetSide _calculateBorderRadius(int index, int length) {
-    if (index == 0) return length > 1 ? WidgetSide.top : WidgetSide.all;
-    if (index == length - 1) return WidgetSide.bottom;
-
-    return WidgetSide.none;
-  }
-
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
@@ -720,7 +710,7 @@ class _CourtPageState extends State<_CourtPage> {
         );
 
         return CourtCard.tile(
-          fullRadiusSide: _calculateBorderRadius(index, 10),
+          fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
           court: court,
           index: index,
           selectedIndex: _selectedCourtIndex,

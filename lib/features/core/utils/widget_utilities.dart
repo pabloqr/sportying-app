@@ -16,7 +16,7 @@ class WidgetUtilities {
     }
   }
 
-  static WidgetSide calculateBorderRadiusSide(int length, int index, int crossAxisCount) {
+  static WidgetSide calculateBorderRadiusSide(int length, int index, {int crossAxisCount = 1}) {
     // Casos base: un solo elemento, o datos inválidos
     if (length == 0 || crossAxisCount == 0) return WidgetSide.none;
     if (length == 1) return crossAxisCount == 1 ? WidgetSide.all : WidgetSide.left;
