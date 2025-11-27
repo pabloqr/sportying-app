@@ -6,7 +6,6 @@ import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
 import 'package:sportying_app/domain/models/courts/court_status.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
-import 'package:sportying_app/features/core/utils/widget_side.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/custom_grid_view.dart';
@@ -41,12 +40,11 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   Court? _court;
   DateTimeRange? _dateTimeRange;
 
-  final List<String> _pages = ['Sport', 'Complex', 'Court', 'Date and time', 'Summary'];
+  final List<String> _pages = ['Sport', 'Complex', 'Court', 'Summary'];
   final List<String> _pagesDetails = [
     'Select a sport to book a court.',
     'Select a complex to book a court.',
     'Select a court to book.',
-    'Select date and time to complete your reservation.',
     'Check your selection and confirm your reservation.',
   ];
 
@@ -268,7 +266,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
 
     return SliverAppBar(
       pinned: true,
-      expandedHeight: _expandedHeight, // Original: 168.0
+      expandedHeight: _expandedHeight,
       collapsedHeight: 72.0,
       toolbarHeight: 48.0,
       backgroundColor: colorScheme.surface,
@@ -415,9 +413,11 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
         ),
         ClipRect(
           child: Transform.translate(
-            offset: Offset(_slideProgress * -20, 0), // Slide sutil de 20px
+            // Aplicar slide al texto
+            offset: Offset(_slideProgress * -20, 0),
             child: Opacity(
-              opacity: (1.0 - _slideProgress.abs() * 0.8).clamp(0.0, 1.0), // Fade más sutil
+              // Aplicar fade al texto
+              opacity: (1.0 - _slideProgress.abs() * 0.8).clamp(0.0, 1.0),
               child: Text(
                 _pagesDetails[_displayPage],
                 style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
@@ -432,19 +432,21 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   Widget _buildPagesIndicator(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16.0),
-      decoration: BoxDecoration(
-        boxShadow: _currentPage == _pages.length - 1
-            ? [BoxShadow(color: colorScheme.primary.withAlpha(100), blurRadius: 8, spreadRadius: 3)]
-            : null,
-      ),
-      child: WavyProgressIndicator(
-        value: (_currentPage + 1) / _pages.length,
-        progressColor: colorScheme.primary,
-        fillerColor: colorScheme.surfaceContainer,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        decoration: BoxDecoration(
+          boxShadow: _currentPage == _pages.length - 1
+              ? [BoxShadow(color: colorScheme.primary.withAlpha(100), blurRadius: 8, spreadRadius: 3)]
+              : null,
+        ),
+        child: WavyProgressIndicator(
+          value: (_currentPage + 1) / _pages.length,
+          progressColor: colorScheme.primary,
+          fillerColor: colorScheme.surfaceContainer,
+        ),
       ),
     );
   }
@@ -459,7 +461,6 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
         _ComplexPage(initialComplex: _complex, onComplexSelected: (complex) => setState(() => _complex = complex)),
         _CourtPage(initialCourt: _court, onCourtSelected: (court) => setState(() => _court = court)),
         Center(child: Text('Content from page ${_pages[3]}')),
-        Center(child: Text('Content from page ${_pages[4]}')),
       ],
     );
   }
