@@ -8,6 +8,8 @@ import 'package:sportying_app/domain/models/courts/court_status.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/utils/widget_side.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
+import 'package:sportying_app/features/core/utils/widget_utilities.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/custom_grid_view.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
 import 'package:sportying_app/features/courts/widgets/court_card.dart';
@@ -546,38 +548,16 @@ class _SportPageState extends State<_SportPage> {
     super.dispose();
   }
 
-  static WidgetSide _calculateBorderRadius(int index) {
-    if (Sport.values.length < 3) {
-      if (index == 0) return WidgetSide.left;
-      if (index == 1) return WidgetSide.right;
-    }
-
-    if (index == 0) return WidgetSide.topLeft;
-    if (index == 1) return WidgetSide.topRight;
-
-    if (index == Sport.values.length - 2 && Sport.values.length.isEven) return WidgetSide.bottomLeft;
-    if (index == Sport.values.length - 1) {
-      return Sport.values.length.isEven ? WidgetSide.bottomRight : WidgetSide.bottomLeft;
-    }
-
-    return WidgetSide.none;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return CustomGridView.expressive(
       padding: EdgeInsets.fromLTRB(16.0, _topPadding, 16.0, 0.0),
-      shrinkWrap: true,
-      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-        maxCrossAxisExtent: 250.0,
-        mainAxisSpacing: 2.0,
-        crossAxisSpacing: 2.0,
-        childAspectRatio: 3 / 2,
-      ),
+      maxCrossAxisExtent: 250.0,
+      childAspectRatio: 3 / 2,
       itemCount: Sport.values.length,
-      itemBuilder: (context, index) {
+      itemBuilder: (context, index, crossAxisCount) {
         return SportCard(
-          fullRadiusSide: _calculateBorderRadius(index),
+          fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(Sport.values.length, index, crossAxisCount),
           sport: Sport.values[index],
           onTap: () {
             setState(() => _selectedSportIndex.value = index);
