@@ -14,7 +14,152 @@ import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indica
 import 'package:sportying_app/features/courts/widgets/court_card.dart';
 import 'package:sportying_app/features/sports/widgets/sport_card.dart';
 
-final _topPadding = 16.0;
+//--------------------------------------------------------------------------------------------------------------------//
+// CONSTANTS
+//--------------------------------------------------------------------------------------------------------------------//
+
+// Header heights
+const double _kExpandedHeightMin = 168.0;
+const double _kExpandedHeightMax = 300.0;
+const double _kCollapsedHeight = 72.0;
+const double _kToolbarHeight = 48.0;
+const double _kCollapsedThreshold = 112.0; // collapsedHeight + bottomHeight
+
+// Header padding calculations
+const double _kHeaderTopPadding = 48.0;
+const double _kHeaderBottomPadding = 16.0;
+const double _kHeaderHorizontalPadding = 16.0;
+const double _kStepIndicatorHeight = 20.0;
+const double _kStepNameHeight = 28.0;
+const double _kBottomHeight = 32.0;
+
+// Animation values
+const Duration _kAnimationDuration = Duration(milliseconds: 500);
+const Duration _kQuickAnimationDuration = Duration(milliseconds: 300);
+const Duration _kScrollAnimationDuration = Duration(milliseconds: 200);
+const Curve _kAnimationCurve = Curves.easeInOut;
+
+// Slide animation offsets
+const double _kSlideOffsetSmall = 15.0;
+const double _kSlideOffsetMedium = 20.0;
+const double _kSlideOffsetLarge = 30.0;
+
+// Page transition threshold
+const double _kPageTransitionThreshold = 0.5;
+
+// Opacity values
+const double _kFadeIntensity = 0.8;
+
+// Content padding
+const double _kContentTopPadding = 16.0;
+const double _kContentHorizontalPadding = 16.0;
+
+// Button dimensions
+const double _kBackButtonWidth = 120.0;
+const double _kButtonSpacing = 8.0;
+
+// Dialog alpha values
+const int _kButtonOverlayAlpha = 25;
+
+// Progress indicator
+const double _kProgressIndicatorVerticalPadding = 16.0;
+const int _kProgressGlowAlpha = 100;
+const double _kProgressGlowBlur = 8.0;
+const double _kProgressGlowSpread = 3.0;
+
+// Grid view
+const double _kGridMaxCrossAxisExtent = 250.0;
+const double _kGridChildAspectRatio = 3 / 2;
+
+// Search bar
+const double _kSearchBarMaxWidth = 480.0;
+
+//--------------------------------------------------------------------------------------------------------------------//
+// HEADER CONTROLLER
+//--------------------------------------------------------------------------------------------------------------------//
+
+/// Controller for managing header animation state and calculations
+class _ReservationHeaderController extends ChangeNotifier {
+  int _currentPage = 0;
+  int _displayPage = 0;
+  double _slideProgress = 0.0;
+  double _expandedHeight = _kExpandedHeightMin;
+
+  int get currentPage => _currentPage;
+  int get displayPage => _displayPage;
+  double get slideProgress => _slideProgress;
+  double get expandedHeight => _expandedHeight;
+
+  /// Updates the controller state based on page scroll
+  void updateFromPageScroll(double page, int pageCount) {
+    final pageInt = page.round();
+    final progress = page - pageInt;
+
+    _currentPage = pageInt;
+
+    // Determine which page to display in header
+    final previousDisplayPage = _displayPage;
+    if (progress.abs() >= _kPageTransitionThreshold) {
+      _displayPage = progress > 0 ? pageInt + 1 : pageInt - 1;
+      _displayPage = _displayPage.clamp(0, pageCount - 1);
+    } else {
+      _displayPage = pageInt;
+    }
+
+    // Calculate slide progress (-1.0 to 1.0)
+    _slideProgress = _calculateSlideProgress(progress);
+
+    // Notify if display page changed
+    if (previousDisplayPage != _displayPage) {
+      notifyListeners();
+    }
+  }
+
+  /// Calculates slide progress from page progress
+  double _calculateSlideProgress(double progress) {
+    if (progress >= 0) {
+      return progress < _kPageTransitionThreshold ? progress * 2 : (progress - 1.0) * 2;
+    } else {
+      return progress > -_kPageTransitionThreshold ? progress * 2 : (progress + 1.0) * 2;
+    }
+  }
+
+  /// Updates the expanded height based on content
+  void updateExpandedHeight(double height) {
+    _expandedHeight = height.clamp(_kExpandedHeightMin, _kExpandedHeightMax);
+    notifyListeners();
+  }
+
+  /// Calculates the required height for the current page description
+  double calculateRequiredHeight(BuildContext context, String description) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final availableWidth = screenWidth - (_kHeaderHorizontalPadding * 2);
+
+    final descriptionStyle = textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant);
+
+    final textPainter = TextPainter(
+      text: TextSpan(text: description, style: descriptionStyle),
+      textDirection: TextDirection.ltr,
+      maxLines: null,
+    );
+
+    textPainter.layout(maxWidth: availableWidth);
+
+    return _kHeaderTopPadding +
+        _kStepIndicatorHeight +
+        _kStepNameHeight +
+        textPainter.height +
+        _kHeaderBottomPadding +
+        _kBottomHeight;
+  }
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+// MAIN SCREEN
+//--------------------------------------------------------------------------------------------------------------------//
 
 class ReservationProcessScreen extends StatefulWidget {
   const ReservationProcessScreen({super.key});
@@ -24,16 +169,9 @@ class ReservationProcessScreen extends StatefulWidget {
 }
 
 class _ReservationProcessScreenState extends State<ReservationProcessScreen> with SingleTickerProviderStateMixin {
-  final _pageController = PageController();
-  final _scrollController = ScrollController();
-
-  late AnimationController _headerAnimationController;
-
-  int _currentPage = 0;
-  int _displayPage = 0;
-  double _slideProgress = 0.0; // -1.0 a 1.0
-
-  double _expandedHeight = 168.0;
+  late final PageController _pageController;
+  late final ScrollController _scrollController;
+  late final _ReservationHeaderController _headerController;
 
   Sport? _sport;
   Complex? _complex;
@@ -52,22 +190,21 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   void initState() {
     super.initState();
 
-    _headerAnimationController = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    _pageController = PageController();
+    _scrollController = ScrollController();
+    _headerController = _ReservationHeaderController();
 
-    // Listener del PageController para sincronizar animaciones
     _pageController.addListener(_onPageScroll);
 
-    // Calcular altura inicial después del primer frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateExpandedHeight();
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateExpandedHeight());
   }
 
   @override
   void dispose() {
     _pageController.removeListener(_onPageScroll);
     _pageController.dispose();
-    _headerAnimationController.dispose();
+    _scrollController.dispose();
+    _headerController.dispose();
 
     super.dispose();
   }
@@ -75,97 +212,38 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   void _updateExpandedHeight() {
     if (!mounted) return;
 
-    final textTheme = Theme.of(context).textTheme;
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // Calcular el ancho disponible para el texto (considerando paddings)
-    final availableWidth = screenWidth - 32.0; // 16.0 padding left + 16.0 padding right
-
-    // Altura fija de los elementos
-    const topPadding = 48.0;
-    const bottomPadding = 16.0;
-    const stepIndicatorHeight = 20.0; // Aproximado para bodyMedium
-    const stepNameHeight = 28.0; // Aproximado para titleLarge
-    const bottomHeight = 32.0;
-
-    // Calcular altura del texto de descripción usando TextPainter
-    final descriptionStyle = textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant);
-
-    final textSpan = TextSpan(text: _pagesDetails[_displayPage], style: descriptionStyle);
-
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-      maxLines: null, // Sin límite de líneas
+    final requiredHeight = _headerController.calculateRequiredHeight(
+      context,
+      _pagesDetails[_headerController.displayPage],
     );
 
-    textPainter.layout(maxWidth: availableWidth);
-    final descriptionHeight = textPainter.height;
-
-    // Calcular altura total expandida
-    final calculatedHeight =
-        topPadding + stepIndicatorHeight + stepNameHeight + descriptionHeight + bottomPadding + bottomHeight;
-
-    // Establecer altura mínima y máxima
-    const minHeight = 168.0;
-    const maxHeight = 300.0;
-
-    setState(() {
-      _expandedHeight = calculatedHeight.clamp(minHeight, maxHeight);
-    });
+    _headerController.updateExpandedHeight(requiredHeight);
   }
 
   void _onPageScroll() {
     if (!_pageController.hasClients) return;
 
     final page = _pageController.page ?? 0.0;
-    final pageInt = page.round();
-    final progress = page - pageInt; // -0.5 a 0.5
+    final previousDisplayPage = _headerController.displayPage;
 
-    setState(() {
-      // Actualizar página actual
-      if (_currentPage != pageInt) {
-        _currentPage = pageInt;
+    _headerController.updateFromPageScroll(page, _pages.length);
+
+    // Actualizar la altura al cambiar de página
+    if (previousDisplayPage != _headerController.displayPage) {
+      _updateExpandedHeight();
+
+      // Restablecer el scroll al inicio
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(0, duration: _kScrollAnimationDuration, curve: Curves.easeOut);
       }
+    }
 
-      // Determinar qué página mostrar en el header
-      final previousDisplayPage = _displayPage;
-      if (progress.abs() >= 0.5) {
-        _displayPage = progress > 0 ? pageInt + 1 : pageInt - 1;
-        _displayPage = _displayPage.clamp(0, _pages.length - 1);
-      } else {
-        _displayPage = pageInt;
-      }
-
-      // Si cambió la página mostrada, recalcular altura
-      if (previousDisplayPage != _displayPage) {
-        _updateExpandedHeight();
-
-        // Resetear scroll
-        if (_scrollController.hasClients) {
-          _scrollController.animateTo(0, duration: const Duration(milliseconds: 200), curve: Curves.easeOut);
-        }
-      }
-
-      // Calcular el progreso del slide (-1.0 a 1.0)
-      if (progress >= 0) {
-        if (progress < 0.5) {
-          _slideProgress = progress * 2; // 0.0 a 1.0
-        } else {
-          _slideProgress = (progress - 1.0) * 2; // -1.0 a 0.0
-        }
-      } else {
-        if (progress > -0.5) {
-          _slideProgress = progress * 2; // 0.0 a -1.0
-        } else {
-          _slideProgress = (progress + 1.0) * 2; // 1.0 a 0.0
-        }
-      }
-    });
+    // Actualización para la animación del indicador de progreso
+    setState(() {});
   }
 
   bool _canContinue() {
-    switch (_currentPage) {
+    switch (_headerController.currentPage) {
       case 0:
         return _sport != null;
       case 1:
@@ -178,63 +256,49 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   }
 
   void _previousPage() {
-    if (_currentPage > 0) {
-      _pageController.previousPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    if (_headerController.currentPage > 0) {
+      _pageController.previousPage(duration: _kAnimationDuration, curve: _kAnimationCurve);
     }
   }
 
   void _nextPage() {
-    if (_canContinue() && _currentPage < _pages.length - 1) {
-      _pageController.nextPage(duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
+    if (_canContinue() && _headerController.currentPage < _pages.length - 1) {
+      _pageController.nextPage(duration: _kAnimationDuration, curve: _kAnimationCurve);
     }
   }
 
-  void _cancelReservation(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.brightnessOf(context);
-
-    final headerColor = WidgetStatus.alert.colorSurface(context);
-    final iconColor = WidgetStatus.alert.colorOnSurface(context);
-
-    final String text = 'Creation';
-
+  void _cancelReservation() {
     showCustomAlertDialog(
       context,
       icon: WidgetStatus.alert.icon,
-      headline: 'Leave reservation ${text.toLowerCase()}?',
-      supportingText:
-          'You are about to exit the reservation ${text.toLowerCase()} process. All unsaved changes will be lost.',
-      headerColor: headerColor,
-      iconColor: iconColor,
+      headline: 'Leave reservation creation?',
+      supportingText: 'You are about to exit the reservation creation process. All unsaved changes will be lost.',
+      headerColor: WidgetStatus.alert.colorSurface(context),
+      iconColor: WidgetStatus.alert.colorOnSurface(context),
       actions: [
+        TextButton(style: _getDialogButtonStyle(context), onPressed: () => context.pop(), child: const Text('Stay')),
         TextButton(
-          style: ButtonStyle(
-            overlayColor: WidgetStatePropertyAll(
-              brightness == Brightness.light ? colorScheme.onPrimary.withAlpha(25) : colorScheme.primary.withAlpha(25),
-            ),
-            foregroundColor: WidgetStatePropertyAll(
-              brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary,
-            ),
-          ),
-          onPressed: () => context.pop(),
-          child: const Text('Stay'),
-        ),
-        TextButton(
-          style: ButtonStyle(
-            overlayColor: WidgetStatePropertyAll(
-              brightness == Brightness.light ? colorScheme.onPrimary.withAlpha(25) : colorScheme.primary.withAlpha(25),
-            ),
-            foregroundColor: WidgetStatePropertyAll(
-              brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary,
-            ),
-          ),
-          onPressed: () async {
+          style: _getDialogButtonStyle(context),
+          onPressed: () {
             context.pop();
             context.pop();
           },
           child: const Text('Leave'),
         ),
       ],
+    );
+  }
+
+  ButtonStyle _getDialogButtonStyle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
+
+    final overlayColor = brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
+    final foregroundColor = brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
+
+    return ButtonStyle(
+      overlayColor: WidgetStatePropertyAll(overlayColor.withAlpha(_kButtonOverlayAlpha)),
+      foregroundColor: WidgetStatePropertyAll(foregroundColor),
     );
   }
 
@@ -247,377 +311,271 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
             Expanded(
               child: NestedScrollView(
                 controller: _scrollController,
-                headerSliverBuilder: (context, innerBoxIsScrolled) {
-                  return [_buildAppBar(context), ?_buildSearchControls(context)];
-                },
-                body: _buildPageView(context),
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  _buildAppBar(),
+                  if (_shouldShowSearchBar()) _buildSearchBar(),
+                ],
+                body: _buildPageView(),
               ),
             ),
-            _buildPageControls(context),
+            _PageNavigationControls(
+              currentPage: _headerController.currentPage,
+              totalPages: _pages.length,
+              canContinue: _canContinue(),
+              onPrevious: _previousPage,
+              onNext: _nextPage,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+  bool _shouldShowSearchBar() {
+    return _headerController.currentPage < 3;
+  }
 
-    return SliverAppBar(
-      pinned: true,
-      expandedHeight: _expandedHeight,
-      collapsedHeight: 72.0,
-      toolbarHeight: 48.0,
-      backgroundColor: colorScheme.surface,
-      surfaceTintColor: colorScheme.surface,
-      leading: IconButton(onPressed: () => _cancelReservation(context), icon: const Icon(Icons.arrow_back_rounded)),
-      title: Text('New reservation'),
-      flexibleSpace: LayoutBuilder(
-        builder: (context, constraints) {
-          final isCollapsed = constraints.maxHeight <= 112.0; // collapsedHeight + bottomHeight (40.0)
+  Widget _buildAppBar() {
+    return ListenableBuilder(
+      listenable: _headerController,
+      builder: (context, _) {
+        final colorScheme = Theme.of(context).colorScheme;
 
-          return FlexibleSpaceBar(
-            centerTitle: false,
-            titlePadding: EdgeInsets.zero,
-            collapseMode: CollapseMode.parallax,
-            title: isCollapsed
-                ? Padding(
-                    padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 32.0),
-                    child: _buildCollapsedHeader(context, textTheme, colorScheme),
-                  )
-                : null,
-            background: Container(
-              padding: const EdgeInsets.fromLTRB(16.0, 48.0, 16.0, 16.0),
-              color: colorScheme.surface,
-              child: _buildExpandedHeader(context, textTheme, colorScheme),
-            ),
-          );
-        },
-      ),
-      bottom: PreferredSize(preferredSize: const Size.fromHeight(32.0), child: _buildPagesIndicator(context)),
+        return SliverAppBar(
+          pinned: true,
+          expandedHeight: _headerController.expandedHeight,
+          collapsedHeight: _kCollapsedHeight,
+          toolbarHeight: _kToolbarHeight,
+          backgroundColor: colorScheme.surface,
+          surfaceTintColor: colorScheme.surface,
+          leading: IconButton(onPressed: _cancelReservation, icon: const Icon(Icons.arrow_back_rounded)),
+          title: const Text('New reservation'),
+          flexibleSpace: _buildFlexibleSpace(),
+          bottom: PreferredSize(preferredSize: const Size.fromHeight(_kBottomHeight), child: _buildProgressIndicator()),
+        );
+      },
     );
   }
 
-  Widget? _buildSearchControls(BuildContext context) {
-    if (_currentPage == 3 || _currentPage == 4) return null;
+  Widget _buildFlexibleSpace() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final colorScheme = Theme.of(context).colorScheme;
 
+        final isCollapsed = constraints.maxHeight <= _kCollapsedThreshold;
+
+        return FlexibleSpaceBar(
+          centerTitle: false,
+          titlePadding: EdgeInsets.zero,
+          collapseMode: CollapseMode.parallax,
+          title: isCollapsed
+              ? Padding(
+                  padding: const EdgeInsets.fromLTRB(
+                    _kHeaderHorizontalPadding,
+                    0.0,
+                    _kHeaderHorizontalPadding,
+                    _kBottomHeight,
+                  ),
+                  child: _CollapsedHeader(
+                    currentStep: _headerController.displayPage + 1,
+                    totalSteps: _pages.length,
+                    stepName: _pages[_headerController.displayPage],
+                    slideProgress: _headerController.slideProgress,
+                  ),
+                )
+              : null,
+          background: Container(
+            padding: const EdgeInsets.fromLTRB(
+              _kHeaderHorizontalPadding,
+              _kHeaderTopPadding,
+              _kHeaderHorizontalPadding,
+              _kHeaderBottomPadding,
+            ),
+            color: colorScheme.surface,
+            child: _ExpandedHeader(
+              currentStep: _headerController.displayPage + 1,
+              totalSteps: _pages.length,
+              stepName: _pages[_headerController.displayPage],
+              description: _pagesDetails[_headerController.displayPage],
+              slideProgress: _headerController.slideProgress,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildProgressIndicator() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: _kProgressIndicatorVerticalPadding),
+      child: AnimatedContainer(
+        duration: _kQuickAnimationDuration,
+        curve: _kAnimationCurve,
+        decoration: BoxDecoration(
+          boxShadow: _headerController.currentPage == _pages.length - 1
+              ? [
+                  BoxShadow(
+                    color: Theme.of(context).colorScheme.primary.withAlpha(_kProgressGlowAlpha),
+                    blurRadius: _kProgressGlowBlur,
+                    spreadRadius: _kProgressGlowSpread,
+                  ),
+                ]
+              : null,
+        ),
+        child: WavyProgressIndicator(
+          value: (_headerController.currentPage + 1) / _pages.length,
+          progressColor: Theme.of(context).colorScheme.primary,
+          fillerColor: Theme.of(context).colorScheme.surfaceContainer,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
     final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
 
     return SliverAppBar(
       automaticallyImplyLeading: false,
       automaticallyImplyActions: false,
       floating: true,
       title: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 480.0),
+        constraints: const BoxConstraints(maxWidth: _kSearchBarMaxWidth),
         child: SearchAnchor.bar(
           barBackgroundColor: WidgetStatePropertyAll(
-            Theme.brightnessOf(context) == Brightness.light
-                ? colorScheme.surfaceContainerLowest
-                : colorScheme.surfaceContainerHigh,
+            brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
           ),
-          barElevation: WidgetStatePropertyAll(0.0),
-          suggestionsBuilder: (context, controller) => List.generate(
-            Sport.values.length,
-            (index) => ListTile(title: Text(Sport.values[index].name.toCapitalized())),
-          ),
+          barElevation: const WidgetStatePropertyAll(0.0),
+          barHintText: _getSearchHintText(),
+          suggestionsBuilder: _buildSearchSuggestions,
         ),
       ),
     );
   }
 
-  Widget _buildCollapsedHeader(BuildContext context, TextTheme textTheme, ColorScheme colorScheme) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      spacing: 8.0,
-      children: [
-        Row(
-          spacing: 4.0,
-          children: [
-            Text('STEP', style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-            ClipRect(
-              child: Transform.translate(
-                offset: Offset(_slideProgress * -15, 0),
-                child: Opacity(
-                  opacity: (1.0 - _slideProgress.abs()).clamp(0.0, 1.0),
-                  child: Text(
-                    '${_displayPage + 1}',
-                    style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
-                  ),
-                ),
-              ),
-            ),
-            Text('/ ${_pages.length}', style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-          ],
-        ),
-        const Text('·'),
-        Expanded(
-          child: ClipRect(
-            child: Transform.translate(
-              offset: Offset(_slideProgress * -30, 0),
-              child: Opacity(
-                opacity: (1.0 - _slideProgress.abs()).clamp(0.0, 1.0),
-                child: Text(
-                  _pages[_displayPage],
-                  style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+  String _getSearchHintText() {
+    switch (_headerController.currentPage) {
+      case 0:
+        return 'Search sports...';
+      case 1:
+        return 'Search complexes...';
+      case 2:
+        return 'Search courts...';
+      default:
+        return 'Search...';
+    }
   }
 
-  Widget _buildExpandedHeader(BuildContext context, TextTheme textTheme, ColorScheme colorScheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      spacing: 8.0,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              spacing: 4.0,
-              children: [
-                Text('STEP', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
-                ClipRect(
-                  child: Transform.translate(
-                    offset: Offset(_slideProgress * -15, 0),
-                    child: Opacity(
-                      opacity: (1.0 - _slideProgress.abs()).clamp(0.0, 1.0),
-                      child: Text(
-                        '${_displayPage + 1}',
-                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                      ),
-                    ),
-                  ),
-                ),
-                Text('/ ${_pages.length}', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
-              ],
-            ),
-            ClipRect(
-              child: Transform.translate(
-                offset: Offset(_slideProgress * -30, 0),
-                child: Opacity(
-                  opacity: (1.0 - _slideProgress.abs()).clamp(0.0, 1.0),
-                  child: Text(
-                    _pages[_displayPage],
-                    style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
-                  ),
-                ),
+  List<Widget> _buildSearchSuggestions(BuildContext context, SearchController controller) {
+    final query = controller.text.toLowerCase();
+
+    switch (_headerController.currentPage) {
+      case 0:
+        return Sport.values
+            .where((sport) => sport.name.toLowerCase().contains(query))
+            .map(
+              (sport) => ListTile(
+                title: Text(sport.name.toCapitalized()),
+                onTap: () {
+                  controller.closeView(sport.name.toCapitalized());
+                  // TODO: Filter by selected sport
+                },
               ),
-            ),
-          ],
-        ),
-        ClipRect(
-          child: Transform.translate(
-            // Aplicar slide al texto
-            offset: Offset(_slideProgress * -20, 0),
-            child: Opacity(
-              // Aplicar fade al texto
-              opacity: (1.0 - _slideProgress.abs() * 0.8).clamp(0.0, 1.0),
-              child: Text(
-                _pagesDetails[_displayPage],
-                style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
+            )
+            .toList();
+      case 1:
+      case 2:
+        // TODO: Implement search for complexes and courts when data is available
+        return [ListTile(title: Text('Search functionality coming soon...'), enabled: false)];
+      default:
+        return [];
+    }
   }
 
-  Widget _buildPagesIndicator(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 16.0),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        decoration: BoxDecoration(
-          boxShadow: _currentPage == _pages.length - 1
-              ? [BoxShadow(color: colorScheme.primary.withAlpha(100), blurRadius: 8, spreadRadius: 3)]
-              : null,
-        ),
-        child: WavyProgressIndicator(
-          value: (_currentPage + 1) / _pages.length,
-          progressColor: colorScheme.primary,
-          fillerColor: colorScheme.surfaceContainer,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPageView(BuildContext context) {
+  Widget _buildPageView() {
     return PageView(
       controller: _pageController,
       physics: const NeverScrollableScrollPhysics(),
-      onPageChanged: (index) => setState(() => _currentPage = index),
       children: [
-        _SportPage(initialSport: _sport, onSportSelected: (sport) => setState(() => _sport = sport)),
-        _ComplexPage(initialComplex: _complex, onComplexSelected: (complex) => setState(() => _complex = complex)),
-        _CourtPage(initialCourt: _court, onCourtSelected: (court) => setState(() => _court = court)),
+        _SelectionPage<Sport>(
+          items: Sport.values,
+          selectedItem: _sport,
+          onItemSelected: (sport) => setState(() => _sport = sport),
+          itemBuilder: (context, sport, index, selectedIndex, crossAxisCount) {
+            return SportCard(
+              fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(
+                Sport.values.length,
+                index,
+                crossAxisCount: crossAxisCount ?? 0,
+              ),
+              sport: sport,
+              onTap: () => setState(() => _sport = sport),
+              index: index,
+              selectedIndex: selectedIndex,
+            );
+          },
+          useGridView: true,
+        ),
+        _SelectionPage<Complex>(
+          items: _generateMockComplexes(),
+          selectedItem: _complex,
+          onItemSelected: (complex) => setState(() => _complex = complex),
+          itemBuilder: (context, complex, index, selectedIndex, _) {
+            return ComplexCard.tile(
+              fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
+              complex: complex,
+              rating: 4.5,
+              index: index,
+              selectedIndex: selectedIndex,
+              onTap: () => setState(() => _complex = complex),
+            );
+          },
+        ),
+        _SelectionPage<Court>(
+          items: _generateMockCourts(),
+          selectedItem: _court,
+          onItemSelected: (court) => setState(() => _court = court),
+          itemBuilder: (context, court, index, selectedIndex, _) {
+            return CourtCard.tile(
+              fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
+              court: court,
+              index: index,
+              selectedIndex: selectedIndex,
+              onTap: () => setState(() => _court = court),
+            );
+          },
+        ),
         Center(child: Text('Content from page ${_pages[3]}')),
       ],
     );
   }
 
-  Widget _buildPageControls(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Row(
-        children: [
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300),
-            switchInCurve: Curves.easeOut,
-            switchOutCurve: Curves.easeIn,
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: SizeTransition(sizeFactor: animation, axis: Axis.horizontal, child: child),
-              );
-            },
-            child: _currentPage != 0
-                ? SizedBox(
-                    key: const ValueKey('buttonBack'),
-                    width: 120.0,
-                    child: FilledButton(
-                      onPressed: _previousPage,
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Theme.brightnessOf(context) == Brightness.light
-                              ? colorScheme.surfaceContainerLowest
-                              : colorScheme.surfaceContainerHigh,
-                        ),
-                        foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
-                      ),
-                      child: const Text("Back"),
-                    ),
-                  )
-                : const SizedBox(key: ValueKey('buttonEmpty'), width: 0.0),
-          ),
-          if (_currentPage != 0) const SizedBox(width: 8.0),
-          Expanded(
-            child: FilledButton(
-              onPressed: _canContinue() ? _nextPage : null,
-              child: Text(_currentPage != _pages.length - 1 ? 'Continue' : 'Confirm reservation'),
-            ),
-          ),
-        ],
+  // TODO: Replace with actual data from server
+  List<Complex> _generateMockComplexes() {
+    return List.generate(
+      10,
+      (index) => Complex(
+        id: index,
+        name: 'Complex $index',
+        timeIni: '09:00',
+        timeEnd: '23:00',
+        address: 'C/Principal, $index, Granada',
+        locLongitude: 0,
+        locLatitude: 0,
+        sports: {Sport.tennis, Sport.football},
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       ),
     );
   }
-}
 
-class _SportPage extends StatefulWidget {
-  const _SportPage({required this.initialSport, required this.onSportSelected});
-
-  final Sport? initialSport;
-  final ValueChanged<Sport> onSportSelected;
-
-  @override
-  State<_SportPage> createState() => _SportPageState();
-}
-
-class _SportPageState extends State<_SportPage> {
-  final ValueNotifier<int> _selectedSportIndex = ValueNotifier(-1);
-
-  @override
-  void initState() {
-    super.initState();
-
-    _selectedSportIndex.value = widget.initialSport != null ? Sport.values.indexOf(widget.initialSport!) : -1;
-  }
-
-  @override
-  void didUpdateWidget(covariant _SportPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    final newIndex = widget.initialSport != null ? Sport.values.indexOf(widget.initialSport!) : -1;
-    if (newIndex != _selectedSportIndex.value) _selectedSportIndex.value = newIndex;
-  }
-
-  @override
-  void dispose() {
-    _selectedSportIndex.dispose();
-
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomGridView.expressive(
-      padding: EdgeInsets.fromLTRB(16.0, _topPadding, 16.0, 0.0),
-      maxCrossAxisExtent: 250.0,
-      childAspectRatio: 3 / 2,
-      itemCount: Sport.values.length,
-      itemBuilder: (context, index, crossAxisCount) {
-        return SportCard(
-          fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(
-            Sport.values.length,
-            index,
-            crossAxisCount: crossAxisCount,
-          ),
-          sport: Sport.values[index],
-          onTap: () {
-            setState(() => _selectedSportIndex.value = index);
-            widget.onSportSelected(Sport.values[index]);
-          },
-          index: index,
-          selectedIndex: _selectedSportIndex,
-        );
-      },
-    );
-  }
-}
-
-class _ComplexPage extends StatefulWidget {
-  const _ComplexPage({required this.initialComplex, required this.onComplexSelected});
-
-  final Complex? initialComplex;
-  final ValueChanged<Complex> onComplexSelected;
-
-  @override
-  State<_ComplexPage> createState() => _ComplexPageState();
-}
-
-class _ComplexPageState extends State<_ComplexPage> {
-  final ValueNotifier<int> _selectedComplexIndex = ValueNotifier(-1);
-
-  @override
-  void initState() {
-    super.initState();
-
-    _selectedComplexIndex.value = widget.initialComplex != null ? widget.initialComplex?.id ?? -1 : -1;
-  }
-
-  @override
-  void didUpdateWidget(covariant _ComplexPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    final newIndex = widget.initialComplex != null ? widget.initialComplex?.id ?? -1 : -1;
-    if (newIndex != _selectedComplexIndex.value) _selectedComplexIndex.value = newIndex;
-  }
-
-  @override
-  void dispose() {
-    _selectedComplexIndex.dispose();
-
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16.0, _topPadding - 1.0, 16.0, 0.0),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        Complex complex = Complex(
+  // TODO: Replace with actual data from server
+  List<Court> _generateMockCourts() {
+    return List.generate(
+      10,
+      (index) => Court(
+        id: index,
+        complex: Complex(
           id: index,
           name: 'Complex $index',
           timeIni: '09:00',
@@ -628,99 +586,373 @@ class _ComplexPageState extends State<_ComplexPage> {
           sports: {Sport.tennis, Sport.football},
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
-        );
+        ),
+        sport: Sport.tennis,
+        name: 'Court $index',
+        description: 'Court $index is a place where you can do some sport.',
+        maxPeople: 4,
+        status: CourtStatus.open,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      ),
+    );
+  }
+}
 
-        return ComplexCard.tile(
-          fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
-          complex: complex,
-          rating: 4.5,
-          index: index,
-          selectedIndex: _selectedComplexIndex,
-          onTap: () {
-            setState(() => _selectedComplexIndex.value = index);
-            widget.onComplexSelected(complex);
-          },
+//--------------------------------------------------------------------------------------------------------------------//
+// HEADER WIDGETS
+//--------------------------------------------------------------------------------------------------------------------//
+
+/// Collapsed header content with step indicator and title
+class _CollapsedHeader extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+  final String stepName;
+  final double slideProgress;
+
+  const _CollapsedHeader({
+    required this.currentStep,
+    required this.totalSteps,
+    required this.stepName,
+    required this.slideProgress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      spacing: 8.0,
+      children: [
+        _AnimatedStepIndicator(
+          currentStep: currentStep,
+          totalSteps: totalSteps,
+          slideProgress: slideProgress,
+          style: textTheme.bodySmall,
+          color: colorScheme.onSurfaceVariant,
+        ),
+        const Text('·'),
+        Expanded(
+          child: _AnimatedText(
+            text: stepName,
+            slideProgress: slideProgress,
+            offset: _kSlideOffsetLarge,
+            style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Expanded header content with step indicator, title, and description
+class _ExpandedHeader extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+  final String stepName;
+  final String description;
+  final double slideProgress;
+
+  const _ExpandedHeader({
+    required this.currentStep,
+    required this.totalSteps,
+    required this.stepName,
+    required this.description,
+    required this.slideProgress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8.0,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _AnimatedStepIndicator(
+              currentStep: currentStep,
+              totalSteps: totalSteps,
+              slideProgress: slideProgress,
+              style: textTheme.bodyMedium,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            _AnimatedText(
+              text: stepName,
+              slideProgress: slideProgress,
+              offset: _kSlideOffsetLarge,
+              style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
+            ),
+          ],
+        ),
+        _AnimatedText(
+          text: description,
+          slideProgress: slideProgress,
+          offset: _kSlideOffsetMedium,
+          fadeIntensity: _kFadeIntensity,
+          style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+        ),
+      ],
+    );
+  }
+}
+
+/// Animated step indicator
+class _AnimatedStepIndicator extends StatelessWidget {
+  final int currentStep;
+  final int totalSteps;
+  final double slideProgress;
+  final TextStyle? style;
+  final Color color;
+
+  const _AnimatedStepIndicator({
+    required this.currentStep,
+    required this.totalSteps,
+    required this.slideProgress,
+    required this.style,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 4.0,
+      children: [
+        Text('STEP', style: style?.copyWith(color: color)),
+        _AnimatedText(
+          text: '$currentStep',
+          slideProgress: slideProgress,
+          offset: _kSlideOffsetSmall,
+          style: style?.copyWith(color: color),
+        ),
+        Text('/ $totalSteps', style: style?.copyWith(color: color)),
+      ],
+    );
+  }
+}
+
+/// Animated text with slide and fade transitions
+class _AnimatedText extends StatelessWidget {
+  final String text;
+  final double slideProgress;
+  final double offset;
+  final double fadeIntensity;
+  final TextStyle? style;
+  final TextOverflow? overflow;
+
+  const _AnimatedText({
+    required this.text,
+    required this.slideProgress,
+    required this.offset,
+    this.fadeIntensity = 1.0,
+    this.style,
+    this.overflow,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRect(
+      child: Transform.translate(
+        offset: Offset(slideProgress * -offset, 0),
+        child: Opacity(
+          opacity: (1.0 - slideProgress.abs() * fadeIntensity).clamp(0.0, 1.0),
+          child: Text(text, style: style, overflow: overflow, softWrap: overflow == null),
+        ),
+      ),
+    );
+  }
+}
+
+//--------------------------------------------------------------------------------------------------------------------//
+// PAGE WIDGETS
+//--------------------------------------------------------------------------------------------------------------------//
+
+/// Generic selection page widget for Sport, Complex, and Court selection
+class _SelectionPage<T> extends StatefulWidget {
+  const _SelectionPage({
+    required this.items,
+    required this.selectedItem,
+    required this.onItemSelected,
+    required this.itemBuilder,
+    this.useGridView = false,
+  });
+
+  final List<T> items;
+  final T? selectedItem;
+  final ValueChanged<T> onItemSelected;
+
+  final Widget Function(BuildContext context, T item, int index, ValueNotifier<int> selectedIndex, int? crossAxisCount)
+  itemBuilder;
+
+  final bool useGridView;
+
+  @override
+  State<_SelectionPage<T>> createState() => _SelectionPageState<T>();
+}
+
+class _SelectionPageState<T> extends State<_SelectionPage<T>> {
+  late final ValueNotifier<int> _selectedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = ValueNotifier<int>(_getInitialIndex());
+  }
+
+  @override
+  void didUpdateWidget(covariant _SelectionPage<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final newIndex = _getInitialIndex();
+    if (newIndex != _selectedIndex.value) {
+      _selectedIndex.value = newIndex;
+    }
+  }
+
+  @override
+  void dispose() {
+    _selectedIndex.dispose();
+    super.dispose();
+  }
+
+  int _getInitialIndex() {
+    if (widget.selectedItem == null) return -1;
+
+    // Para la página de selección del deporte
+    if (T == Sport) {
+      return (widget.items as List<Sport>).indexOf(widget.selectedItem as Sport);
+    }
+
+    // Para las páginas de selección del complejo y pista
+    if (widget.selectedItem is Complex) {
+      return (widget.selectedItem as Complex).id ?? -1;
+    }
+    if (widget.selectedItem is Court) {
+      return (widget.selectedItem as Court).id ?? -1;
+    }
+
+    return -1;
+  }
+
+  void _onItemTap(int index) {
+    _selectedIndex.value = index;
+    widget.onItemSelected(widget.items[index]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.useGridView ? _buildGridView() : _buildListView();
+  }
+
+  Widget _buildGridView() {
+    return CustomGridView.expressive(
+      padding: const EdgeInsets.fromLTRB(
+        _kContentHorizontalPadding,
+        _kContentTopPadding,
+        _kContentHorizontalPadding,
+        0.0,
+      ),
+      maxCrossAxisExtent: _kGridMaxCrossAxisExtent,
+      childAspectRatio: _kGridChildAspectRatio,
+      itemCount: widget.items.length,
+      itemBuilder: (context, index, crossAxisCount) {
+        return GestureDetector(
+          onTap: () => _onItemTap(index),
+          child: widget.itemBuilder(context, widget.items[index], index, _selectedIndex, crossAxisCount),
         );
+      },
+    );
+  }
+
+  Widget _buildListView() {
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(
+        _kContentHorizontalPadding,
+        _kContentTopPadding - 1.0,
+        _kContentHorizontalPadding,
+        0.0,
+      ),
+      itemCount: widget.items.length,
+      itemBuilder: (context, index) {
+        return widget.itemBuilder(context, widget.items[index], index, _selectedIndex, null);
       },
     );
   }
 }
 
-class _CourtPage extends StatefulWidget {
-  const _CourtPage({required this.initialCourt, required this.onCourtSelected});
+//--------------------------------------------------------------------------------------------------------------------//
+// CONTROL WIDGETS
+//--------------------------------------------------------------------------------------------------------------------//
 
-  final Court? initialCourt;
-  final ValueChanged<Court> onCourtSelected;
+/// Navigation controls for moving between pages
+class _PageNavigationControls extends StatelessWidget {
+  final int currentPage;
+  final int totalPages;
+  final bool canContinue;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
 
-  @override
-  State<_CourtPage> createState() => _CourtPageState();
-}
-
-class _CourtPageState extends State<_CourtPage> {
-  final ValueNotifier<int> _selectedCourtIndex = ValueNotifier(-1);
-
-  @override
-  void initState() {
-    super.initState();
-
-    _selectedCourtIndex.value = widget.initialCourt != null ? widget.initialCourt?.id ?? -1 : -1;
-  }
-
-  @override
-  void didUpdateWidget(covariant _CourtPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    final newIndex = widget.initialCourt != null ? widget.initialCourt?.id ?? -1 : -1;
-    if (newIndex != _selectedCourtIndex.value) _selectedCourtIndex.value = newIndex;
-  }
-
-  @override
-  void dispose() {
-    _selectedCourtIndex.dispose();
-
-    super.dispose();
-  }
+  const _PageNavigationControls({
+    required this.currentPage,
+    required this.totalPages,
+    required this.canContinue,
+    required this.onPrevious,
+    required this.onNext,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.fromLTRB(16.0, _topPadding - 1.0, 16.0, 0.0),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        Court court = Court(
-          id: index,
-          complex: Complex(
-            id: index,
-            name: 'Complex $index',
-            timeIni: '09:00',
-            timeEnd: '23:00',
-            address: 'C/Principal, $index, Granada',
-            locLongitude: 0,
-            locLatitude: 0,
-            sports: {Sport.tennis, Sport.football},
-            createdAt: DateTime.now(),
-            updatedAt: DateTime.now(),
-          ),
-          sport: Sport.tennis,
-          name: 'Court $index',
-          description: 'Court $index is a place where you can do some sport.',
-          maxPeople: 4,
-          status: CourtStatus.open,
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        );
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
 
-        return CourtCard.tile(
-          fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
-          court: court,
-          index: index,
-          selectedIndex: _selectedCourtIndex,
-          onTap: () {
-            setState(() => _selectedCourtIndex.value = index);
-            widget.onCourtSelected(court);
-          },
-        );
-      },
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: _kButtonSpacing, horizontal: _kContentHorizontalPadding),
+      child: Row(
+        children: [
+          AnimatedSwitcher(
+            duration: _kQuickAnimationDuration,
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(sizeFactor: animation, axis: Axis.horizontal, child: child),
+              );
+            },
+            child: currentPage != 0
+                ? SizedBox(
+                    key: const ValueKey('buttonBack'),
+                    width: _kBackButtonWidth,
+                    child: FilledButton(
+                      onPressed: onPrevious,
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          brightness == Brightness.light
+                              ? colorScheme.surfaceContainerLowest
+                              : colorScheme.surfaceContainerHigh,
+                        ),
+                        foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
+                      ),
+                      child: const Text("Back"),
+                    ),
+                  )
+                : const SizedBox(key: ValueKey('buttonEmpty'), width: 0.0),
+          ),
+          if (currentPage != 0) const SizedBox(width: _kButtonSpacing),
+          Expanded(
+            child: FilledButton(
+              onPressed: canContinue ? onNext : null,
+              child: Text(currentPage != totalPages - 1 ? 'Continue' : 'Confirm reservation'),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
