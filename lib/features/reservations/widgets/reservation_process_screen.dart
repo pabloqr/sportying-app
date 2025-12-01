@@ -53,8 +53,10 @@ const double _kFadeIntensity = 0.8;
 // Content padding
 const double _kContentTopPadding = 16.0;
 const double _kContentHorizontalPadding = 16.0;
+const double _kContentBottomPadding = 0.0; // 128.0
 
 // Button dimensions
+const double _kButtonMinHeight = 56.0;
 const double _kBackButtonWidth = 120.0;
 const double _kButtonSpacing = 8.0;
 
@@ -306,26 +308,24 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: NestedScrollView(
-                controller: _scrollController,
-                headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  _buildAppBar(),
-                  if (_shouldShowSearchBar()) _buildSearchBar(),
-                ],
-                body: _buildPageView(),
-              ),
-            ),
-            _PageNavigationControls(
-              currentPage: _headerController.currentPage,
-              totalPages: _pages.length,
-              canContinue: _canContinue(),
-              onPrevious: _previousPage,
-              onNext: _nextPage,
-            ),
+        child: NestedScrollView(
+          controller: _scrollController,
+          headerSliverBuilder: (context, innerBoxIsScrolled) => [
+            _buildAppBar(),
+            if (_shouldShowSearchBar()) _buildSearchBar(),
           ],
+          body: _buildPageView(),
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        color: Theme.of(context).colorScheme.surface,
+        child: _PageNavigationControls(
+          currentPage: _headerController.currentPage,
+          totalPages: _pages.length,
+          canContinue: _canContinue(),
+          onPrevious: _previousPage,
+          onNext: _nextPage,
         ),
       ),
     );
@@ -856,7 +856,7 @@ class _SelectionPageState<T> extends State<_SelectionPage<T>> {
         _kContentHorizontalPadding,
         _kContentTopPadding,
         _kContentHorizontalPadding,
-        0.0,
+        _kContentBottomPadding,
       ),
       maxCrossAxisExtent: _kGridMaxCrossAxisExtent,
       childAspectRatio: _kGridChildAspectRatio,
@@ -876,7 +876,7 @@ class _SelectionPageState<T> extends State<_SelectionPage<T>> {
         _kContentHorizontalPadding,
         _kContentTopPadding - 1.0,
         _kContentHorizontalPadding,
-        0.0,
+        _kContentBottomPadding,
       ),
       itemCount: widget.items.length,
       itemBuilder: (context, index) {
@@ -911,48 +911,41 @@ class _PageNavigationControls extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final brightness = Theme.brightnessOf(context);
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: _kButtonSpacing, horizontal: _kContentHorizontalPadding),
-      child: Row(
-        children: [
-          AnimatedSwitcher(
-            duration: _kQuickAnimationDuration,
-            switchInCurve: Curves.easeOut,
-            switchOutCurve: Curves.easeIn,
-            transitionBuilder: (child, animation) {
-              return FadeTransition(
-                opacity: animation,
-                child: SizeTransition(sizeFactor: animation, axis: Axis.horizontal, child: child),
-              );
-            },
-            child: currentPage != 0
-                ? SizedBox(
-                    key: const ValueKey('buttonBack'),
-                    width: _kBackButtonWidth,
-                    child: FilledButton(
-                      onPressed: onPrevious,
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          brightness == Brightness.light
-                              ? colorScheme.surfaceContainerLowest
-                              : colorScheme.surfaceContainerHigh,
-                        ),
-                        foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
-                      ),
-                      child: const Text("Back"),
-                    ),
-                  )
-                : const SizedBox(key: ValueKey('buttonEmpty'), width: 0.0),
-          ),
-          if (currentPage != 0) const SizedBox(width: _kButtonSpacing),
-          Expanded(
-            child: FilledButton(
-              onPressed: canContinue ? onNext : null,
-              child: Text(currentPage != totalPages - 1 ? 'Continue' : 'Confirm reservation'),
+    final filledButtonTheme = Theme.of(context).filledButtonTheme;
+
+    final canGoBack = currentPage != 0;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: _kButtonSpacing,
+      children: [
+        FilledButton(
+          onPressed: canGoBack ? onPrevious : null,
+          style: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(
+              !canGoBack
+                  ? filledButtonTheme.style?.backgroundColor?.resolve({WidgetState.disabled})
+                  : brightness == Brightness.light
+                  ? colorScheme.surfaceContainerLowest
+                  : colorScheme.surfaceContainerHigh,
             ),
+            foregroundColor: WidgetStatePropertyAll(
+              !canGoBack
+                  ? filledButtonTheme.style?.foregroundColor?.resolve({WidgetState.disabled})
+                  : colorScheme.onSurface,
+            ),
+            minimumSize: WidgetStatePropertyAll(Size(_kBackButtonWidth, _kButtonMinHeight)),
           ),
-        ],
-      ),
+          child: const Text("Back"),
+        ),
+        Expanded(
+          child: FilledButton(
+            style: ButtonStyle(minimumSize: WidgetStatePropertyAll(Size.fromHeight(_kButtonMinHeight))),
+            onPressed: canContinue ? onNext : null,
+            child: Text(currentPage != totalPages - 1 ? 'Continue' : 'Confirm reservation'),
+          ),
+        ),
+      ],
     );
   }
 }
