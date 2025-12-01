@@ -36,7 +36,7 @@ class WidgetUtilities {
     // Caso extremo: una fila
     if (length <= crossAxisCount) {
       if (index == 0) return WidgetSide.left;
-      if (index == length - 1) return WidgetSide.right;
+      if (index == crossAxisCount - 1) return WidgetSide.right;
       return WidgetSide.none;
     }
 

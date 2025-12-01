@@ -30,7 +30,7 @@ Widget withSystemUiOverlay(BuildContext context, {required Widget child}) {
 }
 
 GoRouter router() => GoRouter(
-  initialLocation: Routes.reservationNewRoute,
+  initialLocation: Routes.clientDashboardRoute,
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
