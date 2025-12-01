@@ -19,7 +19,9 @@ Widget withSystemUiOverlay(BuildContext context, {required Widget child}) {
   return AnnotatedRegion<SystemUiOverlayStyle>(
     value: SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      systemNavigationBarColor: brightness == Brightness.light ? colorScheme.surface : colorScheme.surface,
+      systemNavigationBarColor: brightness == Brightness.light
+          ? colorScheme.surfaceContainerHigh
+          : colorScheme.surfaceContainerLowest,
       systemNavigationBarDividerColor: Colors.transparent,
 
       statusBarIconBrightness: brightness,

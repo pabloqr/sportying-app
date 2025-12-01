@@ -35,7 +35,7 @@ class AnimatedNavigationBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomBarTransition(
       animation: barAnimation,
-      backgroundColor: floatingBar ? Colors.transparent : Colors.white,
+      backgroundColor: Colors.transparent,
       child: floatingBar
           ? SafeArea(
               child: Padding(

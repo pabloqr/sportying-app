@@ -96,7 +96,7 @@ class _ClientScaffoldState extends State<ClientScaffold> with SingleTickerProvid
           ),
         ),
         endDrawer: const EndDrawer(),
-        bottomNavigationBar: AnimatedNavigationBar.floating(
+        bottomNavigationBar: AnimatedNavigationBar(
           barAnimation: _barAnimation,
           selectedIndex: widget.navigationShell.currentIndex,
           onDestinationSelected: (index) => _onDestinationSelected(index, context),
@@ -127,43 +127,6 @@ class _ClientScaffoldState extends State<ClientScaffold> with SingleTickerProvid
       child: InkWell(
         borderRadius: BorderRadius.circular(1000),
         onTap: () => Scaffold.of(context).openEndDrawer(),
-        // onTap: () => showSideSheet(
-        //   context,
-        //   title: 'Account',
-        //   content: [
-        //     Padding(
-        //       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        //       child: Text('My account', style: textTheme.titleMedium),
-        //     ),
-        //     Column(
-        //       children: [
-        //         ListTileRounded(title: 'Edit profile', icon: Symbols.person_rounded, onTap: () {}),
-        //         ListTileRounded(title: 'My payments', icon: Symbols.payments_rounded, onTap: () {}),
-        //         ListTileRounded(title: 'Notifications', icon: Symbols.notifications_rounded, onTap: () {}),
-        //         ListTileRounded(title: 'Settings', icon: Symbols.settings_rounded, onTap: () {}),
-        //       ],
-        //     ),
-        //     Divider(),
-        //     Padding(
-        //       padding: const EdgeInsets.symmetric(horizontal: 12.0),
-        //       child: Text('Support', style: textTheme.titleMedium),
-        //     ),
-        //     Column(
-        //       children: [
-        //         ListTileRounded(title: 'Help', icon: Symbols.help_rounded, onTap: () {}),
-        //         ListTileRounded(title: 'FAQ', icon: Symbols.question_mark_rounded, onTap: () {}),
-        //         ListTileRounded(title: 'About this app', icon: Symbols.info_rounded, onTap: () {}),
-        //       ],
-        //     ),
-        //     Divider(),
-        //     ListTileRounded(
-        //       title: 'Sign out',
-        //       icon: Symbols.logout_rounded,
-        //       contentColor: colorScheme.error,
-        //       onTap: () {},
-        //     ),
-        //   ],
-        // ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: const CircleAvatar(
