@@ -9,7 +9,7 @@ extension DoubleExtension on double {
     return DateTime(date.year, date.month, date.day, hours, minutes);
   }
 
-  String formatAsTime() {
+  String toFormattedTime0() {
     final hours = floor();
     final minutes = ((this - hours) * 60).round();
     return '${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}';
@@ -18,6 +18,11 @@ extension DoubleExtension on double {
 
 extension StringExtension on String {
   String toCapitalized() => length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+
+  double toDoubleTime0() {
+    final dateTime = DateFormat('HH:mm').parse(this);
+    return dateTime.hour + dateTime.minute / 60.0;
+  }
 }
 
 extension DateTimeExtension on DateTime {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
@@ -10,6 +11,7 @@ import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/custom_grid_view.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
+import 'package:sportying_app/features/core/widgets/visuals/time_range_selector.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
 import 'package:sportying_app/features/courts/widgets/court_card.dart';
 import 'package:sportying_app/features/sports/widgets/sport_card.dart';
@@ -17,6 +19,15 @@ import 'package:sportying_app/features/sports/widgets/sport_card.dart';
 //--------------------------------------------------------------------------------------------------------------------//
 // CONSTANTS
 //--------------------------------------------------------------------------------------------------------------------//
+
+// Pages
+const List<String> _pages = ['Sport', 'Complex', 'Court', 'Summary'];
+const List<String> _pagesDetails = [
+  'Select a sport to book a court.',
+  'Select a complex to book a court.',
+  'Select a court to book.',
+  'Check your selection and confirm your reservation.',
+];
 
 // Header heights
 const double _kExpandedHeightMin = 168.0;
@@ -175,28 +186,29 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   late final ScrollController _scrollController;
   late final _ReservationHeaderController _headerController;
 
+  PersistentBottomSheetController? _bottomSheetController;
+  late final TimeRangeController _timeRangeController;
+
   Sport? _sport;
   Complex? _complex;
   Court? _court;
   DateTimeRange? _dateTimeRange;
 
-  final List<String> _pages = ['Sport', 'Complex', 'Court', 'Summary'];
-  final List<String> _pagesDetails = [
-    'Select a sport to book a court.',
-    'Select a complex to book a court.',
-    'Select a court to book.',
-    'Check your selection and confirm your reservation.',
-  ];
-
   @override
   void initState() {
     super.initState();
 
+    final now = DateTime.now();
+    _dateTimeRange = DateTimeRange(start: now, end: now);
+
     _pageController = PageController();
+    _pageController.addListener(_onPageScroll);
+
     _scrollController = ScrollController();
     _headerController = _ReservationHeaderController();
 
-    _pageController.addListener(_onPageScroll);
+    _timeRangeController = context.read<TimeRangeController>();
+    _timeRangeController.addListener(_onTimeRangeChanged);
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _updateExpandedHeight());
   }
@@ -244,6 +256,21 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     setState(() {});
   }
 
+  void _onPageChanged(BuildContext context, int previousPage, int currentPage) {
+    if (previousPage == currentPage) return;
+
+    // Actualizar la visibilidad del BottomSheet al cambiar de página
+    if (currentPage == 2 && _court != null && _bottomSheetController == null) {
+      // Si se pasa a la página 3 (index == 2), mostrar el BottomSheet
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _bottomSheetController == null) _showBottomSheet(context);
+      });
+    } else if (_bottomSheetController != null && currentPage != 2) {
+      // Si se sale de la página 3 (index == 2), ocultar el BottomSheet
+      _closeBottomSheet();
+    }
+  }
+
   bool _canContinue() {
     switch (_headerController.currentPage) {
       case 0:
@@ -252,6 +279,8 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
         return _complex != null;
       case 2:
         return _court != null;
+      case 3:
+        return _dateTimeRange != null;
       default:
         return true;
     }
@@ -267,6 +296,177 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     if (_canContinue() && _headerController.currentPage < _pages.length - 1) {
       _pageController.nextPage(duration: _kAnimationDuration, curve: _kAnimationCurve);
     }
+  }
+
+  void _onTimeRangeChanged() {
+    if (mounted) {
+      final timeRange = _timeRangeController.currentRangeValues;
+      _dateTimeRange = DateTimeRange(
+        start: _dateTimeRange!.start.copyWith(
+          hour: timeRange.start.toDateTime().hour,
+          minute: timeRange.start.toDateTime().minute,
+        ),
+        end: _dateTimeRange!.start.copyWith(
+          hour: timeRange.end.toDateTime().hour,
+          minute: timeRange.end.toDateTime().minute,
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      body: SafeArea(
+        child: Builder(
+          builder: (context) {
+            return _ReservationProcessContent(
+              pageController: _pageController,
+              scrollController: _scrollController,
+              headerController: _headerController,
+              onPageChanged: (previousPage, currentPage) => _onPageChanged(context, previousPage, currentPage),
+              sport: _sport,
+              onSportSelected: (sport) => setState(() => _sport = sport),
+              complex: _complex,
+              onComplexSelected: (complex) => setState(() => _complex = complex),
+              court: _court,
+              onCourtSelected: (court) {
+                setState(() => _court = court);
+                _showBottomSheet(context);
+              },
+            );
+          },
+        ),
+      ),
+      bottomNavigationBar: BottomAppBar(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        color: _bottomSheetController == null ? colorScheme.surface : colorScheme.surfaceContainerLow,
+        child: _PageNavigationControls(
+          currentPage: _headerController.currentPage,
+          totalPages: _pages.length,
+          canContinue: _canContinue(),
+          onPrevious: _previousPage,
+          onNext: _nextPage,
+        ),
+      ),
+    );
+  }
+
+  void _showBottomSheet(BuildContext context) {
+    // Verificar que no se ha abierto previamente un BottomSheet
+    if (_bottomSheetController != null) return;
+
+    _bottomSheetController = showBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+          child: Wrap(
+            children: [
+              TimeRangeSelector(
+                schedule: RangeValues(
+                  _complex?.timeIni.toDoubleTime0() ?? 8.0,
+                  _complex?.timeEnd.toDoubleTime0() ?? 24.0,
+                ),
+                date: DateTime.now(),
+                availability: [],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    _bottomSheetController!.closed.then((_) {
+      setState(() {
+        _bottomSheetController = null;
+      });
+    });
+  }
+
+  void _closeBottomSheet() {
+    if (_bottomSheetController != null) {
+      _bottomSheetController!.close();
+      setState(() {
+        _bottomSheetController = null;
+      });
+    }
+  }
+}
+
+class _ReservationProcessContent extends StatefulWidget {
+  const _ReservationProcessContent({
+    required this.pageController,
+    required this.scrollController,
+    required this.headerController,
+    required this.onPageChanged,
+    required this.sport,
+    required this.onSportSelected,
+    required this.complex,
+    required this.onComplexSelected,
+    required this.court,
+    required this.onCourtSelected,
+  });
+
+  final PageController pageController;
+  final ScrollController scrollController;
+  final _ReservationHeaderController headerController;
+
+  final void Function(int previousPage, int currentPage) onPageChanged;
+
+  final Sport? sport;
+  final ValueChanged<Sport> onSportSelected;
+
+  final Complex? complex;
+  final ValueChanged<Complex> onComplexSelected;
+
+  final Court? court;
+  final ValueChanged<Court> onCourtSelected;
+
+  @override
+  State<_ReservationProcessContent> createState() => _ReservationProcessContentState();
+}
+
+class _ReservationProcessContentState extends State<_ReservationProcessContent> {
+  int _previousPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    widget.pageController.addListener(_onPageControllerChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.pageController.removeListener(_onPageControllerChanged);
+
+    super.dispose();
+  }
+
+  void _onPageControllerChanged() {
+    final currentPage = widget.headerController.currentPage;
+    if (_previousPage != currentPage) {
+      // Llamar al callback al cambiar de página
+      widget.onPageChanged(_previousPage, currentPage);
+      _previousPage = currentPage;
+    }
+  }
+
+  ButtonStyle _getDialogButtonStyle(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
+
+    final overlayColor = brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
+    final foregroundColor = brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
+
+    return ButtonStyle(
+      overlayColor: WidgetStatePropertyAll(overlayColor.withAlpha(_kButtonOverlayAlpha)),
+      foregroundColor: WidgetStatePropertyAll(foregroundColor),
+    );
   }
 
   void _cancelReservation() {
@@ -291,59 +491,31 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     );
   }
 
-  ButtonStyle _getDialogButtonStyle(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final brightness = Theme.brightnessOf(context);
-
-    final overlayColor = brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
-    final foregroundColor = brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
-
-    return ButtonStyle(
-      overlayColor: WidgetStatePropertyAll(overlayColor.withAlpha(_kButtonOverlayAlpha)),
-      foregroundColor: WidgetStatePropertyAll(foregroundColor),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: NestedScrollView(
-          controller: _scrollController,
-          headerSliverBuilder: (context, innerBoxIsScrolled) => [
-            _buildAppBar(),
-            if (_shouldShowSearchBar()) _buildSearchBar(),
-          ],
-          body: _buildPageView(),
-        ),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        color: Theme.of(context).colorScheme.surface,
-        child: _PageNavigationControls(
-          currentPage: _headerController.currentPage,
-          totalPages: _pages.length,
-          canContinue: _canContinue(),
-          onPrevious: _previousPage,
-          onNext: _nextPage,
-        ),
-      ),
+    return NestedScrollView(
+      controller: widget.scrollController,
+      headerSliverBuilder: (context, innerBoxIsScrolled) => [
+        _buildAppBar(),
+        if (_shouldShowSearchBar()) _buildSearchBar(),
+      ],
+      body: _buildPageView(),
     );
   }
 
   bool _shouldShowSearchBar() {
-    return _headerController.currentPage < 3;
+    return widget.headerController.currentPage < 3;
   }
 
   Widget _buildAppBar() {
     return ListenableBuilder(
-      listenable: _headerController,
+      listenable: widget.headerController,
       builder: (context, _) {
         final colorScheme = Theme.of(context).colorScheme;
 
         return SliverAppBar(
           pinned: true,
-          expandedHeight: _headerController.expandedHeight,
+          expandedHeight: widget.headerController.expandedHeight,
           collapsedHeight: _kCollapsedHeight,
           toolbarHeight: _kToolbarHeight,
           backgroundColor: colorScheme.surface,
@@ -377,10 +549,10 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                     _kBottomHeight,
                   ),
                   child: _CollapsedHeader(
-                    currentStep: _headerController.displayPage + 1,
+                    currentStep: widget.headerController.displayPage + 1,
                     totalSteps: _pages.length,
-                    stepName: _pages[_headerController.displayPage],
-                    slideProgress: _headerController.slideProgress,
+                    stepName: _pages[widget.headerController.displayPage],
+                    slideProgress: widget.headerController.slideProgress,
                   ),
                 )
               : null,
@@ -393,11 +565,11 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
             ),
             color: colorScheme.surface,
             child: _ExpandedHeader(
-              currentStep: _headerController.displayPage + 1,
+              currentStep: widget.headerController.displayPage + 1,
               totalSteps: _pages.length,
-              stepName: _pages[_headerController.displayPage],
-              description: _pagesDetails[_headerController.displayPage],
-              slideProgress: _headerController.slideProgress,
+              stepName: _pages[widget.headerController.displayPage],
+              description: _pagesDetails[widget.headerController.displayPage],
+              slideProgress: widget.headerController.slideProgress,
             ),
           ),
         );
@@ -412,7 +584,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
         duration: _kQuickAnimationDuration,
         curve: _kAnimationCurve,
         decoration: BoxDecoration(
-          boxShadow: _headerController.currentPage == _pages.length - 1
+          boxShadow: widget.headerController.currentPage == _pages.length - 1
               ? [
                   BoxShadow(
                     color: Theme.of(context).colorScheme.primary.withAlpha(_kProgressGlowAlpha),
@@ -423,7 +595,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
               : null,
         ),
         child: WavyProgressIndicator(
-          value: (_headerController.currentPage + 1) / _pages.length,
+          value: (widget.headerController.currentPage + 1) / _pages.length,
           progressColor: Theme.of(context).colorScheme.primary,
           fillerColor: Theme.of(context).colorScheme.surfaceContainer,
         ),
@@ -454,7 +626,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   }
 
   String _getSearchHintText() {
-    switch (_headerController.currentPage) {
+    switch (widget.headerController.currentPage) {
       case 0:
         return 'Search sports...';
       case 1:
@@ -469,7 +641,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   List<Widget> _buildSearchSuggestions(BuildContext context, SearchController controller) {
     final query = controller.text.toLowerCase();
 
-    switch (_headerController.currentPage) {
+    switch (widget.headerController.currentPage) {
       case 0:
         return Sport.values
             .where((sport) => sport.name.toLowerCase().contains(query))
@@ -494,13 +666,12 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
 
   Widget _buildPageView() {
     return PageView(
-      controller: _pageController,
+      controller: widget.pageController,
       physics: const NeverScrollableScrollPhysics(),
       children: [
         _SelectionPage<Sport>(
           items: Sport.values,
-          selectedItem: _sport,
-          onItemSelected: (sport) => setState(() => _sport = sport),
+          selectedItem: widget.sport,
           itemBuilder: (context, sport, index, selectedIndex, crossAxisCount) {
             return SportCard(
               fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(
@@ -509,7 +680,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                 crossAxisCount: crossAxisCount ?? 0,
               ),
               sport: sport,
-              onTap: () => setState(() => _sport = sport),
+              onTap: () => widget.onSportSelected(sport),
               index: index,
               selectedIndex: selectedIndex,
             );
@@ -518,8 +689,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
         ),
         _SelectionPage<Complex>(
           items: _generateMockComplexes(),
-          selectedItem: _complex,
-          onItemSelected: (complex) => setState(() => _complex = complex),
+          selectedItem: widget.complex,
           itemBuilder: (context, complex, index, selectedIndex, _) {
             return ComplexCard.tile(
               fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
@@ -527,21 +697,20 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
               rating: 4.5,
               index: index,
               selectedIndex: selectedIndex,
-              onTap: () => setState(() => _complex = complex),
+              onTap: () => widget.onComplexSelected(complex),
             );
           },
         ),
         _SelectionPage<Court>(
           items: _generateMockCourts(),
-          selectedItem: _court,
-          onItemSelected: (court) => setState(() => _court = court),
+          selectedItem: widget.court,
           itemBuilder: (context, court, index, selectedIndex, _) {
             return CourtCard.tile(
               fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
               court: court,
               index: index,
               selectedIndex: selectedIndex,
-              onTap: () => setState(() => _court = court),
+              onTap: () => widget.onCourtSelected(court),
             );
           },
         ),
@@ -778,14 +947,12 @@ class _SelectionPage<T> extends StatefulWidget {
   const _SelectionPage({
     required this.items,
     required this.selectedItem,
-    required this.onItemSelected,
     required this.itemBuilder,
     this.useGridView = false,
   });
 
   final List<T> items;
   final T? selectedItem;
-  final ValueChanged<T> onItemSelected;
 
   final Widget Function(BuildContext context, T item, int index, ValueNotifier<int> selectedIndex, int? crossAxisCount)
   itemBuilder;
@@ -842,7 +1009,6 @@ class _SelectionPageState<T> extends State<_SelectionPage<T>> {
 
   void _onItemTap(int index) {
     _selectedIndex.value = index;
-    widget.onItemSelected(widget.items[index]);
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:sportying_app/data/repositories/reservations/reservations_reposi
 import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
 import 'package:sportying_app/data/services/courts/courts_remote_service.dart';
 import 'package:sportying_app/data/services/reservations/reservations_remote_service.dart';
+import 'package:sportying_app/features/core/widgets/visuals/time_range_selector.dart';
 
 List<SingleChildWidget> get appProviders {
   return [
@@ -46,5 +47,6 @@ List<SingleChildWidget> get appProviders {
     // ---------------------------------------------------------------------------------------------------------------//
     // PROVIDERS (ChangeNotifiers)
     // ---------------------------------------------------------------------------------------------------------------//
+    ChangeNotifierProvider<TimeRangeController>(create: (_) => TimeRangeController()),
   ];
 }
