@@ -174,17 +174,7 @@ class _ReservationCardState extends State<ReservationCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 8.0,
             children: [
-              DateContainer(
-                width: 65.0,
-                color: colorScheme.surfaceContainerHighest,
-                child: Column(
-                  children: [
-                    Text(widget.reservation.dateIni.toFormattedWeekDay0().toUpperCase(), style: textTheme.bodyMedium),
-                    Text(widget.reservation.dateIni.toFormattedMonthDay0(), style: textTheme.titleLarge),
-                    Text(widget.reservation.dateIni.toFormattedMonth0().toUpperCase(), style: textTheme.bodyMedium),
-                  ],
-                ),
-              ),
+              DateContainer(width: 65.0, color: colorScheme.surfaceContainerHighest, date: widget.reservation.dateIni),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

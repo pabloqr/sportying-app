@@ -11,6 +11,7 @@ import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/custom_grid_view.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
+import 'package:sportying_app/features/core/widgets/visuals/date_container.dart';
 import 'package:sportying_app/features/core/widgets/visuals/time_range_selector.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
 import 'package:sportying_app/features/courts/widgets/court_card.dart';
@@ -21,11 +22,11 @@ import 'package:sportying_app/features/sports/widgets/sport_card.dart';
 //--------------------------------------------------------------------------------------------------------------------//
 
 // Pages
-const List<String> _pages = ['Sport', 'Complex', 'Court', 'Summary'];
+const List<String> _pages = ['Sport', 'Complex', 'Court, date and time', 'Summary'];
 const List<String> _pagesDetails = [
   'Select a sport to book a court.',
   'Select a complex to book a court.',
-  'Select a court to book.',
+  'Select a court to book. And choose your preferred available date and time range.',
   'Check your selection and confirm your reservation.',
 ];
 
@@ -194,12 +195,15 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   Court? _court;
   DateTimeRange? _dateTimeRange;
 
+  late final ValueNotifier<DateTimeRange> _dateTimeRangeNotifier;
+
   @override
   void initState() {
     super.initState();
 
     final now = DateTime.now();
-    _dateTimeRange = DateTimeRange(start: now, end: now);
+    _dateTimeRangeNotifier = ValueNotifier(DateTimeRange(start: now, end: now));
+    _dateTimeRange = _dateTimeRangeNotifier.value;
 
     _pageController = PageController();
     _pageController.addListener(_onPageScroll);
@@ -219,6 +223,8 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     _pageController.dispose();
     _scrollController.dispose();
     _headerController.dispose();
+
+    _dateTimeRangeNotifier.dispose();
 
     super.dispose();
   }
@@ -298,10 +304,18 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     }
   }
 
+  void _onDateChanged(DateTime date) {
+    _dateTimeRangeNotifier.value = DateTimeRange(
+      start: _dateTimeRange!.start.copyWith(year: date.year, month: date.month, day: date.day),
+      end: _dateTimeRange!.end.copyWith(year: date.year, month: date.month, day: date.day),
+    );
+    _dateTimeRange = _dateTimeRangeNotifier.value;
+  }
+
   void _onTimeRangeChanged() {
     if (mounted) {
       final timeRange = _timeRangeController.currentRangeValues;
-      _dateTimeRange = DateTimeRange(
+      _dateTimeRangeNotifier.value = DateTimeRange(
         start: _dateTimeRange!.start.copyWith(
           hour: timeRange.start.toDateTime().hour,
           minute: timeRange.start.toDateTime().minute,
@@ -311,6 +325,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
           minute: timeRange.end.toDateTime().minute,
         ),
       );
+      _dateTimeRange = _dateTimeRangeNotifier.value;
     }
   }
 
@@ -355,6 +370,8 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   }
 
   void _showBottomSheet(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     // Verificar que no se ha abierto previamente un BottomSheet
     if (_bottomSheetController != null) return;
 
@@ -362,19 +379,54 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
       context: context,
       showDragHandle: true,
       builder: (context) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-          child: Wrap(
-            children: [
-              TimeRangeSelector(
-                schedule: RangeValues(
-                  _complex?.timeIni.toDoubleTime0() ?? 8.0,
-                  _complex?.timeEnd.toDoubleTime0() ?? 24.0,
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.4,
+          minChildSize: 0.4,
+          maxChildSize: 0.4,
+          builder: (context, _) => SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                  height: 96.0,
+                  child: ValueListenableBuilder<DateTimeRange>(
+                    valueListenable: _dateTimeRangeNotifier,
+                    builder: (context, dateTimeRange, child) => ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final date = DateTime.now().add(Duration(days: index));
+                        final selected = dateTimeRange.start.isSameDay(date);
+
+                        return DateContainer(
+                          width: 65.0,
+                          margin: const EdgeInsets.symmetric(horizontal: 1.0),
+                          borderRadius: selected ? 12.0 : 4.0,
+                          color: selected ? colorScheme.primary : null,
+                          date: date,
+                          onTap: () => _onDateChanged(date),
+                        );
+                      },
+                    ),
+                  ),
                 ),
-                date: DateTime.now(),
-                availability: [],
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+                  child: Wrap(
+                    children: [
+                      TimeRangeSelector(
+                        schedule: RangeValues(
+                          _complex?.timeIni.toDoubleTime0() ?? 8.0,
+                          _complex?.timeEnd.toDoubleTime0() ?? 24.0,
+                        ),
+                        date: DateTime.now(),
+                        availability: [],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
