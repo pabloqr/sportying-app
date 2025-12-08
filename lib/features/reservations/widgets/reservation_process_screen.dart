@@ -88,6 +88,10 @@ const double _kGridChildAspectRatio = 3 / 2;
 // Search bar
 const double _kSearchBarMaxWidth = 480.0;
 
+// Calendar
+const double _kItemWidth = 65.0;
+const double _kItemSpacing = 2.0;
+
 //--------------------------------------------------------------------------------------------------------------------//
 // HEADER CONTROLLER
 //--------------------------------------------------------------------------------------------------------------------//
@@ -392,19 +396,31 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                   height: 96.0,
                   child: ValueListenableBuilder<DateTimeRange>(
                     valueListenable: _dateTimeRangeNotifier,
-                    builder: (context, dateTimeRange, child) => ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        final date = DateTime.now().add(Duration(days: index));
-                        final selected = dateTimeRange.start.isSameDay(date);
+                    builder: (context, dateTimeRange, _) => LayoutBuilder(
+                      builder: (context, constraints) {
+                        // Obtener el ancho disponible
+                        final maxWidth = constraints.maxWidth;
+                        // Calcular el entero que representa el número de elementos que caben dado el ancho mínimo
+                        final numItems = maxWidth ~/ (_kItemWidth + _kItemSpacing);
+                        // Calcular el ancho real de los elementos para que ocupen todo el ancho disponible
+                        final itemWidth = (maxWidth - _kItemSpacing * numItems) / numItems;
 
-                        return DateContainer(
-                          width: 65.0,
-                          margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                          borderRadius: selected ? 12.0 : 4.0,
-                          color: selected ? colorScheme.primary : null,
-                          date: date,
-                          onTap: () => _onDateChanged(date),
+                        return ListView.builder(
+                          physics: PageScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            final date = DateTime.now().add(Duration(days: index));
+                            final selected = dateTimeRange.start.isSameDay(date);
+
+                            return DateContainer(
+                              width: itemWidth,
+                              margin: const EdgeInsets.symmetric(horizontal: 1.0),
+                              borderRadius: selected ? 12.0 : 4.0,
+                              color: selected ? colorScheme.primary : null,
+                              date: date,
+                              onTap: () => _onDateChanged(date),
+                            );
+                          },
                         );
                       },
                     ),
