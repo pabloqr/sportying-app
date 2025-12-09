@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
@@ -374,10 +375,13 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   }
 
   void _showBottomSheet(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     // Verificar que no se ha abierto previamente un BottomSheet
     if (_bottomSheetController != null) return;
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final brightness = Theme.brightnessOf(context);
 
     _bottomSheetController = showBottomSheet(
       context: context,
@@ -390,10 +394,70 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
           maxChildSize: 0.4,
           builder: (context, _) => SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
+                  child: Text('Select date and time', style: textTheme.titleLarge),
+                ),
+                Divider(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    spacing: 8.0,
+                    children: [
+                      Text('Select date', style: textTheme.titleMedium?.copyWith(fontSize: 18.0)),
+                      Row(
+                        spacing: 4.0,
+                        children: [
+                          FilledButton.icon(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                brightness == Brightness.light
+                                    ? colorScheme.surfaceContainerLowest
+                                    : colorScheme.surfaceContainerHigh,
+                              ),
+                              foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
+                            ),
+                            onPressed: () {},
+                            icon: const Icon(
+                              Symbols.today_rounded,
+                              size: 18,
+                              fill: 0,
+                              weight: 400,
+                              grade: 0,
+                              opticalSize: 18,
+                            ),
+                            label: const Text('Today'),
+                          ),
+                          IconButton.filled(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                brightness == Brightness.light
+                                    ? colorScheme.surfaceContainerLowest
+                                    : colorScheme.surfaceContainerHigh,
+                              ),
+                              foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
+                            ),
+                            onPressed: () {},
+                            icon: const Icon(
+                              Symbols.calendar_month_rounded,
+                              size: 24,
+                              fill: 0,
+                              weight: 400,
+                              grade: 0,
+                              opticalSize: 24,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                  height: 96.0,
+                  padding: const EdgeInsets.fromLTRB(15.0, 0.0, 15.0, 8.0),
+                  height: 100.0,
                   child: ValueListenableBuilder<DateTimeRange>(
                     valueListenable: _dateTimeRangeNotifier,
                     builder: (context, dateTimeRange, _) => LayoutBuilder(
@@ -427,7 +491,42 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
+                  padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    spacing: 8.0,
+                    children: [
+                      Text('Available times', style: textTheme.titleMedium?.copyWith(fontSize: 18.0)),
+                      Row(
+                        spacing: 4.0,
+                        children: [
+                          FilledButton.icon(
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                brightness == Brightness.light
+                                    ? colorScheme.surfaceContainerLowest
+                                    : colorScheme.surfaceContainerHigh,
+                              ),
+                              foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
+                            ),
+                            onPressed: () {},
+                            icon: const Icon(
+                              Symbols.history_2_rounded,
+                              size: 18,
+                              fill: 0,
+                              weight: 400,
+                              grade: 0,
+                              opticalSize: 18,
+                            ),
+                            label: const Text('Reset'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
                   child: Wrap(
                     children: [
                       TimeRangeSelector(
