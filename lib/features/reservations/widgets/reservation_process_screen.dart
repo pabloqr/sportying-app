@@ -389,10 +389,13 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
       builder: (context) {
         return DraggableScrollableSheet(
           expand: false,
+          snap: true,
+          snapSizes: [0.0, 0.4],
           initialChildSize: 0.4,
-          minChildSize: 0.4,
+          minChildSize: 0.0,
           maxChildSize: 0.4,
-          builder: (context, _) => SingleChildScrollView(
+          builder: (context, scrollController) => SingleChildScrollView(
+            controller: scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
