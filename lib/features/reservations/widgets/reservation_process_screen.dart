@@ -193,6 +193,8 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   late final _ReservationHeaderController _headerController;
 
   PersistentBottomSheetController? _bottomSheetController;
+  PersistentBottomSheetController? _priceSheetController;
+
   late final TimeRangeController _timeRangeController;
 
   Sport? _sport;
@@ -270,15 +272,36 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   void _onPageChanged(BuildContext context, int previousPage, int currentPage) {
     if (previousPage == currentPage) return;
 
-    // Actualizar la visibilidad del BottomSheet al cambiar de página
-    if (currentPage == 2 && _court != null && _bottomSheetController == null) {
-      // Si se pasa a la página 3 (index == 2), mostrar el BottomSheet
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && _bottomSheetController == null) _showBottomSheet(context);
-      });
-    } else if (_bottomSheetController != null && currentPage != 2) {
-      // Si se sale de la página 3 (index == 2), ocultar el BottomSheet
-      _closeBottomSheet();
+    switch (currentPage) {
+      case 2:
+        // Si se sale de la página 4 (index == 4), ocultar el PriceSheet
+        if (_priceSheetController != null) _closePriceSheet();
+
+        // Actualizar la visibilidad del BottomSheet al cambiar de página
+        if (_court != null && _bottomSheetController == null) {
+          // Si se pasa a la página 3 (index == 2), mostrar el BottomSheet
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && _bottomSheetController == null) _showBottomSheet(context);
+          });
+        }
+        break;
+      case 3:
+        // Si se sale de la página 3 (index == 2), ocultar el BottomSheet
+        if (_bottomSheetController != null) _closeBottomSheet();
+
+        // Actualizar la visibilidad del BottomSheet al cambiar de página
+        if (_priceSheetController == null) {
+          // Si se pasa a la página 3 (index == 2), mostrar el BottomSheet
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && _priceSheetController == null) _showPriceSheet(context);
+          });
+        }
+        break;
+      default:
+        // Si se sale de la página 3 (index == 2), ocultar el BottomSheet
+        if (_bottomSheetController != null) _closeBottomSheet();
+        // Si se sale de la página 4 (index == 4), ocultar el PriceSheet
+        if (_priceSheetController != null) _closePriceSheet();
     }
   }
 
@@ -362,7 +385,9 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
       ),
       bottomNavigationBar: BottomAppBar(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        color: _bottomSheetController == null ? colorScheme.surface : colorScheme.surfaceContainerLow,
+        color: _bottomSheetController == null && _priceSheetController == null
+            ? colorScheme.surface
+            : colorScheme.surfaceContainerLow,
         child: _PageNavigationControls(
           currentPage: _headerController.currentPage,
           totalPages: _pages.length,
@@ -530,17 +555,13 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 8.0),
-                  child: Wrap(
-                    children: [
-                      TimeRangeSelector(
-                        schedule: RangeValues(
-                          _complex?.timeIni.toDoubleTime0() ?? 8.0,
-                          _complex?.timeEnd.toDoubleTime0() ?? 24.0,
-                        ),
-                        date: DateTime.now(),
-                        availability: [],
-                      ),
-                    ],
+                  child: TimeRangeSelector(
+                    schedule: RangeValues(
+                      _complex?.timeIni.toDoubleTime0() ?? 8.0,
+                      _complex?.timeEnd.toDoubleTime0() ?? 24.0,
+                    ),
+                    date: DateTime.now(),
+                    availability: [],
                   ),
                 ),
               ],
@@ -560,9 +581,71 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
   void _closeBottomSheet() {
     if (_bottomSheetController != null) {
       _bottomSheetController!.close();
-      setState(() {
-        _bottomSheetController = null;
-      });
+      setState(() => _bottomSheetController = null);
+    }
+  }
+
+  void _showPriceSheet(BuildContext context) {
+    if (_priceSheetController != null) return;
+
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    _priceSheetController = showBottomSheet(
+      context: context,
+      enableDrag: false,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 4.0,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 8.0,
+                children: [
+                  Text(
+                    'Court fee',
+                    style: textTheme.titleMedium?.copyWith(fontSize: 18.0, color: colorScheme.onSurfaceVariant),
+                  ),
+                  Text('00,00€', style: textTheme.titleMedium?.copyWith(fontSize: 18.0)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 8.0,
+                children: [
+                  Text(
+                    'Service fee',
+                    style: textTheme.titleMedium?.copyWith(fontSize: 18.0, color: colorScheme.onSurfaceVariant),
+                  ),
+                  Text('00,00€', style: textTheme.titleMedium?.copyWith(fontSize: 18.0)),
+                ],
+              ),
+              Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 8.0,
+                children: [
+                  Text('Total', style: textTheme.titleLarge),
+                  Text('00,00€', style: textTheme.titleLarge),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _closePriceSheet() {
+    if (_priceSheetController != null) {
+      _priceSheetController!.close();
+      setState(() => _priceSheetController = null);
     }
   }
 }
@@ -1228,12 +1311,6 @@ class _SelectionPageState<T> extends State<_SelectionPage<T>> {
 
 /// Navigation controls for moving between pages
 class _PageNavigationControls extends StatelessWidget {
-  final int currentPage;
-  final int totalPages;
-  final bool canContinue;
-  final VoidCallback onPrevious;
-  final VoidCallback onNext;
-
   const _PageNavigationControls({
     required this.currentPage,
     required this.totalPages,
@@ -1241,6 +1318,12 @@ class _PageNavigationControls extends StatelessWidget {
     required this.onPrevious,
     required this.onNext,
   });
+
+  final int currentPage;
+  final int totalPages;
+  final bool canContinue;
+  final VoidCallback onPrevious;
+  final VoidCallback onNext;
 
   @override
   Widget build(BuildContext context) {
