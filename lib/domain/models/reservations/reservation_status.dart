@@ -2,10 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:sportying_app/features/core/utils/widget_palette.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
+import 'package:sportying_app/features/core/widgets/visuals/pulsing_dot.dart';
 
 enum ReservationStatus { scheduled, weather, completed, cancelled }
 
 extension ReservationStatusExtension on ReservationStatus {
+  Color _colorOnSurfaceFromPalette(BuildContext context, WidgetPalette palette) {
+    switch (palette) {
+      case WidgetPalette.normal:
+        return colorOnSurface(context);
+      case WidgetPalette.inverse:
+        return colorSurface(context);
+      case WidgetPalette.primary:
+        return colorOnPrimary(context);
+    }
+  }
+
   bool get isActive => this == ReservationStatus.scheduled || this == ReservationStatus.weather;
 
   Color colorPrimary(BuildContext context) {
@@ -60,12 +72,20 @@ extension ReservationStatusExtension on ReservationStatus {
     }
   }
 
-  Widget smallChip(WidgetPalette palette) {
+  Widget smallChip(BuildContext context, WidgetPalette palette) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return CustomChip.small.neutral(palette: palette, label: 'Scheduled');
+        return CustomChip.small.neutral(
+          palette: palette,
+          leading: PulsingDot.small(color: _colorOnSurfaceFromPalette(context, palette)),
+          label: 'Scheduled',
+        );
       case ReservationStatus.weather:
-        return CustomChip.small.alert(palette: palette, label: 'Weather');
+        return CustomChip.small.alert(
+          palette: palette,
+          leading: PulsingDot.small(color: _colorOnSurfaceFromPalette(context, palette)),
+          label: 'Weather',
+        );
       case ReservationStatus.completed:
         return CustomChip.small.success(palette: palette, label: 'Completed');
       case ReservationStatus.cancelled:
