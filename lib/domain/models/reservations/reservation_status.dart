@@ -93,12 +93,20 @@ extension ReservationStatusExtension on ReservationStatus {
     }
   }
 
-  Widget mediumChip(WidgetPalette palette) {
+  Widget mediumChip(BuildContext context, WidgetPalette palette) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return CustomChip.medium.neutral(palette: palette, label: 'Scheduled');
+        return CustomChip.medium.neutral(
+          palette: palette,
+          leading: PulsingDot.small(color: _colorOnSurfaceFromPalette(context, palette)),
+          label: 'Scheduled',
+        );
       case ReservationStatus.weather:
-        return CustomChip.medium.alert(palette: palette, label: 'Weather');
+        return CustomChip.medium.alert(
+          palette: palette,
+          leading: PulsingDot.small(color: _colorOnSurfaceFromPalette(context, palette)),
+          label: 'Weather',
+        );
       case ReservationStatus.completed:
         return CustomChip.medium.success(palette: palette, label: 'Completed');
       case ReservationStatus.cancelled:
