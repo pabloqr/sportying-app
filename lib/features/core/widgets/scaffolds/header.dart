@@ -10,7 +10,7 @@ extension _HeaderTypeExtension on _HeaderType {
 
     switch (this) {
       case _HeaderType.subheader:
-        return textTheme.titleMedium?.copyWith(fontSize: 18.0);
+        return textTheme.titleMedium;
       case _HeaderType.subsubheader:
         return textTheme.titleSmall;
     }
