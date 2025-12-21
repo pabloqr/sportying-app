@@ -2,20 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
 
 class LabeledInfoWidget extends StatelessWidget {
-  const LabeledInfoWidget({
+  const LabeledInfoWidget({super.key, required this.label, required this.text, this.customTextTheme})
+    : showIcon = false,
+      icon = null,
+      filledIcon = false;
+
+  const LabeledInfoWidget.icon({
     super.key,
-    this.showIcon = true,
-    this.icon,
+    required this.icon,
     this.filledIcon = false,
     required this.label,
     required this.text,
-  });
+    this.customTextTheme,
+  }) : showIcon = true;
 
   final bool showIcon;
   final IconData? icon;
   final bool filledIcon;
+
   final String label;
+
   final String text;
+  final TextStyle? customTextTheme;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +55,11 @@ class LabeledInfoWidget extends StatelessWidget {
                 ),
               ),
               MarqueeWidget(
-                child: Text(text, style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface), softWrap: false),
+                child: Text(
+                  text,
+                  style: customTextTheme ?? textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface),
+                  softWrap: false,
+                ),
               ),
             ],
           ),
