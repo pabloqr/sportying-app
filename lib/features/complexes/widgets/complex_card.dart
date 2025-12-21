@@ -216,7 +216,7 @@ class _ComplexCarouselCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(complex.name, style: textTheme.titleLarge?.copyWith(color: titleColor), softWrap: false),
+        Text(complex.name, style: textTheme.titleMedium?.copyWith(color: titleColor), softWrap: false),
         const SizedBox(height: 4.0),
         ClipRect(
           child: OverflowBox(
@@ -444,7 +444,7 @@ class _ComplexTitle extends StatelessWidget {
       children: [
         Text(
           name,
-          style: textTheme.titleLarge?.copyWith(
+          style: textTheme.titleMedium?.copyWith(
             color: brightness == Brightness.light ? colorScheme.onSurface : colorScheme.surface,
           ),
         ),

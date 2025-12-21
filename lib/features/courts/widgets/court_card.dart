@@ -198,7 +198,7 @@ class _CourtCarouselCard extends StatelessWidget {
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [Text(court.name, style: textTheme.titleLarge?.copyWith(color: titleColor), softWrap: false)],
+      children: [Text(court.name, style: textTheme.titleMedium?.copyWith(color: titleColor), softWrap: false)],
     );
   }
 }
@@ -397,7 +397,7 @@ class _CourtTitle extends StatelessWidget {
       children: [
         Text(
           name,
-          style: textTheme.titleLarge?.copyWith(
+          style: textTheme.titleMedium?.copyWith(
             color: brightness == Brightness.light ? colorScheme.onSurface : colorScheme.surface,
           ),
         ),

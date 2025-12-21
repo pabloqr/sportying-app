@@ -79,7 +79,7 @@ class NewsCard extends StatelessWidget {
                           children: [
                             Text(
                               'News title',
-                              style: textTheme.titleLarge?.copyWith(
+                              style: textTheme.titleMedium?.copyWith(
                                 color: brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface,
                               ),
                             ),
