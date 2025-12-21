@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
-import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
 import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
-import 'package:sportying_app/features/core/widgets/visuals/date_container.dart';
-import 'package:sportying_app/features/core/widgets/visuals/pulsing_dot.dart';
+import 'package:sportying_app/features/core/widgets/visuals/time_progress_indicator.dart';
 
 class ReservationCard extends StatefulWidget {
   const ReservationCard({super.key, required this.reservation});
@@ -19,38 +18,15 @@ class ReservationCard extends StatefulWidget {
 class _ReservationCardState extends State<ReservationCard> {
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4.0),
-      color: Colors.transparent,
-      // shape: RoundedRectangleBorder(borderRadius: BorderRadiusGeometry.circular(28.0)),
+      color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
       elevation: 0.0,
       clipBehavior: Clip.antiAlias,
-      child: Stack(
-        children: [
-          Column(
-            children: [
-              _buildHeader(context),
-              const Divider(height: 1.0),
-              _buildBody(context),
-              const Divider(height: 1.0),
-              _buildFooter(context),
-            ],
-          ),
-          Positioned(
-            left: 0,
-            top: 0,
-            bottom: 0,
-            child: Container(
-              width: 4,
-              decoration: BoxDecoration(
-                color: widget.reservation.reservationStatus == ReservationStatus.scheduled
-                    ? widget.reservation.reservationStatus.colorOnPrimary(context)
-                    : widget.reservation.reservationStatus.colorOnSurface(context),
-              ),
-            ),
-          ),
-        ],
-      ),
+      child: Column(children: [_buildHeader(context), _buildBody(context), _buildButtons(context)]),
     );
   }
 
@@ -58,179 +34,101 @@ class _ReservationCardState extends State<ReservationCard> {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.brightnessOf(context);
-
-    return Material(
-      color: widget.reservation.reservationStatus == ReservationStatus.scheduled
-          ? widget.reservation.reservationStatus.colorPrimary(context)
-          : widget.reservation.reservationStatus.colorSurface(context),
-      child: InkWell(
-        overlayColor: WidgetStatePropertyAll(
-          widget.reservation.reservationStatus == ReservationStatus.scheduled
-              ? widget.reservation.reservationStatus.colorOnPrimary(context).withAlpha(25)
-              : widget.reservation.reservationStatus.colorOnSurface(context).withAlpha(25),
-        ),
-        onTap: () {},
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            spacing: 8.0,
-            children: [
-              Expanded(
-                child: Row(
-                  spacing: 8.0,
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        spacing: 8.0,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              spacing: 4.0,
+              children: [
+                Text(
+                  widget.reservation.complex.name,
+                  style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
+                ),
+                Row(
+                  spacing: 4.0,
                   children: [
                     Icon(
-                      Symbols.sports_tennis_rounded,
-                      size: 28,
+                      Symbols.location_on_rounded,
+                      size: 18,
                       fill: 0,
                       weight: 400,
                       grade: 0,
-                      opticalSize: 28,
-                      color:
-                          brightness == Brightness.light ||
-                              widget.reservation.reservationStatus != ReservationStatus.scheduled
-                          ? colorScheme.onSurface
-                          : colorScheme.surface,
+                      opticalSize: 18,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                     Expanded(
-                      child: Text(
-                        widget.reservation.court.sport.name.toCapitalized(),
-                        style: textTheme.titleLarge?.copyWith(
-                          color:
-                              brightness == Brightness.light ||
-                                  widget.reservation.reservationStatus != ReservationStatus.scheduled
-                              ? colorScheme.onSurface
-                              : colorScheme.surface,
+                      child: MarqueeWidget(
+                        child: Text(
+                          widget.reservation.complex.address,
+                          style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                         ),
-                        softWrap: false,
-                        overflow: TextOverflow.fade,
                       ),
                     ),
                   ],
                 ),
-              ),
-              Row(
-                spacing: 16.0,
-                children: [
-                  Row(
-                    spacing: 4.0,
-                    children: [
-                      if (widget.reservation.reservationStatus.isActive)
-                        PulsingDot.medium(
-                          color: widget.reservation.reservationStatus == ReservationStatus.scheduled
-                              ? widget.reservation.reservationStatus.colorOnPrimary(context)
-                              : widget.reservation.reservationStatus.colorOnSurface(context),
-                        ),
-                      Text(
-                        widget.reservation.reservationStatus.name.toUpperCase(),
-                        style: textTheme.titleSmall?.copyWith(
-                          color: widget.reservation.reservationStatus == ReservationStatus.scheduled
-                              ? widget.reservation.reservationStatus.colorOnPrimary(context)
-                              : widget.reservation.reservationStatus.colorOnSurface(context),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Icon(
-                    Symbols.chevron_right_rounded,
-                    size: 24,
-                    fill: 0,
-                    weight: 400,
-                    grade: 0,
-                    opticalSize: 24,
-                    color:
-                        brightness == Brightness.light ||
-                            widget.reservation.reservationStatus != ReservationStatus.scheduled
-                        ? colorScheme.onSurface
-                        : colorScheme.surface,
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
+          IconButton.filled(
+            onPressed: () {},
+            icon: Icon(
+              Symbols.directions_rounded,
+              size: 24,
+              fill: 1,
+              weight: 400,
+              grade: 0,
+              opticalSize: 24,
+              color: colorScheme.onPrimary,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildBody(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(spacing: 2.0, children: [_buildProgressIndicator(context), _buildInfo(context)]),
+    );
+  }
+
+  Widget _buildProgressIndicator(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
-    final brightness = Theme.brightnessOf(context);
 
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12.0), bottom: Radius.circular(4.0)),
       ),
-      child: Column(
+      child: Row(
         spacing: 16.0,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 8.0,
-            children: [
-              DateContainer(width: 65.0, color: colorScheme.surfaceContainerHighest, date: widget.reservation.dateIni),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    '${widget.reservation.dateIni.toFormattedTime0()} - ${widget.reservation.dateEnd.toFormattedTime0()}',
-                    style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
-                  ),
-                  Row(
-                    spacing: 4.0,
-                    children: [
-                      Icon(
-                        Symbols.sports_rounded,
-                        size: 18,
-                        fill: 0,
-                        weight: 400,
-                        grade: 0,
-                        opticalSize: 18,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      Text(
-                        widget.reservation.court.name,
-                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
+          TimeProgressIndicator(
+            sport: widget.reservation.court.sport,
+            date: DateTimeRange(start: widget.reservation.dateIni, end: widget.reservation.dateEnd),
+            status: widget.reservation.reservationStatus,
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 4.0,
+            spacing: 8.0,
             children: [
-              Text(
-                widget.reservation.complex.name,
-                style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface),
-              ),
-              Row(
-                spacing: 4.0,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(
-                    Symbols.location_on_rounded,
-                    size: 18,
-                    fill: 0,
-                    weight: 400,
-                    grade: 0,
-                    opticalSize: 18,
-                    color: colorScheme.onSurfaceVariant,
+                  Text(
+                    '${widget.reservation.dateIni.toFormattedTime0()} - ${widget.reservation.dateEnd.toFormattedTime0()}',
+                    style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
                   ),
-                  Expanded(
-                    child: MarqueeWidget(
-                      child: Text(
-                        widget.reservation.complex.address,
-                        style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                      ),
-                    ),
+                  Text(
+                    widget.reservation.dateIni.toFormattedDate2(),
+                    style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -241,38 +139,81 @@ class _ReservationCardState extends State<ReservationCard> {
     );
   }
 
-  Widget _buildFooter(BuildContext context) {
+  Widget _buildInfo(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final brightness = Theme.brightnessOf(context);
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-      decoration: BoxDecoration(
-        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text('00,00€', style: textTheme.titleLarge?.copyWith(color: colorScheme.onSurface)),
-          Row(
-            children: [
-              Icon(
-                Symbols.tag_rounded,
-                size: 18,
-                fill: 0,
-                weight: 400,
-                grade: 0,
-                opticalSize: 18,
-                color: colorScheme.onSurfaceVariant,
+    return Row(
+      spacing: 2.0,
+      children: [
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            height: 80.0,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerLow,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4.0),
+                topRight: Radius.circular(4.0),
+                bottomLeft: Radius.circular(12.0),
+                bottomRight: Radius.circular(4.0),
               ),
-              Text(
-                widget.reservation.id.toString().padLeft(8, '0'),
-                style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-              ),
-            ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LabeledInfoWidget(
+                  label: 'FACILITY',
+                  text: '${widget.reservation.court.sport.name.toCapitalized()} · ${widget.reservation.court.name}',
+                  customTextTheme: textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
           ),
+        ),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(16.0),
+            height: 80.0,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerLow,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(4.0),
+                topRight: Radius.circular(4.0),
+                bottomLeft: Radius.circular(4.0),
+                bottomRight: Radius.circular(12.0),
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LabeledInfoWidget(
+                  label: 'PRICE',
+                  text: '00,00€',
+                  customTextTheme: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildButtons(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        spacing: 4.0,
+        children: [
+          TextButton(onPressed: () {}, child: const Text('More info')),
+          FilledButton(onPressed: () {}, child: const Text('Modify')),
         ],
       ),
     );

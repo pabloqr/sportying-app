@@ -26,15 +26,6 @@ extension StringExtension on String {
 }
 
 extension DateTimeExtension on DateTime {
-  static DateTime fromDouble(double value) {
-    final date = DateTime.now();
-    final hours = value.floor();
-    final minutes = ((value - hours) * 60).round();
-    return DateTime(date.year, date.month, date.day, hours, minutes);
-  }
-
-  bool isSameDay(DateTime other) => year == other.year && month == other.month && day == other.day;
-
   DateTime copyWith({
     int? year,
     int? month,
@@ -55,6 +46,17 @@ extension DateTimeExtension on DateTime {
       millisecond ?? this.millisecond,
       microsecond ?? this.microsecond,
     );
+  }
+
+  bool isBetween(DateTime start, DateTime end) => !isBefore(start) && !isAfter(end);
+
+  bool isSameDay(DateTime other) => year == other.year && month == other.month && day == other.day;
+
+  static DateTime fromDouble(double value) {
+    final date = DateTime.now();
+    final hours = value.floor();
+    final minutes = ((value - hours) * 60).round();
+    return DateTime(date.year, date.month, date.day, hours, minutes);
   }
 
   double toDouble() => hour + minute / 60.0;

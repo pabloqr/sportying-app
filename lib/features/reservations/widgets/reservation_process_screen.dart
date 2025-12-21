@@ -435,7 +435,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     spacing: 8.0,
                     children: [
-                      Text('Select date', style: textTheme.titleMedium?.copyWith(fontSize: 18.0)),
+                      Text('Select date', style: textTheme.titleMedium),
                       Row(
                         spacing: 4.0,
                         children: [
@@ -524,7 +524,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     spacing: 8.0,
                     children: [
-                      Text('Available times', style: textTheme.titleMedium?.copyWith(fontSize: 18.0)),
+                      Text('Available times', style: textTheme.titleMedium),
                       Row(
                         spacing: 4.0,
                         children: [
@@ -594,9 +594,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     _priceSheetController = showBottomSheet(
       context: context,
       enableDrag: false,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
-      ),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 0.0),
@@ -608,22 +606,16 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 spacing: 8.0,
                 children: [
-                  Text(
-                    'Court fee',
-                    style: textTheme.titleMedium?.copyWith(fontSize: 18.0, color: colorScheme.onSurfaceVariant),
-                  ),
-                  Text('00,00€', style: textTheme.titleMedium?.copyWith(fontSize: 18.0)),
+                  Text('Court fee', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+                  Text('00,00€', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
                 ],
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 spacing: 8.0,
                 children: [
-                  Text(
-                    'Service fee',
-                    style: textTheme.titleMedium?.copyWith(fontSize: 18.0, color: colorScheme.onSurfaceVariant),
-                  ),
-                  Text('00,00€', style: textTheme.titleMedium?.copyWith(fontSize: 18.0)),
+                  Text('Service fee', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+                  Text('00,00€', style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
                 ],
               ),
               Divider(),

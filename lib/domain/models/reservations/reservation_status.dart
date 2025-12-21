@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/features/core/utils/widget_palette.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
@@ -69,6 +70,19 @@ extension ReservationStatusExtension on ReservationStatus {
         return WidgetStatus.success.colorOnSurface(context);
       case ReservationStatus.cancelled:
         return WidgetStatus.error.colorOnSurface(context);
+    }
+  }
+
+  IconData get icon {
+    switch (this) {
+      case ReservationStatus.scheduled:
+        return Symbols.hourglass_rounded;
+      case ReservationStatus.weather:
+        return Symbols.cloud_rounded;
+      case ReservationStatus.completed:
+        return Symbols.check_rounded;
+      case ReservationStatus.cancelled:
+        return Symbols.close_rounded;
     }
   }
 
