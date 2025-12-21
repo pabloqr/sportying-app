@@ -2,14 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:sportying_app/domain/models/complexes/complex.dart';
-import 'package:sportying_app/domain/models/complexes/sport.dart';
-import 'package:sportying_app/domain/models/courts/court.dart';
-import 'package:sportying_app/domain/models/courts/court_status.dart';
-import 'package:sportying_app/domain/models/reservations/availability_status.dart';
-import 'package:sportying_app/domain/models/reservations/reservation.dart';
-import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
-import 'package:sportying_app/domain/models/reservations/time_filter.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/header.dart';
 import 'package:sportying_app/features/core/widgets/visuals/error_indicator.dart';
@@ -74,51 +66,7 @@ class _ClientHomeScreenState extends State<ClientHomeScreen> {
         if (widget.viewModel.reservation != null)
           ReservationCard(reservation: widget.viewModel.reservation!)
         else
-          ReservationCard(
-            reservation: Reservation(
-              id: 12342,
-              userId: 6,
-              complex: Complex(
-                name: 'Complejo Deportivo Municipal',
-                timeIni: '09:00',
-                timeEnd: '23:00',
-                address: 'C/Pricipal, s/n, Granada',
-                locLongitude: 0,
-                locLatitude: 0,
-                sports: {Sport.tennis, Sport.padel, Sport.football},
-                createdAt: DateTime.now(),
-                updatedAt: DateTime.now(),
-              ),
-              court: Court(
-                complex: Complex(
-                  name: 'Complejo Deportivo Municipal',
-                  timeIni: '09:00',
-                  timeEnd: '23:00',
-                  address: 'C/Pricipal, s/n, Granada',
-                  locLongitude: 0,
-                  locLatitude: 0,
-                  sports: {Sport.tennis, Sport.padel, Sport.football},
-                  createdAt: DateTime.now(),
-                  updatedAt: DateTime.now(),
-                ),
-                sport: Sport.tennis,
-                name: 'Court 1',
-                description: 'This is tennis court 1.',
-                maxPeople: 4,
-                status: CourtStatus.open,
-                createdAt: DateTime.now(),
-                updatedAt: DateTime.now(),
-              ),
-              dateIni: DateTime.now(),
-              dateEnd: DateTime.now().add(Duration(hours: 1, minutes: 30)),
-              status: AvailabilityStatus.empty,
-              reservationStatus: ReservationStatus.scheduled,
-              timeFilter: TimeFilter.all,
-              createdAt: DateTime.now(),
-              updatedAt: DateTime.now(),
-            ),
-          ),
-        // const Center(child: Text('No upcoming reservations')),
+          const Center(child: Text('No upcoming reservations')),
       ],
     );
   }
