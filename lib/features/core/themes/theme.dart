@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:sportying_app/features/core/themes/text_theme.dart';
 
+/// Button overlay alpha
+const int _kButtonOverlayAlpha = 25;
+
 class AdminTheme extends MaterialTheme {
   AdminTheme() : super();
 
@@ -347,6 +350,18 @@ abstract class MaterialTheme {
       splashColor: colorScheme.onPrimary.withAlpha(25),
       backgroundColor: colorScheme.primary,
       foregroundColor: colorScheme.onPrimary,
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: ButtonStyle(
+        overlayColor: WidgetStatePropertyAll(
+          colorScheme.brightness == Brightness.light
+              ? colorScheme.onPrimary.withAlpha(_kButtonOverlayAlpha)
+              : colorScheme.primary.withAlpha(_kButtonOverlayAlpha),
+        ),
+        foregroundColor: WidgetStatePropertyAll(
+          colorScheme.brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.primary,
+        ),
+      ),
     ),
   );
 }

@@ -619,10 +619,6 @@ class _ComplexActionButtons extends StatelessWidget {
       spacing: 4.0,
       children: [
         TextButton(
-          style: ButtonStyle(
-            overlayColor: WidgetStatePropertyAll(_getTextButtonOverlayColor(context)),
-            foregroundColor: WidgetStatePropertyAll(_getTextButtonForegroundColor(context)),
-          ),
           onPressed: onMoreInfo,
           child: const Text('More info'),
         ),
@@ -637,19 +633,5 @@ class _ComplexActionButtons extends StatelessWidget {
         ),
       ],
     );
-  }
-
-  Color _getTextButtonOverlayColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Theme.brightnessOf(context) == Brightness.light
-        ? colorScheme.onPrimary.withAlpha(_kButtonOverlayAlpha)
-        : colorScheme.primary.withAlpha(_kButtonOverlayAlpha);
-  }
-
-  Color _getTextButtonForegroundColor(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
-    return Theme.brightnessOf(context) == Brightness.light ? colorScheme.onPrimary : colorScheme.primary;
   }
 }
