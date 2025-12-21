@@ -446,16 +446,14 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
             ),
             InfoSectionWidget(
               leftChildren: [
-                LabeledInfoWidget.normal(
+                LabeledInfoWidget.icon(
                   icon: Symbols.timelapse_rounded,
                   label: 'Selected time',
                   text:
                       '${controller.currentRangeValues.duration.inHours}h ${controller.currentRangeValues.duration.inMinutes % 60}min',
                 ),
               ],
-              rightChildren: [
-                LabeledInfoWidget.normal(icon: Symbols.payments_rounded, label: 'Price', text: '00.00 €'),
-              ],
+              rightChildren: [LabeledInfoWidget.icon(icon: Symbols.payments_rounded, label: 'Price', text: '00.00 €')],
             ),
           ],
         );

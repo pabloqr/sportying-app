@@ -359,7 +359,7 @@ class _CourtDisplayCard extends StatelessWidget {
       spacing: 4.0,
       children: [
         Expanded(
-          child: LabeledInfoWidget.normal(
+          child: LabeledInfoWidget.icon(
             icon: Symbols.schedule_rounded,
             label: 'Schedule',
             text: '${court.createdAt} - ${court.updatedAt}',

@@ -2,25 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
 
 class LabeledInfoWidget extends StatelessWidget {
-  const LabeledInfoWidget.normal({
+  const LabeledInfoWidget({
     super.key,
     this.showIcon = true,
     this.icon,
     this.filledIcon = false,
     required this.label,
     required this.text,
-  }) : brightness = Brightness.dark;
-
-  const LabeledInfoWidget.inverse({
-    super.key,
-    this.showIcon = true,
-    this.icon,
-    this.filledIcon = false,
-    required this.label,
-    required this.text,
-  }) : brightness = Brightness.light;
-
-  final Brightness brightness;
+  });
 
   final bool showIcon;
   final IconData? icon;
@@ -44,7 +33,7 @@ class LabeledInfoWidget extends StatelessWidget {
             weight: 400,
             grade: 0,
             opticalSize: 18,
-            color: brightness == Brightness.light ? colorScheme.outlineVariant : colorScheme.onSurfaceVariant,
+            color: colorScheme.onSurfaceVariant,
           ),
         Expanded(
           child: Column(
@@ -52,21 +41,13 @@ class LabeledInfoWidget extends StatelessWidget {
             children: [
               MarqueeWidget(
                 child: Text(
-                  label,
-                  style: textTheme.labelSmall?.copyWith(
-                    color: brightness == Brightness.light ? colorScheme.outlineVariant : colorScheme.onSurfaceVariant,
-                  ),
+                  label.toUpperCase(),
+                  style: textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant),
                   softWrap: false,
                 ),
               ),
               MarqueeWidget(
-                child: Text(
-                  text,
-                  style: textTheme.bodyLarge?.copyWith(
-                    color: brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface,
-                  ),
-                  softWrap: false,
-                ),
+                child: Text(text, style: textTheme.bodyLarge?.copyWith(color: colorScheme.onSurface), softWrap: false),
               ),
             ],
           ),

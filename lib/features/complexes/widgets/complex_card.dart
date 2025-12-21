@@ -349,7 +349,7 @@ class _ComplexTileCard extends StatelessWidget {
           label: rating.toString(),
         ),
         Expanded(
-          child: LabeledInfoWidget.normal(
+          child: LabeledInfoWidget.icon(
             icon: Symbols.schedule_rounded,
             label: 'Schedule',
             text: '${complex.timeIni} - ${complex.timeEnd}',
@@ -417,7 +417,7 @@ class _ComplexDisplayCard extends StatelessWidget {
       spacing: 4.0,
       children: [
         Expanded(
-          child: LabeledInfoWidget.normal(
+          child: LabeledInfoWidget.icon(
             icon: Symbols.schedule_rounded,
             label: 'Schedule',
             text: '${complex.timeIni} - ${complex.timeEnd}',
