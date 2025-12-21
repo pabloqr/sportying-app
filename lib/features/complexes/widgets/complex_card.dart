@@ -39,9 +39,6 @@ const double _kCardImageHeight = 200.0;
 /// Star icon size
 const double _kStarIconSize = 18.0;
 
-/// Button overlay alpha
-const int _kButtonOverlayAlpha = 25;
-
 //--------------------------------------------------------------------------------------------------------------------//
 // ENUMS
 //--------------------------------------------------------------------------------------------------------------------//
@@ -612,25 +609,12 @@ class _ComplexActionButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       spacing: 4.0,
       children: [
-        TextButton(
-          onPressed: onMoreInfo,
-          child: const Text('More info'),
-        ),
-        FilledButton(
-          style: ButtonStyle(
-            overlayColor: WidgetStatePropertyAll(colorScheme.onPrimary.withAlpha(_kButtonOverlayAlpha)),
-            backgroundColor: WidgetStatePropertyAll(colorScheme.primary),
-            foregroundColor: WidgetStatePropertyAll(colorScheme.onPrimary),
-          ),
-          onPressed: onBookCourt,
-          child: const Text('Book court'),
-        ),
+        TextButton(onPressed: onMoreInfo, child: const Text('More info')),
+        FilledButton(onPressed: onBookCourt, child: const Text('Book court')),
       ],
     );
   }
