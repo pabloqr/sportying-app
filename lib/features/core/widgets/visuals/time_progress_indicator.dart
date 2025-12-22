@@ -86,8 +86,10 @@ class TimeProgressIndicator extends StatelessWidget {
 
     // Calcular el tiempo restante y obtener la cadena de texto representativa
     final remaining = date.end.difference(current);
-    final remainingText = remaining.inHours > 0
+    final remainingText = remaining.inHours > 0 && remaining.inMinutes.remainder(60) > 0
         ? '${remaining.inHours}h ${remaining.inMinutes.remainder(60)}m'
+        : remaining.inHours > 0
+        ? '${remaining.inHours}h'
         : '${remaining.inMinutes}m';
 
     return Stack(

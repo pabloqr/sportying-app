@@ -8,9 +8,13 @@ import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
 import 'package:sportying_app/domain/models/courts/court_status.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
+import 'package:sportying_app/features/core/utils/widget_palette.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/custom_grid_view.dart';
+import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
+import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
+import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
 import 'package:sportying_app/features/core/widgets/visuals/date_container.dart';
 import 'package:sportying_app/features/core/widgets/visuals/time_range_selector.dart';
@@ -28,7 +32,7 @@ const List<String> _pagesDetails = [
   'Select a sport to book a court.',
   'Select a complex to book a court.',
   'Select a court to book. And choose your preferred available date and time range.',
-  'Check your selection and confirm your reservation.',
+  'Review your selection and confirm your reservation.',
 ];
 
 // Header heights
@@ -370,6 +374,10 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
               scrollController: _scrollController,
               headerController: _headerController,
               onPageChanged: (previousPage, currentPage) => _onPageChanged(context, previousPage, currentPage),
+              onCloseBottomSheets: () {
+                _closeBottomSheet();
+                _closePriceSheet();
+              },
               sport: _sport,
               onSportSelected: (sport) => setState(() => _sport = sport),
               complex: _complex,
@@ -379,6 +387,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                 setState(() => _court = court);
                 _showBottomSheet(context);
               },
+              summaryPage: _SummaryPage(_sport, _complex, _court, _dateTimeRange),
             );
           },
         ),
@@ -648,12 +657,14 @@ class _ReservationProcessContent extends StatefulWidget {
     required this.scrollController,
     required this.headerController,
     required this.onPageChanged,
+    required this.onCloseBottomSheets,
     required this.sport,
     required this.onSportSelected,
     required this.complex,
     required this.onComplexSelected,
     required this.court,
     required this.onCourtSelected,
+    required this.summaryPage,
   });
 
   final PageController pageController;
@@ -661,6 +672,8 @@ class _ReservationProcessContent extends StatefulWidget {
   final _ReservationHeaderController headerController;
 
   final void Function(int previousPage, int currentPage) onPageChanged;
+
+  final VoidCallback onCloseBottomSheets;
 
   final Sport? sport;
   final ValueChanged<Sport> onSportSelected;
@@ -670,6 +683,8 @@ class _ReservationProcessContent extends StatefulWidget {
 
   final Court? court;
   final ValueChanged<Court> onCourtSelected;
+
+  final Widget summaryPage;
 
   @override
   State<_ReservationProcessContent> createState() => _ReservationProcessContentState();
@@ -727,6 +742,8 @@ class _ReservationProcessContentState extends State<_ReservationProcessContent> 
         TextButton(
           style: _getDialogButtonStyle(context),
           onPressed: () {
+            widget.onCloseBottomSheets();
+
             context.pop();
             context.pop();
           },
@@ -959,7 +976,7 @@ class _ReservationProcessContentState extends State<_ReservationProcessContent> 
             );
           },
         ),
-        Center(child: Text('Content from page ${_pages[3]}')),
+        widget.summaryPage,
       ],
     );
   }
@@ -1293,6 +1310,203 @@ class _SelectionPageState<T> extends State<_SelectionPage<T>> {
       itemBuilder: (context, index) {
         return widget.itemBuilder(context, widget.items[index], index, _selectedIndex, null);
       },
+    );
+  }
+}
+
+class _SummaryPage extends StatelessWidget {
+  const _SummaryPage(this.sport, this.complex, this.court, this.dateTimeRange);
+
+  final Sport? sport;
+  final Complex? complex;
+  final Court? court;
+  final DateTimeRange? dateTimeRange;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        spacing: 2.0,
+        children: [
+          _buildComplexContainer(context),
+          _buildDateTimeContainer(context),
+          Row(
+            spacing: 2.0,
+            children: [
+              Expanded(child: _buildSportContainer(context)),
+              Expanded(child: _buildCapacityContainer(context)),
+            ],
+          ),
+          _buildCourtContainer(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildComplexContainer(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final brightness = Theme.brightnessOf(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12.0), bottom: Radius.circular(4.0)),
+      ),
+      child: Row(
+        spacing: 8.0,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(complex!.name, style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface)),
+                Row(
+                  spacing: 4.0,
+                  children: [
+                    Icon(
+                      Symbols.location_on_rounded,
+                      size: 18,
+                      fill: 0,
+                      weight: 400,
+                      grade: 0,
+                      opticalSize: 18,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    Expanded(
+                      child: MarqueeWidget(
+                        child: Text(
+                          complex!.address,
+                          style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          IconButton.filled(
+            onPressed: () {},
+            icon: Icon(
+              Symbols.directions_rounded,
+              size: 24,
+              fill: 1,
+              weight: 400,
+              grade: 0,
+              opticalSize: 24,
+              color: colorScheme.onPrimary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDateTimeContainer(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    final brightness = Theme.brightnessOf(context);
+
+    // Calcular el tiempo restante y obtener la cadena de texto representativa
+    final remaining = dateTimeRange!.end.difference(dateTimeRange!.start);
+    final remainingText = remaining.inHours > 0 && remaining.inMinutes.remainder(60) > 0
+        ? '${remaining.inHours}h ${remaining.inMinutes.remainder(60)}m'
+        : remaining.inHours > 0
+        ? '${remaining.inHours}h'
+        : '${remaining.inMinutes}m';
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+      ),
+      child: Column(
+        spacing: 8.0,
+        children: [
+          CustomChip.medium.neutral(palette: WidgetPalette.primary, label: dateTimeRange!.start.toFormattedDate2()),
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('START', style: textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+                  Text('END', style: textTheme.labelSmall?.copyWith(color: colorScheme.onSurfaceVariant)),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                spacing: 8.0,
+                children: [
+                  Text(dateTimeRange!.start.toFormattedTime0(), style: textTheme.titleMedium),
+                  Expanded(
+                    child: Stack(
+                      alignment: AlignmentGeometry.center,
+                      children: [
+                        Divider(
+                          height: 2.0,
+                          thickness: 2.0,
+                          color: colorScheme.primary,
+                          radius: BorderRadius.circular(1000.0),
+                        ),
+                        CustomChip.medium.neutral(palette: WidgetPalette.primary, label: remainingText),
+                      ],
+                    ),
+                  ),
+                  Text(dateTimeRange!.end.toFormattedTime0(), style: textTheme.titleMedium),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSportContainer(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+      ),
+      child: LabeledInfoWidget(label: 'SPORT', text: sport!.name.toCapitalized()),
+    );
+  }
+
+  Widget _buildCapacityContainer(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.all(Radius.circular(4.0)),
+      ),
+      child: LabeledInfoWidget(label: 'CAPACITY', text: court!.maxPeople.toString().padLeft(2, '0')),
+    );
+  }
+
+  Widget _buildCourtContainer(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.brightnessOf(context);
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: brightness == Brightness.light ? colorScheme.surfaceContainerLowest : colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(4.0), bottom: Radius.circular(12.0)),
+      ),
+      child: LabeledInfoWidget(label: 'FACILITY', text: '${court!.name} · Grass'),
     );
   }
 }
