@@ -201,6 +201,9 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
 
   late final TimeRangeController _timeRangeController;
 
+  late final PageController _dayCarouselPageController;
+  late int _numDaysInPage;
+
   Sport? _sport;
   Complex? _complex;
   Court? _court;
@@ -224,6 +227,9 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
 
     _timeRangeController = context.read<TimeRangeController>();
     _timeRangeController.addListener(_onTimeRangeChanged);
+
+    _dayCarouselPageController = PageController();
+    _numDaysInPage = 0;
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _updateExpandedHeight());
   }
@@ -336,12 +342,31 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     }
   }
 
+  int _daysOffsetFromToday(DateTime date) {
+    final today = DateTime.now();
+    final todayStart = DateTime(today.year, today.month, today.day);
+    final dateStart = DateTime(date.year, date.month, date.day);
+
+    return dateStart.difference(todayStart).inDays;
+  }
+
   void _onDateChanged(DateTime date) {
     _dateTimeRangeNotifier.value = DateTimeRange(
       start: _dateTimeRange!.start.copyWith(year: date.year, month: date.month, day: date.day),
       end: _dateTimeRange!.end.copyWith(year: date.year, month: date.month, day: date.day),
     );
     _dateTimeRange = _dateTimeRangeNotifier.value;
+
+    // Calcular el offset en días desde el actual hasta el seleccionado
+    final offset = _daysOffsetFromToday(date);
+    // Calcular la página a la que se debe desplazar el carousel
+    final page = offset < 0 ? 0 : offset ~/ _numDaysInPage;
+    // Aplicar el desplazamiento a la página calculada
+    _dayCarouselPageController.animateToPage(
+      page,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.fastLinearToSlowEaseIn,
+    );
   }
 
   void _onTimeRangeChanged() {
@@ -477,7 +502,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                               ),
                               foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
                             ),
-                            onPressed: () {},
+                            onPressed: () => _showDatePicker(context),
                             icon: const Icon(
                               Symbols.calendar_month_rounded,
                               size: 24,
@@ -502,24 +527,28 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                         // Obtener el ancho disponible
                         final maxWidth = constraints.maxWidth;
                         // Calcular el entero que representa el número de elementos que caben dado el ancho mínimo
-                        final numItems = maxWidth ~/ (_kItemWidth + _kItemSpacing);
+                        _numDaysInPage = maxWidth ~/ (_kItemWidth + _kItemSpacing);
                         // Calcular el ancho real de los elementos para que ocupen todo el ancho disponible
-                        final itemWidth = (maxWidth - _kItemSpacing * numItems) / numItems;
+                        final itemWidth = (maxWidth - _kItemSpacing * _numDaysInPage) / _numDaysInPage;
 
-                        return ListView.builder(
-                          physics: PageScrollPhysics(),
+                        return PageView.builder(
+                          controller: _dayCarouselPageController,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
-                            final date = DateTime.now().add(Duration(days: index));
-                            final selected = dateTimeRange.start.isSameDay(date);
+                            return Row(
+                              children: List.generate(_numDaysInPage, (i) {
+                                final date = DateTime.now().add(Duration(days: index * _numDaysInPage + i));
+                                final selected = dateTimeRange.start.isSameDay(date);
 
-                            return DateContainer(
-                              width: itemWidth,
-                              margin: const EdgeInsets.symmetric(horizontal: 1.0),
-                              borderRadius: selected ? 12.0 : 4.0,
-                              color: selected ? colorScheme.primary : null,
-                              date: date,
-                              onTap: () => _onDateChanged(date),
+                                return DateContainer(
+                                  width: itemWidth,
+                                  margin: const EdgeInsets.symmetric(horizontal: 1.0),
+                                  borderRadius: selected ? 12.0 : 4.0,
+                                  color: selected ? colorScheme.primary : null,
+                                  date: date,
+                                  onTap: () => _onDateChanged(date),
+                                );
+                              }),
                             );
                           },
                         );
@@ -648,6 +677,19 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
       _priceSheetController!.close();
       setState(() => _priceSheetController = null);
     }
+  }
+
+  void _showDatePicker(BuildContext context) async {
+    // Mostrar el calendario para seleccionar una fecha
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _dateTimeRange?.start,
+      firstDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(days: 365)),
+    );
+
+    // Actualizar la fecha a la seleccionada
+    if (date != null) _onDateChanged(date);
   }
 }
 
