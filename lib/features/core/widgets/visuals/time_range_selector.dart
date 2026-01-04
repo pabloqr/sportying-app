@@ -8,7 +8,7 @@ import 'package:sportying_app/features/core/widgets/scaffolds/info_section_widge
 import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';
 import 'package:sportying_app/features/core/widgets/utils/unavailable_ranges_painter.dart';
 
-enum _DayTime { morning, afternoon }
+enum DayTime { morning, afternoon }
 
 /// Manages the state for time range selection, including available and unavailable time slots.
 ///
@@ -28,17 +28,16 @@ class TimeRangeController extends ChangeNotifier {
   }
 
   /// Defines the upper limit for the morning time slot.
-  // static const double morningLimit = 12.0;
   static const double morningLimit = 16.0;
+
+  /// Defines the upper limit for the night time slot.
+  double nightLimit = 24.0;
 
   /// The complete schedule of the complex (opening and closing hours)
   RangeValues schedule = RangeValues(8.0, 24.0);
 
   /// The start of the current time window being displayed/selected.
   double currentTimeIni = 8.0;
-
-  /// Defines the upper limit for the night time slot.
-  double nightLimit = 24.0;
 
   /// The end of the current time window being displayed/selected.
   double currentTimeEnd = morningLimit;
@@ -301,6 +300,9 @@ class TimeRangeController extends ChangeNotifier {
   /// Gets the effective max for the current slider
   double get effectiveMax => [currentTimeEnd, schedule.end].reduce((a, b) => a < b ? a : b);
 
+  /// Determines the current day period (morning or afternoon) based on controller state
+  DayTime get currentDayTime => currentTimeEnd <= morningLimit ? DayTime.morning : DayTime.afternoon;
+
   /// Resets the time range selector to the default morning time.
   void reset() => setMorningTime();
 }
@@ -326,18 +328,35 @@ class TimeRangeSelector extends StatefulWidget {
 class _TimeRangeSelectorState extends State<TimeRangeSelector> {
   late TimeRangeController _timeRangeController;
 
-  _DayTime _dayTime = _DayTime.morning;
+  DayTime _dayTime = DayTime.morning;
 
   @override
   void initState() {
     super.initState();
     _timeRangeController = context.read<TimeRangeController>();
+    _timeRangeController.addListener(_onControllerChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _updateControllerSchedule();
         _updateControllerUnavailableSlots();
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _timeRangeController.removeListener(_onControllerChanged);
+    super.dispose();
+  }
+
+  void _onControllerChanged() {
+    // Sincronizar _dayTime con el período actual del controlador
+    final newDayTime = _timeRangeController.currentDayTime;
+    if (_dayTime != newDayTime) {
+      setState(() {
+        _dayTime = newDayTime;
+      });
+    }
   }
 
   @override
@@ -349,6 +368,13 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
         if (mounted) {
           _updateControllerSchedule();
           _updateControllerUnavailableSlots();
+          // Sincronizar _dayTime después de actualizar
+          final newDayTime = _timeRangeController.currentDayTime;
+          if (_dayTime != newDayTime) {
+            setState(() {
+              _dayTime = newDayTime;
+            });
+          }
         }
       });
     }
@@ -377,18 +403,18 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
             SegmentedButton(
               expandedInsets: EdgeInsets.zero,
               segments: [
-                ButtonSegment(value: _DayTime.morning, label: const Text('Morning')),
-                ButtonSegment(value: _DayTime.afternoon, label: const Text('Afternoon')),
+                ButtonSegment(value: DayTime.morning, label: const Text('Morning')),
+                ButtonSegment(value: DayTime.afternoon, label: const Text('Afternoon')),
               ],
               selected: {_dayTime},
               onSelectionChanged: (selection) {
                 setState(() {
                   _dayTime = selection.first;
                   switch (_dayTime) {
-                    case _DayTime.morning:
+                    case DayTime.morning:
                       controller.setMorningTime();
                       break;
-                    case _DayTime.afternoon:
+                    case DayTime.afternoon:
                       controller.setAfternoonTime();
                       break;
                   }

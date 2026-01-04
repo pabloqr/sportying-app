@@ -482,7 +482,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                               ),
                               foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
                             ),
-                            onPressed: () {},
+                            onPressed: () => _onDateChanged(DateTime.now()),
                             icon: const Icon(
                               Symbols.today_rounded,
                               size: 18,
@@ -575,7 +575,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                               ),
                               foregroundColor: WidgetStatePropertyAll(colorScheme.onSurface),
                             ),
-                            onPressed: () {},
+                            onPressed: _timeRangeController.reset,
                             icon: const Icon(
                               Symbols.history_2_rounded,
                               size: 18,
