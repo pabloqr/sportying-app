@@ -7,7 +7,7 @@ part of 'court.dart';
 // **************************************************************************
 
 _Court _$CourtFromJson(Map<String, dynamic> json) => _Court(
-  id: (json['id'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
   complex: Complex.fromJson(json['complex'] as Map<String, dynamic>),
   sport: $enumDecode(_$SportEnumMap, json['sport']),
   name: json['name'] as String,

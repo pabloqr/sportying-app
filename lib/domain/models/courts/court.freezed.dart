@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Court {
 
- int? get id; Complex get complex; Sport get sport; String get name; String get description; int get maxPeople; CourtStatus get status; DateTime get createdAt; DateTime get updatedAt;
+ int get id; Complex get complex; Sport get sport; String get name; String get description; int get maxPeople; CourtStatus get status; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of Court
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $CourtCopyWith<$Res>  {
   factory $CourtCopyWith(Court value, $Res Function(Court) _then) = _$CourtCopyWithImpl;
 @useResult
 $Res call({
- int? id, Complex complex, Sport sport, String name, String description, int maxPeople, CourtStatus status, DateTime createdAt, DateTime updatedAt
+ int id, Complex complex, Sport sport, String name, String description, int maxPeople, CourtStatus status, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,10 +65,10 @@ class _$CourtCopyWithImpl<$Res>
 
 /// Create a copy of Court
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? complex = null,Object? sport = null,Object? name = null,Object? description = null,Object? maxPeople = null,Object? status = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? complex = null,Object? sport = null,Object? name = null,Object? description = null,Object? maxPeople = null,Object? status = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
 as Complex,sport: null == sport ? _self.sport : sport // ignore: cast_nullable_to_non_nullable
 as Sport,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -170,7 +170,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  Complex complex,  Sport sport,  String name,  String description,  int maxPeople,  CourtStatus status,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  Complex complex,  Sport sport,  String name,  String description,  int maxPeople,  CourtStatus status,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Court() when $default != null:
 return $default(_that.id,_that.complex,_that.sport,_that.name,_that.description,_that.maxPeople,_that.status,_that.createdAt,_that.updatedAt);case _:
@@ -191,7 +191,7 @@ return $default(_that.id,_that.complex,_that.sport,_that.name,_that.description,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  Complex complex,  Sport sport,  String name,  String description,  int maxPeople,  CourtStatus status,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  Complex complex,  Sport sport,  String name,  String description,  int maxPeople,  CourtStatus status,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Court():
 return $default(_that.id,_that.complex,_that.sport,_that.name,_that.description,_that.maxPeople,_that.status,_that.createdAt,_that.updatedAt);case _:
@@ -211,7 +211,7 @@ return $default(_that.id,_that.complex,_that.sport,_that.name,_that.description,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  Complex complex,  Sport sport,  String name,  String description,  int maxPeople,  CourtStatus status,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  Complex complex,  Sport sport,  String name,  String description,  int maxPeople,  CourtStatus status,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Court() when $default != null:
 return $default(_that.id,_that.complex,_that.sport,_that.name,_that.description,_that.maxPeople,_that.status,_that.createdAt,_that.updatedAt);case _:
@@ -226,10 +226,10 @@ return $default(_that.id,_that.complex,_that.sport,_that.name,_that.description,
 @JsonSerializable()
 
 class _Court implements Court {
-  const _Court({this.id, required this.complex, required this.sport, required this.name, required this.description, required this.maxPeople, required this.status, required this.createdAt, required this.updatedAt});
+  const _Court({required this.id, required this.complex, required this.sport, required this.name, required this.description, required this.maxPeople, required this.status, required this.createdAt, required this.updatedAt});
   factory _Court.fromJson(Map<String, dynamic> json) => _$CourtFromJson(json);
 
-@override final  int? id;
+@override final  int id;
 @override final  Complex complex;
 @override final  Sport sport;
 @override final  String name;
@@ -272,7 +272,7 @@ abstract mixin class _$CourtCopyWith<$Res> implements $CourtCopyWith<$Res> {
   factory _$CourtCopyWith(_Court value, $Res Function(_Court) _then) = __$CourtCopyWithImpl;
 @override @useResult
 $Res call({
- int? id, Complex complex, Sport sport, String name, String description, int maxPeople, CourtStatus status, DateTime createdAt, DateTime updatedAt
+ int id, Complex complex, Sport sport, String name, String description, int maxPeople, CourtStatus status, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -289,10 +289,10 @@ class __$CourtCopyWithImpl<$Res>
 
 /// Create a copy of Court
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? complex = null,Object? sport = null,Object? name = null,Object? description = null,Object? maxPeople = null,Object? status = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? complex = null,Object? sport = null,Object? name = null,Object? description = null,Object? maxPeople = null,Object? status = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_Court(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
 as Complex,sport: null == sport ? _self.sport : sport // ignore: cast_nullable_to_non_nullable
 as Sport,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable

@@ -9,7 +9,7 @@ part 'court.g.dart';
 @freezed
 abstract class Court with _$Court {
   const factory Court ({
-    int? id,
+    required int id,
     required Complex complex,
     required Sport sport,
     required String name,

@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:sportying_app/data/repositories/complexes/complexes_repository.dart';
+import 'package:sportying_app/data/repositories/courts/courts_repository.dart';
 import 'package:sportying_app/data/repositories/reservations/reservations_repository.dart';
 import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
 import 'package:sportying_app/data/services/courts/courts_remote_service.dart';
@@ -26,6 +27,7 @@ List<SingleChildWidget> get appProviders {
     // REPOSITORIES LEVEL 1 (Depend on services from level 1)
     // ---------------------------------------------------------------------------------------------------------------//
     Provider(create: (context) => ComplexesRepositoryImpl(remoteService: context.read()) as ComplexesRepository),
+    Provider(create: (context) => CourtsRepositoryImpl(remoteService: context.read()) as CourtsRepository),
     Provider(
       create: (context) =>
           ReservationsRepositoryImpl(
