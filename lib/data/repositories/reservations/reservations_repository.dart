@@ -110,6 +110,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
 
                     // Crear la instancia del modelo de la pista
                     court = Court(
+                      id: value.id ?? 0,
                       complex: complex,
                       sport: Sport.values.firstWhere((sport) {
                         final String name = sport.name.toLowerCase();
