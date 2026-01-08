@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Complex {
 
- int? get id; String get name; String get timeIni; String get timeEnd; String get address; double? get locLongitude; double? get locLatitude; Set<Sport> get sports; DateTime get createdAt; DateTime get updatedAt;
+ int get id; String get name; String get timeIni; String get timeEnd; String get address; double? get locLongitude; double? get locLatitude; Set<Sport> get sports; DateTime get createdAt; DateTime get updatedAt;
 /// Create a copy of Complex
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $ComplexCopyWith<$Res>  {
   factory $ComplexCopyWith(Complex value, $Res Function(Complex) _then) = _$ComplexCopyWithImpl;
 @useResult
 $Res call({
- int? id, String name, String timeIni, String timeEnd, String address, double? locLongitude, double? locLatitude, Set<Sport> sports, DateTime createdAt, DateTime updatedAt
+ int id, String name, String timeIni, String timeEnd, String address, double? locLongitude, double? locLatitude, Set<Sport> sports, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -65,10 +65,10 @@ class _$ComplexCopyWithImpl<$Res>
 
 /// Create a copy of Complex
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? name = null,Object? timeIni = null,Object? timeEnd = null,Object? address = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? sports = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? timeIni = null,Object? timeEnd = null,Object? address = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? sports = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_self.copyWith(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,timeIni: null == timeIni ? _self.timeIni : timeIni // ignore: cast_nullable_to_non_nullable
 as String,timeEnd: null == timeEnd ? _self.timeEnd : timeEnd // ignore: cast_nullable_to_non_nullable
 as String,address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
@@ -162,7 +162,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  Set<Sport> sports,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  Set<Sport> sports,  DateTime createdAt,  DateTime updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Complex() when $default != null:
 return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_that.locLongitude,_that.locLatitude,_that.sports,_that.createdAt,_that.updatedAt);case _:
@@ -183,7 +183,7 @@ return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  Set<Sport> sports,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  Set<Sport> sports,  DateTime createdAt,  DateTime updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _Complex():
 return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_that.locLongitude,_that.locLatitude,_that.sports,_that.createdAt,_that.updatedAt);case _:
@@ -203,7 +203,7 @@ return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  Set<Sport> sports,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String name,  String timeIni,  String timeEnd,  String address,  double? locLongitude,  double? locLatitude,  Set<Sport> sports,  DateTime createdAt,  DateTime updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _Complex() when $default != null:
 return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_that.locLongitude,_that.locLatitude,_that.sports,_that.createdAt,_that.updatedAt);case _:
@@ -218,10 +218,10 @@ return $default(_that.id,_that.name,_that.timeIni,_that.timeEnd,_that.address,_t
 @JsonSerializable()
 
 class _Complex implements Complex {
-  const _Complex({this.id, required this.name, required this.timeIni, required this.timeEnd, required this.address, required this.locLongitude, required this.locLatitude, required final  Set<Sport> sports, required this.createdAt, required this.updatedAt}): _sports = sports;
+  const _Complex({required this.id, required this.name, required this.timeIni, required this.timeEnd, required this.address, required this.locLongitude, required this.locLatitude, required final  Set<Sport> sports, required this.createdAt, required this.updatedAt}): _sports = sports;
   factory _Complex.fromJson(Map<String, dynamic> json) => _$ComplexFromJson(json);
 
-@override final  int? id;
+@override final  int id;
 @override final  String name;
 @override final  String timeIni;
 @override final  String timeEnd;
@@ -271,7 +271,7 @@ abstract mixin class _$ComplexCopyWith<$Res> implements $ComplexCopyWith<$Res> {
   factory _$ComplexCopyWith(_Complex value, $Res Function(_Complex) _then) = __$ComplexCopyWithImpl;
 @override @useResult
 $Res call({
- int? id, String name, String timeIni, String timeEnd, String address, double? locLongitude, double? locLatitude, Set<Sport> sports, DateTime createdAt, DateTime updatedAt
+ int id, String name, String timeIni, String timeEnd, String address, double? locLongitude, double? locLatitude, Set<Sport> sports, DateTime createdAt, DateTime updatedAt
 });
 
 
@@ -288,10 +288,10 @@ class __$ComplexCopyWithImpl<$Res>
 
 /// Create a copy of Complex
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? name = null,Object? timeIni = null,Object? timeEnd = null,Object? address = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? sports = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? timeIni = null,Object? timeEnd = null,Object? address = null,Object? locLongitude = freezed,Object? locLatitude = freezed,Object? sports = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_Complex(
-id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int?,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
+id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+as int,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,timeIni: null == timeIni ? _self.timeIni : timeIni // ignore: cast_nullable_to_non_nullable
 as String,timeEnd: null == timeEnd ? _self.timeEnd : timeEnd // ignore: cast_nullable_to_non_nullable
 as String,address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable

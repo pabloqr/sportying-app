@@ -77,6 +77,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
 
                     // Crear la instancia del modelo del complejo
                     complex = Complex(
+                      id: value.id ?? 0,
                       name: value.complexName,
                       timeIni: value.timeIni,
                       timeEnd: value.timeEnd,
@@ -163,11 +164,11 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
             ),
           );
         case Error<List<ReservationApiModel>>():
-          _log.warning('Filed to fetch nested information.');
+          _log.warning('Failed to fetch nested information.');
           return Result.error(result.error);
       }
     } on Exception catch (e) {
-      _log.warning('Filed to fetch reservations.');
+      _log.warning('Failed to fetch reservations.');
       return Result.error(e);
     }
   }

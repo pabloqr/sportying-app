@@ -7,7 +7,7 @@ part 'complex.g.dart';
 @freezed
 abstract class Complex with _$Complex {
   const factory Complex({
-    int? id,
+    required int id,
     required String name,
     required String timeIni,
     required String timeEnd,

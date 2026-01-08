@@ -7,7 +7,7 @@ part of 'complex.dart';
 // **************************************************************************
 
 _Complex _$ComplexFromJson(Map<String, dynamic> json) => _Complex(
-  id: (json['id'] as num?)?.toInt(),
+  id: (json['id'] as num).toInt(),
   name: json['name'] as String,
   timeIni: json['timeIni'] as String,
   timeEnd: json['timeEnd'] as String,

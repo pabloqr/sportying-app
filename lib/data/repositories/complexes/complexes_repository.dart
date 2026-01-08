@@ -27,6 +27,8 @@ class ComplexesRepositoryImpl implements ComplexesRepository {
       // Obtener el resultado de la operación
       switch (result) {
         case Ok<List<ComplexApiModel>>():
+          _log.fine('Fetched complexes from server. Getting nested information.');
+
           return Result.ok(
             // Necesario para las operaciones asíncronas que se realizan dentro del bucle
             await Future.wait(
@@ -38,8 +40,11 @@ class ComplexesRepositoryImpl implements ComplexesRepository {
                     ? await WidgetUtilities.getAddressFromLatLng(complex.locLatitude!, complex.locLongitude!)
                     : 'No address provided';
 
+                _log.fine('Fetched nested information.');
+
                 // Crear la instancia del modelo del complejo
                 return Complex(
+                  id: complex.id ?? 0,
                   name: complex.complexName,
                   timeIni: complex.timeIni,
                   timeEnd: complex.timeEnd,
@@ -62,9 +67,11 @@ class ComplexesRepositoryImpl implements ComplexesRepository {
             ),
           );
         case Error<List<ComplexApiModel>>():
+          _log.warning('Failed to fetch nested information.');
           return Result.error(result.error);
       }
     } on Exception catch (e) {
+      _log.warning('Failed to fetch complexes.');
       return Result.error(e);
     }
   }
