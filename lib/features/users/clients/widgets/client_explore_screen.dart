@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/widgets/visuals/error_indicator.dart';
+import 'package:sportying_app/features/core/widgets/visuals/loading_indicator.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_explore_viewmodel.dart';
 
 class ClientExploreScreen extends StatefulWidget {
@@ -20,9 +21,7 @@ class _ClientExploreScreenState extends State<ClientExploreScreen> {
     return ListenableBuilder(
       listenable: widget.viewModel.load,
       builder: (context, child) {
-        if (widget.viewModel.load.running) {
-          return const SafeArea(child: Center(child: CircularProgressIndicator(year2023: false)));
-        }
+        if (widget.viewModel.load.running) return const LoadingIndicator();
 
         if (widget.viewModel.load.error) {
           return ErrorIndicator(
