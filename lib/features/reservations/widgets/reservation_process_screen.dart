@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
@@ -17,9 +19,12 @@ import 'package:sportying_app/features/core/widgets/utils/marquee_widget.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_chip.dart';
 import 'package:sportying_app/features/core/widgets/visuals/custom_dialog.dart';
 import 'package:sportying_app/features/core/widgets/visuals/date_container.dart';
+import 'package:sportying_app/features/core/widgets/visuals/error_indicator.dart';
+import 'package:sportying_app/features/core/widgets/visuals/loading_indicator.dart';
 import 'package:sportying_app/features/core/widgets/visuals/time_range_selector.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
 import 'package:sportying_app/features/courts/widgets/court_card.dart';
+import 'package:sportying_app/features/reservations/view_model/reservation_process_viewmodel.dart';
 import 'package:sportying_app/features/sports/widgets/sport_card.dart';
 
 //--------------------------------------------------------------------------------------------------------------------//
@@ -185,7 +190,9 @@ class _ReservationHeaderController extends ChangeNotifier {
 //--------------------------------------------------------------------------------------------------------------------//
 
 class ReservationProcessScreen extends StatefulWidget {
-  const ReservationProcessScreen({super.key});
+  const ReservationProcessScreen({super.key, required this.viewModel});
+
+  final ReservationProcessViewModel viewModel;
 
   @override
   State<ReservationProcessScreen> createState() => _ReservationProcessScreenState();
@@ -395,6 +402,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
         child: Builder(
           builder: (context) {
             return _ReservationProcessContent(
+              viewModel: widget.viewModel,
               pageController: _pageController,
               scrollController: _scrollController,
               headerController: _headerController,
@@ -406,7 +414,10 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
               sport: _sport,
               onSportSelected: (sport) => setState(() => _sport = sport),
               complex: _complex,
-              onComplexSelected: (complex) => setState(() => _complex = complex),
+              onComplexSelected: (complex) {
+                log('Complex - $complex');
+                setState(() => _complex = complex);
+              },
               court: _court,
               onCourtSelected: (court) {
                 setState(() => _court = court);
@@ -695,6 +706,7 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
 
 class _ReservationProcessContent extends StatefulWidget {
   const _ReservationProcessContent({
+    required this.viewModel,
     required this.pageController,
     required this.scrollController,
     required this.headerController,
@@ -708,6 +720,8 @@ class _ReservationProcessContent extends StatefulWidget {
     required this.onCourtSelected,
     required this.summaryPage,
   });
+
+  final ReservationProcessViewModel viewModel;
 
   final PageController pageController;
   final ScrollController scrollController;
@@ -991,19 +1005,41 @@ class _ReservationProcessContentState extends State<_ReservationProcessContent> 
           },
           useGridView: true,
         ),
-        _SelectionPage<Complex>(
-          items: _generateMockComplexes(),
-          selectedItem: widget.complex,
-          itemBuilder: (context, complex, index, selectedIndex, _) {
-            return ComplexCard.tile(
-              fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
-              complex: complex,
-              rating: 4.5,
-              index: index,
-              selectedIndex: selectedIndex,
-              onTap: () => widget.onComplexSelected(complex),
-            );
+        ListenableBuilder(
+          listenable: widget.viewModel.loadComplexes,
+          builder: (context, child) {
+            if (widget.viewModel.loadComplexes.running) return const LoadingIndicator();
+
+            if (widget.viewModel.loadComplexes.error) {
+              return ErrorIndicator(
+                title: 'Error while loading home',
+                label: 'Try again',
+                onPressed: () => widget.viewModel.loadComplexes.execute(),
+              );
+            }
+
+            return child!;
           },
+          child: ListenableBuilder(
+            listenable: widget.viewModel,
+            builder: (context, _) => _SelectionPage<Complex>(
+              items: widget.viewModel.complexes,
+              selectedItem: widget.complex,
+              itemBuilder: (context, complex, index, selectedIndex, _) {
+                return ComplexCard.tile(
+                  fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(widget.viewModel.complexes.length, index),
+                  complex: complex,
+                  rating: 4.5,
+                  index: index,
+                  selectedIndex: selectedIndex,
+                  onTap: () {
+                    widget.onComplexSelected(complex);
+                    log('Complex - ${widget.complex}');
+                  },
+                );
+              },
+            ),
+          ),
         ),
         _SelectionPage<Court>(
           items: _generateMockCourts(),
@@ -1020,25 +1056,6 @@ class _ReservationProcessContentState extends State<_ReservationProcessContent> 
         ),
         widget.summaryPage,
       ],
-    );
-  }
-
-  // TODO: Replace with actual data from server
-  List<Complex> _generateMockComplexes() {
-    return List.generate(
-      10,
-      (index) => Complex(
-        id: index,
-        name: 'Complex $index',
-        timeIni: '09:00',
-        timeEnd: '23:00',
-        address: 'C/Principal, $index, Granada',
-        locLongitude: 0,
-        locLatitude: 0,
-        sports: {Sport.tennis, Sport.football},
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
     );
   }
 
@@ -1302,10 +1319,10 @@ class _SelectionPageState<T> extends State<_SelectionPage<T>> {
 
     // Para las páginas de selección del complejo y pista
     if (widget.selectedItem is Complex) {
-      return (widget.selectedItem as Complex).id ?? -1;
+      return widget.items.indexWhere((item) => (item as Complex).id == (widget.selectedItem as Complex).id);
     }
     if (widget.selectedItem is Court) {
-      return (widget.selectedItem as Court).id ?? -1;
+      return widget.items.indexWhere((item) => (item as Court).id == (widget.selectedItem as Court).id);
     }
 
     return -1;
