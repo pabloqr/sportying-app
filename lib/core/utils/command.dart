@@ -3,6 +3,7 @@ import 'package:sportying_app/core/utils/result.dart';
 
 typedef CommandAction0<T> = Future<Result<T>> Function();
 typedef CommandAction1<T, A> = Future<Result<T>> Function(A);
+typedef CommandAction2<T, A, B> = Future<Result<T>> Function(A, B);
 
 /// Facilitates interaction with a ViewModel.
 ///
@@ -68,7 +69,19 @@ class Command1<T, A> extends Command<T> {
 
   final CommandAction1<T, A> _action;
 
-  Future<void> execute(A argument) async {
-    await _execute(() => _action(argument));
+  Future<void> execute(A arg0) async {
+    await _execute(() => _action(arg0));
+  }
+}
+
+/// [Command] with two arguments.
+/// Takes a [CommandAction2] as action.
+class Command2<T, A, B> extends Command<T> {
+  Command2(this._action);
+
+  final CommandAction2<T, A, B> _action;
+
+  Future<void> execute(A arg0, B arg1) async {
+    await _execute(() => _action(arg0, arg1));
   }
 }
