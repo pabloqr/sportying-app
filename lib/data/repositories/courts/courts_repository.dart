@@ -45,7 +45,7 @@ class CourtsRepositoryImpl implements CourtsRepository {
                   name: court.name,
                   description: court.description,
                   maxPeople: court.maxPeople,
-                  status: CourtStatus.values.byName(court.status),
+                  status: CourtStatus.values.byName(court.status.toLowerCase()),
                   createdAt: court.createdAt,
                   updatedAt: court.updatedAt,
                 );
