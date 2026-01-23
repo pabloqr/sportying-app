@@ -24,7 +24,7 @@ extension ReservationStatusExtension on ReservationStatus {
   Color colorPrimary(BuildContext context) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return WidgetStatus.neutral.colorPrimary(context);
+        return WidgetStatus.normal.colorPrimary(context);
       case ReservationStatus.weather:
         return WidgetStatus.alert.colorPrimary(context);
       case ReservationStatus.completed:
@@ -37,7 +37,7 @@ extension ReservationStatusExtension on ReservationStatus {
   Color colorOnPrimary(BuildContext context) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return WidgetStatus.neutral.colorOnPrimary(context);
+        return WidgetStatus.normal.colorOnPrimary(context);
       case ReservationStatus.weather:
         return WidgetStatus.alert.colorOnPrimary(context);
       case ReservationStatus.completed:
@@ -50,7 +50,7 @@ extension ReservationStatusExtension on ReservationStatus {
   Color colorSurface(BuildContext context) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return WidgetStatus.neutral.colorSurface(context);
+        return WidgetStatus.normal.colorSurface(context);
       case ReservationStatus.weather:
         return WidgetStatus.alert.colorSurface(context);
       case ReservationStatus.completed:
@@ -63,7 +63,7 @@ extension ReservationStatusExtension on ReservationStatus {
   Color colorOnSurface(BuildContext context) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return WidgetStatus.neutral.colorOnSurface(context);
+        return WidgetStatus.normal.colorOnSurface(context);
       case ReservationStatus.weather:
         return WidgetStatus.alert.colorOnSurface(context);
       case ReservationStatus.completed:
@@ -89,7 +89,7 @@ extension ReservationStatusExtension on ReservationStatus {
   Widget smallChip(BuildContext context, WidgetPalette palette) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return CustomChip.small.neutral(
+        return CustomChip.small.normal(
           palette: palette,
           leading: PulsingDot.small(color: _colorOnSurfaceFromPalette(context, palette)),
           label: 'Scheduled',
@@ -110,7 +110,7 @@ extension ReservationStatusExtension on ReservationStatus {
   Widget mediumChip(BuildContext context, WidgetPalette palette) {
     switch (this) {
       case ReservationStatus.scheduled:
-        return CustomChip.medium.neutral(
+        return CustomChip.medium.normal(
           palette: palette,
           leading: PulsingDot.small(color: _colorOnSurfaceFromPalette(context, palette)),
           label: 'Scheduled',

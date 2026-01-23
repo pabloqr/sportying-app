@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 
-enum WidgetStatus { neutral, translucent, alert, success, error }
+enum WidgetStatus { normal, neutral, translucent, alert, success, error }
 
 extension WidgetStatusColor on WidgetStatus {
   Color colorPrimary(BuildContext context) {
@@ -9,8 +9,10 @@ extension WidgetStatusColor on WidgetStatus {
     final brightness = Theme.brightnessOf(context);
 
     switch (this) {
-      case WidgetStatus.neutral:
+      case WidgetStatus.normal:
         return colorScheme.primary;
+      case WidgetStatus.neutral:
+        return brightness == Brightness.light ? colorScheme.surface : colorScheme.surface;
       case WidgetStatus.translucent:
         return brightness == Brightness.light
             ? colorScheme.inverseSurface.withAlpha(50)
@@ -29,6 +31,8 @@ extension WidgetStatusColor on WidgetStatus {
     final brightness = Theme.brightnessOf(context);
 
     switch (this) {
+      case WidgetStatus.normal:
+        return brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary;
       case WidgetStatus.neutral:
         return brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary;
       case WidgetStatus.translucent:
@@ -47,8 +51,10 @@ extension WidgetStatusColor on WidgetStatus {
     final brightness = Theme.brightnessOf(context);
 
     switch (this) {
-      case WidgetStatus.neutral:
+      case WidgetStatus.normal:
         return brightness == Brightness.light ? colorScheme.primaryContainer : colorScheme.primaryContainer;
+      case WidgetStatus.neutral:
+        return brightness == Brightness.light ? colorScheme.surface : colorScheme.surface;
       case WidgetStatus.translucent:
         return brightness == Brightness.light
             ? colorScheme.surface.withAlpha(50)
@@ -67,8 +73,10 @@ extension WidgetStatusColor on WidgetStatus {
     final brightness = Theme.brightnessOf(context);
 
     switch (this) {
-      case WidgetStatus.neutral:
+      case WidgetStatus.normal:
         return brightness == Brightness.light ? colorScheme.onPrimaryContainer : colorScheme.onPrimaryContainer;
+      case WidgetStatus.neutral:
+        return brightness == Brightness.light ? colorScheme.onSurface : colorScheme.onSurface;
       case WidgetStatus.translucent:
         return brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface;
       case WidgetStatus.alert:
@@ -82,6 +90,7 @@ extension WidgetStatusColor on WidgetStatus {
 
   IconData get icon {
     switch (this) {
+      case WidgetStatus.normal:
       case WidgetStatus.neutral:
       case WidgetStatus.translucent:
         return Symbols.info_rounded;

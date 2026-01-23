@@ -339,7 +339,7 @@ class _ComplexTileCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       spacing: 8.0,
       children: [
-        CustomChip.medium.neutral(
+        CustomChip.medium.normal(
           palette: WidgetPalette.primary,
           icon: Symbols.star_rounded,
           filledIcon: true,
@@ -594,7 +594,7 @@ class _ComplexSportsRow extends StatelessWidget {
     return Row(
       spacing: 4.0,
       children: sports.map((sport) {
-        return CustomChip.small.neutral(palette: WidgetPalette.primary, label: sport.name.toCapitalized());
+        return CustomChip.small.normal(palette: WidgetPalette.primary, label: sport.name.toCapitalized());
       }).toList(),
     );
   }

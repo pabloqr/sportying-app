@@ -132,15 +132,21 @@ class ChipBuilder {
 
   const ChipBuilder(this.size);
 
+  CustomChip normal({
+    required WidgetPalette palette,
+    Widget? leading,
+    IconData? icon,
+    bool? filledIcon,
+    String? label,
+  }) => CustomChip._(size, WidgetStatus.normal, palette, leading, icon, filledIcon, label);
+
   CustomChip neutral({
     required WidgetPalette palette,
     Widget? leading,
     IconData? icon,
     bool? filledIcon,
     String? label,
-  }) {
-    return CustomChip._(size, WidgetStatus.neutral, palette, leading, icon, filledIcon, label);
-  }
+  }) => CustomChip._(size, WidgetStatus.neutral, palette, leading, icon, filledIcon, label);
 
   CustomChip translucent({
     required WidgetPalette palette,
@@ -148,13 +154,15 @@ class ChipBuilder {
     IconData? icon,
     bool? filledIcon,
     String? label,
-  }) {
-    return CustomChip._(size, WidgetStatus.translucent, palette, leading, icon, filledIcon, label);
-  }
+  }) => CustomChip._(size, WidgetStatus.translucent, palette, leading, icon, filledIcon, label);
 
-  CustomChip alert({required WidgetPalette palette, Widget? leading, IconData? icon, bool? filledIcon, String? label}) {
-    return CustomChip._(size, WidgetStatus.alert, palette, leading, icon, filledIcon, label);
-  }
+  CustomChip alert({
+    required WidgetPalette palette,
+    Widget? leading,
+    IconData? icon,
+    bool? filledIcon,
+    String? label,
+  }) => CustomChip._(size, WidgetStatus.alert, palette, leading, icon, filledIcon, label);
 
   CustomChip success({
     required WidgetPalette palette,
@@ -162,11 +170,13 @@ class ChipBuilder {
     IconData? icon,
     bool? filledIcon,
     String? label,
-  }) {
-    return CustomChip._(size, WidgetStatus.success, palette, leading, icon, filledIcon, label);
-  }
+  }) => CustomChip._(size, WidgetStatus.success, palette, leading, icon, filledIcon, label);
 
-  CustomChip error({required WidgetPalette palette, Widget? leading, IconData? icon, bool? filledIcon, String? label}) {
-    return CustomChip._(size, WidgetStatus.error, palette, leading, icon, filledIcon, label);
-  }
+  CustomChip error({
+    required WidgetPalette palette,
+    Widget? leading,
+    IconData? icon,
+    bool? filledIcon,
+    String? label,
+  }) => CustomChip._(size, WidgetStatus.error, palette, leading, icon, filledIcon, label);
 }
