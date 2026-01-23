@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sportying_app/core/routing/routes.dart';
+import 'package:sportying_app/features/reservations/view_model/reservation_process_viewmodel.dart';
 import 'package:sportying_app/features/reservations/widgets/reservation_process_screen.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_explore_viewmodel.dart';
 import 'package:sportying_app/features/users/clients/view_model/client_home_viewmodel.dart';
@@ -78,7 +79,14 @@ GoRouter router() => GoRouter(
         ),
       ],
     ),
-    GoRoute(path: Routes.reservationNewRoute, builder: (context, state) => ReservationProcessScreen()),
+    GoRoute(
+      path: Routes.reservationNewRoute,
+      builder: (context, state) {
+        return ReservationProcessScreen(
+          viewModel: ReservationProcessViewModel(complexesRepository: context.read(), courtsRepository: context.read()),
+        );
+      },
+    ),
     GoRoute(path: Routes.reservationModifyRoute, builder: (context, state) => const Placeholder()),
     GoRoute(path: Routes.reservationInfoRoute, builder: (context, state) => const Placeholder()),
   ],

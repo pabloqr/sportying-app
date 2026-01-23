@@ -5,12 +5,13 @@ import 'package:http/http.dart' as http;
 import 'package:sportying_app/core/utils/network_utilities.dart';
 import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/services/courts/models/court_api_model.dart';
+import 'package:sportying_app/data/services/courts/models/court_availability_api_model.dart';
 
 abstract class CourtsRemoteService {
   Future<Result<List<CourtApiModel>>> getCourts(int complexId, Map<String, dynamic>? query);
   Future<Result<CourtApiModel>> getCourt(int complexId, int courtId);
 
-  // Future<Result<CourtAvailabilityModel>> getCourtAvailability(int complexId, int courtId);
+  Future<Result<CourtAvailabilityApiModel>> getCourtAvailability(int complexId, int courtId);
 
   // Future<Result<List<DeviceModel>>> getCourtDevices(int complexId, int courtId);
 }
@@ -76,7 +77,28 @@ class CourtsRemoteServiceImpl implements CourtsRemoteService {
         return Result.ok(CourtApiModel.fromJson(data));
       } else {
         final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
-        return Result.error(HttpException(data['message'] ?? 'Error getting complexes: ${response.statusCode}'));
+        return Result.error(HttpException(data['message'] ?? 'Error getting courts: ${response.statusCode}'));
+      }
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+
+  @override
+  Future<Result<CourtAvailabilityApiModel>> getCourtAvailability(int complexId, int courtId) async {
+    Uri uri = Uri.parse('http://100.70.62.176:3000/complexes/$complexId/courts/$courtId/availability');
+
+    try {
+      final response = await _client.get(uri);
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(utf8.decode(response.bodyBytes));
+        return Result.ok(CourtAvailabilityApiModel.fromJson(data));
+      } else {
+        final Map<String, dynamic> data = json.decode(utf8.decode(response.bodyBytes));
+        return Result.error(
+          HttpException(data['message'] ?? 'Error getting court availability: ${response.statusCode}'),
+        );
       }
     } on Exception catch (e) {
       return Result.error(e);

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
@@ -8,7 +6,6 @@ import 'package:sportying_app/core/utils/extension_utilities.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
-import 'package:sportying_app/domain/models/courts/court_status.dart';
 import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/utils/widget_palette.dart';
 import 'package:sportying_app/features/core/utils/widget_status.dart';
@@ -393,6 +390,16 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
     }
   }
 
+  void _loadCourtsIfNeeded() {
+    if (_complex == null || _sport == null) return;
+
+    // Limpiar selección anterior
+    setState(() => _court = null);
+
+    // Obtener las pistas para el complejo dado
+    widget.viewModel.loadCourts.execute(_complex!, _sport!);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -412,11 +419,19 @@ class _ReservationProcessScreenState extends State<ReservationProcessScreen> wit
                 _closePriceSheet();
               },
               sport: _sport,
-              onSportSelected: (sport) => setState(() => _sport = sport),
+              onSportSelected: (sport) {
+                setState(() => _sport = sport);
+
+                // Si ya hay un complejo seleccionado, recargar pistas para el nuevo deporte
+                _loadCourtsIfNeeded();
+              },
               complex: _complex,
               onComplexSelected: (complex) {
-                log('Complex - $complex');
+                // Guardar el complejo seleccionado en el estado local
                 setState(() => _complex = complex);
+
+                // Solicitar pistas para el complejo seleccionado
+                _loadCourtsIfNeeded();
               },
               court: _court,
               onCourtSelected: (court) {
@@ -1012,7 +1027,7 @@ class _ReservationProcessContentState extends State<_ReservationProcessContent> 
 
             if (widget.viewModel.loadComplexes.error) {
               return ErrorIndicator(
-                title: 'Error while loading home',
+                title: 'Error while loading complexes',
                 label: 'Try again',
                 onPressed: () => widget.viewModel.loadComplexes.execute(),
               );
@@ -1032,59 +1047,51 @@ class _ReservationProcessContentState extends State<_ReservationProcessContent> 
                   rating: 4.5,
                   index: index,
                   selectedIndex: selectedIndex,
-                  onTap: () {
-                    widget.onComplexSelected(complex);
-                    log('Complex - ${widget.complex}');
-                  },
+                  onTap: () => widget.onComplexSelected(complex),
                 );
               },
             ),
           ),
         ),
-        _SelectionPage<Court>(
-          items: _generateMockCourts(),
-          selectedItem: widget.court,
-          itemBuilder: (context, court, index, selectedIndex, _) {
-            return CourtCard.tile(
-              fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(10, index),
-              court: court,
-              index: index,
-              selectedIndex: selectedIndex,
-              onTap: () => widget.onCourtSelected(court),
-            );
+        ListenableBuilder(
+          listenable: widget.viewModel.loadCourts,
+          builder: (context, child) {
+            if (widget.viewModel.loadCourts.running) return const LoadingIndicator();
+
+            if (widget.viewModel.loadCourts.error) {
+              return ErrorIndicator(
+                title: 'Error while loading courts',
+                label: 'Try again',
+                onPressed: () {
+                  if (widget.complex != null && widget.sport != null) {
+                    widget.viewModel.loadCourts.execute(widget.complex!, widget.sport!);
+                  }
+                },
+              );
+            }
+
+            return child!;
           },
+          child: ListenableBuilder(
+            listenable: widget.viewModel,
+            builder: (context, child) => _SelectionPage<Court>(
+              items: widget.viewModel.courts,
+              selectedItem: widget.court,
+              itemBuilder: (context, court, index, selectedIndex, _) {
+                return CourtCard.tile(
+                  fullRadiusSide: WidgetUtilities.calculateBorderRadiusSide(widget.viewModel.courts.length, index),
+                  court: court,
+                  nextAvailable: widget.viewModel.courtsAvailability[court.id]?.nextAvailable ?? DateTime.now(),
+                  index: index,
+                  selectedIndex: selectedIndex,
+                  onTap: () => widget.onCourtSelected(court),
+                );
+              },
+            ),
+          ),
         ),
         widget.summaryPage,
       ],
-    );
-  }
-
-  // TODO: Replace with actual data from server
-  List<Court> _generateMockCourts() {
-    return List.generate(
-      10,
-      (index) => Court(
-        id: index,
-        complex: Complex(
-          id: index,
-          name: 'Complex $index',
-          timeIni: '09:00',
-          timeEnd: '23:00',
-          address: 'C/Principal, $index, Granada',
-          locLongitude: 0,
-          locLatitude: 0,
-          sports: {Sport.tennis, Sport.football},
-          createdAt: DateTime.now(),
-          updatedAt: DateTime.now(),
-        ),
-        sport: Sport.tennis,
-        name: 'Court $index',
-        description: 'Court $index is a place where you can do some sport.',
-        maxPeople: 4,
-        status: CourtStatus.open,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      ),
     );
   }
 }

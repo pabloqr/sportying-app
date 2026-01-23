@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:sportying_app/core/utils/extension_utilities.dart';
@@ -58,33 +56,45 @@ enum _CourtCardType { carousel, tile, card }
 /// - [CourtCard.tile]: Compact tile layout (ready for custom implementation)
 /// - [CourtCard.card]: Full card layout with detailed information
 class CourtCard extends StatelessWidget {
-  CourtCard.carousel({super.key, required this.court, this.index, ValueNotifier<int>? selectedIndex})
-    : _type = _CourtCardType.carousel,
-      fullRadiusSide = null,
-      selectedIndex = selectedIndex ?? ValueNotifier<int>(-1),
-      onTap = null;
+  CourtCard.carousel({
+    super.key,
+    required this.court,
+    required this.nextAvailable,
+    this.index,
+    ValueNotifier<int>? selectedIndex,
+  }) : _type = _CourtCardType.carousel,
+       fullRadiusSide = null,
+       selectedIndex = selectedIndex ?? ValueNotifier<int>(-1),
+       onTap = null;
 
   CourtCard.tile({
     super.key,
     this.fullRadiusSide = WidgetSide.none,
     required this.court,
+    required this.nextAvailable,
     this.index,
     ValueNotifier<int>? selectedIndex,
     this.onTap,
   }) : _type = _CourtCardType.tile,
        selectedIndex = selectedIndex ?? ValueNotifier<int>(-1);
 
-  CourtCard.card({super.key, required this.court, this.index, ValueNotifier<int>? selectedIndex})
-    : _type = _CourtCardType.card,
-      fullRadiusSide = null,
-      selectedIndex = selectedIndex ?? ValueNotifier<int>(-1),
-      onTap = null;
+  CourtCard.card({
+    super.key,
+    required this.court,
+    required this.nextAvailable,
+    this.index,
+    ValueNotifier<int>? selectedIndex,
+  }) : _type = _CourtCardType.card,
+       fullRadiusSide = null,
+       selectedIndex = selectedIndex ?? ValueNotifier<int>(-1),
+       onTap = null;
 
   final _CourtCardType _type;
 
   final WidgetSide? fullRadiusSide;
 
   final Court court;
+  final DateTime nextAvailable;
 
   final int? index;
   final ValueNotifier<int> selectedIndex;
@@ -100,12 +110,13 @@ class CourtCard extends StatelessWidget {
         return _CourtTileCard(
           fullRadiusSide: fullRadiusSide!,
           court: court,
+          nextAvailable: nextAvailable,
           index: index,
           selectedIndex: selectedIndex,
           onTap: onTap,
         );
       case _CourtCardType.card:
-        return _CourtDisplayCard(court: court);
+        return _CourtDisplayCard(court: court, nextAvailable: nextAvailable);
     }
   }
 }
@@ -172,18 +183,10 @@ class _CourtCarouselCard extends StatelessWidget {
             ).createShader(bounds),
             blendMode: BlendMode.dstIn,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // TODO: Replace with actual condition
-                if (true) _AvailabilityInfo(isAvailable: Random().nextBool()),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  spacing: 12.0,
-                  children: [_buildTitle(context, brightness)],
-                ),
-              ],
+              spacing: 12.0,
+              children: [_buildTitle(context, brightness)],
             ),
           ),
         ),
@@ -207,6 +210,7 @@ class _CourtTileCard extends StatelessWidget {
   const _CourtTileCard({
     this.fullRadiusSide = WidgetSide.none,
     required this.court,
+    required this.nextAvailable,
     required this.index,
     required this.selectedIndex,
     required this.onTap,
@@ -215,6 +219,7 @@ class _CourtTileCard extends StatelessWidget {
   final WidgetSide fullRadiusSide;
 
   final Court court;
+  final DateTime nextAvailable;
 
   final int? index;
   final ValueNotifier<int> selectedIndex;
@@ -269,9 +274,6 @@ class _CourtTileCard extends StatelessWidget {
   }
 
   Widget _buildBody(BuildContext context, bool isSelected) {
-    final isAvailable = Random().nextBool();
-    final nextAvailable = DateTime(2025, Random().nextBool() ? 11 : 12, 25, 18);
-
     return Row(
       spacing: 16.0,
       children: [
@@ -300,7 +302,10 @@ class _CourtTileCard extends StatelessWidget {
                     label: 4.5.toString(),
                   ),
                   Expanded(
-                    child: _AvailabilityInfo(isAvailable: isAvailable, nextAvailable: nextAvailable),
+                    child: _AvailabilityInfo(
+                      nextAvailable: nextAvailable,
+                      timeEnd: court.complex.timeEnd.toDateTime0(),
+                    ),
                   ),
                 ],
               ),
@@ -313,9 +318,10 @@ class _CourtTileCard extends StatelessWidget {
 }
 
 class _CourtDisplayCard extends StatelessWidget {
-  const _CourtDisplayCard({required this.court});
+  const _CourtDisplayCard({required this.court, required this.nextAvailable});
 
   final Court court;
+  final DateTime nextAvailable;
 
   @override
   Widget build(BuildContext context) {
@@ -341,7 +347,7 @@ class _CourtDisplayCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     spacing: 8.0,
-                    children: [if (true) _AvailabilityInfo(isAvailable: Random().nextBool())],
+                    children: [if (true) _AvailabilityInfo(nextAvailable: nextAvailable, timeEnd: DateTime.now())],
                   ),
                 ],
               ),
@@ -464,27 +470,36 @@ class _CourtImageContainer extends StatelessWidget {
 
 /// Displays the availability status chip
 class _AvailabilityInfo extends StatelessWidget {
-  const _AvailabilityInfo({required this.isAvailable, this.nextAvailable});
+  const _AvailabilityInfo({required this.nextAvailable, required this.timeEnd});
 
-  final bool isAvailable;
-  final DateTime? nextAvailable;
+  final DateTime nextAvailable;
+  final DateTime timeEnd;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final isAvailableToday =
-        DateTime.now().day == nextAvailable?.day &&
-        DateTime.now().month == nextAvailable?.month &&
-        DateTime.now().year == nextAvailable?.year;
+    // Obtener el instante de tiempo actual (tiempo UTC)
+    final now = DateTime.now().toUtc();
+    final nowRounded = now.ceilNextHalfHour;
 
-    final label = isAvailable
+    // Verificar si el instante redondeado a la siguiente media hora se corresponde con el siguiente disponible
+    final isAvailableNow = nowRounded == nextAvailable;
+    // Verificar si la fecha del instante actual se corresponde con la del siguiente disponible
+    final isAvailableToday =
+        now.day == nextAvailable.day &&
+        now.month == nextAvailable.month &&
+        now.year == nextAvailable.year &&
+        nowRounded.difference(timeEnd).inHours.abs() >= 1;
+
+    // Construir la etiqueta que se muestra (tiempo LOCAL)
+    final label = isAvailableNow
         ? 'Available'
         : isAvailableToday
-        ? 'Next available time frame at ${nextAvailable?.toFormattedTime0()}'
+        ? 'Available at ${nextAvailable.toLocal().toFormattedTime0()}'
         : 'Unavailable today';
-    final color = isAvailable
+    final color = isAvailableNow
         ? colorScheme.secondary
         : isAvailableToday
         ? colorScheme.tertiary
@@ -493,8 +508,8 @@ class _AvailabilityInfo extends StatelessWidget {
     return Row(
       spacing: 4.0,
       children: [
-        if (isAvailable || isAvailableToday)
-          PulsingDot.small(color: isAvailable ? colorScheme.secondary : colorScheme.tertiary),
+        if (isAvailableNow || isAvailableToday)
+          PulsingDot.small(color: isAvailableNow ? colorScheme.secondary : colorScheme.tertiary),
         Expanded(
           child: Text(label, style: textTheme.bodyMedium?.copyWith(color: color)),
         ),

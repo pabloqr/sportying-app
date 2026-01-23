@@ -284,7 +284,7 @@ as bool,
 /// @nodoc
 mixin _$CourtAvailability {
 
- int get id; Complex get complex; List<CourtAvailabilitySlot> get availability;
+ Court get court; Complex get complex; List<CourtAvailabilitySlot> get availability; DateTime get nextAvailable;
 /// Create a copy of CourtAvailability
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -297,16 +297,16 @@ $CourtAvailabilityCopyWith<CourtAvailability> get copyWith => _$CourtAvailabilit
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CourtAvailability&&(identical(other.id, id) || other.id == id)&&(identical(other.complex, complex) || other.complex == complex)&&const DeepCollectionEquality().equals(other.availability, availability));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CourtAvailability&&(identical(other.court, court) || other.court == court)&&(identical(other.complex, complex) || other.complex == complex)&&const DeepCollectionEquality().equals(other.availability, availability)&&(identical(other.nextAvailable, nextAvailable) || other.nextAvailable == nextAvailable));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,complex,const DeepCollectionEquality().hash(availability));
+int get hashCode => Object.hash(runtimeType,court,complex,const DeepCollectionEquality().hash(availability),nextAvailable);
 
 @override
 String toString() {
-  return 'CourtAvailability(id: $id, complex: $complex, availability: $availability)';
+  return 'CourtAvailability(court: $court, complex: $complex, availability: $availability, nextAvailable: $nextAvailable)';
 }
 
 
@@ -317,11 +317,11 @@ abstract mixin class $CourtAvailabilityCopyWith<$Res>  {
   factory $CourtAvailabilityCopyWith(CourtAvailability value, $Res Function(CourtAvailability) _then) = _$CourtAvailabilityCopyWithImpl;
 @useResult
 $Res call({
- int id, Complex complex, List<CourtAvailabilitySlot> availability
+ Court court, Complex complex, List<CourtAvailabilitySlot> availability, DateTime nextAvailable
 });
 
 
-$ComplexCopyWith<$Res> get complex;
+$CourtCopyWith<$Res> get court;$ComplexCopyWith<$Res> get complex;
 
 }
 /// @nodoc
@@ -334,15 +334,25 @@ class _$CourtAvailabilityCopyWithImpl<$Res>
 
 /// Create a copy of CourtAvailability
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? complex = null,Object? availability = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? court = null,Object? complex = null,Object? availability = null,Object? nextAvailable = null,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
+court: null == court ? _self.court : court // ignore: cast_nullable_to_non_nullable
+as Court,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
 as Complex,availability: null == availability ? _self.availability : availability // ignore: cast_nullable_to_non_nullable
-as List<CourtAvailabilitySlot>,
+as List<CourtAvailabilitySlot>,nextAvailable: null == nextAvailable ? _self.nextAvailable : nextAvailable // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 /// Create a copy of CourtAvailability
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CourtCopyWith<$Res> get court {
+  
+  return $CourtCopyWith<$Res>(_self.court, (value) {
+    return _then(_self.copyWith(court: value));
+  });
+}/// Create a copy of CourtAvailability
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
@@ -433,10 +443,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  Complex complex,  List<CourtAvailabilitySlot> availability)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( Court court,  Complex complex,  List<CourtAvailabilitySlot> availability,  DateTime nextAvailable)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CourtAvailability() when $default != null:
-return $default(_that.id,_that.complex,_that.availability);case _:
+return $default(_that.court,_that.complex,_that.availability,_that.nextAvailable);case _:
   return orElse();
 
 }
@@ -454,10 +464,10 @@ return $default(_that.id,_that.complex,_that.availability);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  Complex complex,  List<CourtAvailabilitySlot> availability)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( Court court,  Complex complex,  List<CourtAvailabilitySlot> availability,  DateTime nextAvailable)  $default,) {final _that = this;
 switch (_that) {
 case _CourtAvailability():
-return $default(_that.id,_that.complex,_that.availability);case _:
+return $default(_that.court,_that.complex,_that.availability,_that.nextAvailable);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -474,10 +484,10 @@ return $default(_that.id,_that.complex,_that.availability);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  Complex complex,  List<CourtAvailabilitySlot> availability)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( Court court,  Complex complex,  List<CourtAvailabilitySlot> availability,  DateTime nextAvailable)?  $default,) {final _that = this;
 switch (_that) {
 case _CourtAvailability() when $default != null:
-return $default(_that.id,_that.complex,_that.availability);case _:
+return $default(_that.court,_that.complex,_that.availability,_that.nextAvailable);case _:
   return null;
 
 }
@@ -489,10 +499,10 @@ return $default(_that.id,_that.complex,_that.availability);case _:
 @JsonSerializable()
 
 class _CourtAvailability implements CourtAvailability {
-  const _CourtAvailability({required this.id, required this.complex, required final  List<CourtAvailabilitySlot> availability}): _availability = availability;
+  const _CourtAvailability({required this.court, required this.complex, required final  List<CourtAvailabilitySlot> availability, required this.nextAvailable}): _availability = availability;
   factory _CourtAvailability.fromJson(Map<String, dynamic> json) => _$CourtAvailabilityFromJson(json);
 
-@override final  int id;
+@override final  Court court;
 @override final  Complex complex;
  final  List<CourtAvailabilitySlot> _availability;
 @override List<CourtAvailabilitySlot> get availability {
@@ -501,6 +511,7 @@ class _CourtAvailability implements CourtAvailability {
   return EqualUnmodifiableListView(_availability);
 }
 
+@override final  DateTime nextAvailable;
 
 /// Create a copy of CourtAvailability
 /// with the given fields replaced by the non-null parameter values.
@@ -515,16 +526,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CourtAvailability&&(identical(other.id, id) || other.id == id)&&(identical(other.complex, complex) || other.complex == complex)&&const DeepCollectionEquality().equals(other._availability, _availability));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CourtAvailability&&(identical(other.court, court) || other.court == court)&&(identical(other.complex, complex) || other.complex == complex)&&const DeepCollectionEquality().equals(other._availability, _availability)&&(identical(other.nextAvailable, nextAvailable) || other.nextAvailable == nextAvailable));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,complex,const DeepCollectionEquality().hash(_availability));
+int get hashCode => Object.hash(runtimeType,court,complex,const DeepCollectionEquality().hash(_availability),nextAvailable);
 
 @override
 String toString() {
-  return 'CourtAvailability(id: $id, complex: $complex, availability: $availability)';
+  return 'CourtAvailability(court: $court, complex: $complex, availability: $availability, nextAvailable: $nextAvailable)';
 }
 
 
@@ -535,11 +546,11 @@ abstract mixin class _$CourtAvailabilityCopyWith<$Res> implements $CourtAvailabi
   factory _$CourtAvailabilityCopyWith(_CourtAvailability value, $Res Function(_CourtAvailability) _then) = __$CourtAvailabilityCopyWithImpl;
 @override @useResult
 $Res call({
- int id, Complex complex, List<CourtAvailabilitySlot> availability
+ Court court, Complex complex, List<CourtAvailabilitySlot> availability, DateTime nextAvailable
 });
 
 
-@override $ComplexCopyWith<$Res> get complex;
+@override $CourtCopyWith<$Res> get court;@override $ComplexCopyWith<$Res> get complex;
 
 }
 /// @nodoc
@@ -552,16 +563,26 @@ class __$CourtAvailabilityCopyWithImpl<$Res>
 
 /// Create a copy of CourtAvailability
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? complex = null,Object? availability = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? court = null,Object? complex = null,Object? availability = null,Object? nextAvailable = null,}) {
   return _then(_CourtAvailability(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as int,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
+court: null == court ? _self.court : court // ignore: cast_nullable_to_non_nullable
+as Court,complex: null == complex ? _self.complex : complex // ignore: cast_nullable_to_non_nullable
 as Complex,availability: null == availability ? _self._availability : availability // ignore: cast_nullable_to_non_nullable
-as List<CourtAvailabilitySlot>,
+as List<CourtAvailabilitySlot>,nextAvailable: null == nextAvailable ? _self.nextAvailable : nextAvailable // ignore: cast_nullable_to_non_nullable
+as DateTime,
   ));
 }
 
 /// Create a copy of CourtAvailability
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$CourtCopyWith<$Res> get court {
+  
+  return $CourtCopyWith<$Res>(_self.court, (value) {
+    return _then(_self.copyWith(court: value));
+  });
+}/// Create a copy of CourtAvailability
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')

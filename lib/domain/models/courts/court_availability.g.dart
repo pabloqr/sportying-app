@@ -24,16 +24,18 @@ Map<String, dynamic> _$CourtAvailabilitySlotToJson(
 
 _CourtAvailability _$CourtAvailabilityFromJson(Map<String, dynamic> json) =>
     _CourtAvailability(
-      id: (json['id'] as num).toInt(),
+      court: Court.fromJson(json['court'] as Map<String, dynamic>),
       complex: Complex.fromJson(json['complex'] as Map<String, dynamic>),
       availability: (json['availability'] as List<dynamic>)
           .map((e) => CourtAvailabilitySlot.fromJson(e as Map<String, dynamic>))
           .toList(),
+      nextAvailable: DateTime.parse(json['nextAvailable'] as String),
     );
 
 Map<String, dynamic> _$CourtAvailabilityToJson(_CourtAvailability instance) =>
     <String, dynamic>{
-      'id': instance.id,
+      'court': instance.court,
       'complex': instance.complex,
       'availability': instance.availability,
+      'nextAvailable': instance.nextAvailable.toIso8601String(),
     };

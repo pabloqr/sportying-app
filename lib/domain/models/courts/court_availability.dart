@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
+import 'package:sportying_app/domain/models/courts/court.dart';
 
 part 'court_availability.freezed.dart';
 part 'court_availability.g.dart';
@@ -15,9 +16,10 @@ abstract class CourtAvailabilitySlot with _$CourtAvailabilitySlot {
 @freezed
 abstract class CourtAvailability with _$CourtAvailability {
   const factory CourtAvailability({
-    required int id,
+    required Court court,
     required Complex complex,
     required List<CourtAvailabilitySlot> availability,
+    required DateTime nextAvailable,
   }) = _CourtAvailability;
 
   factory CourtAvailability.fromJson(Map<String, Object?> json) => _$CourtAvailabilityFromJson(json);

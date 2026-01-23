@@ -19,6 +19,11 @@ extension DoubleExtension on double {
 extension StringExtension on String {
   String toCapitalized() => length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
 
+  DateTime toDateTime0() {
+    final now = DateTime.now();
+    return DateFormat('HH:mm').parse(this).copyWith(year: now.year, month: now.month, day: now.day);
+  }
+
   double toDoubleTime0() {
     final dateTime = DateFormat('HH:mm').parse(this);
     return dateTime.hour + dateTime.minute / 60.0;
@@ -51,6 +56,14 @@ extension DateTimeExtension on DateTime {
   bool isBetween(DateTime start, DateTime end) => !isBefore(start) && !isAfter(end);
 
   bool isSameDay(DateTime other) => year == other.year && month == other.month && day == other.day;
+
+  DateTime get ceilNextHalfHour {
+    if (minute < 30) {
+      return copyWith(minute: 30, second: 0, millisecond: 0, microsecond: 0);
+    } else {
+      return add(const Duration(hours: 1)).copyWith(minute: 0, second: 0, millisecond: 0, microsecond: 0);
+    }
+  }
 
   static DateTime fromDouble(double value) {
     final date = DateTime.now();
