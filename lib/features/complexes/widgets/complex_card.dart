@@ -339,7 +339,7 @@ class _ComplexTileCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       spacing: 8.0,
       children: [
-        CustomChip.medium.normal(
+        CustomChip.medium.neutral(
           palette: WidgetPalette.primary,
           icon: Symbols.star_rounded,
           filledIcon: true,

@@ -283,23 +283,37 @@ class _CourtTileCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 8.0,
             children: [
-              _CourtTitle(
-                brightness: Theme.brightnessOf(context) == Brightness.light || !isSelected
-                    ? Brightness.light
-                    : Brightness.dark,
-                name: court.name,
-                sport: court.sport,
-                surface: 'Grass',
-                maxPeople: court.maxPeople,
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                spacing: 8.0,
+                children: [
+                  Expanded(
+                    child: _CourtTitle(
+                      brightness: Theme.brightnessOf(context) == Brightness.light || !isSelected
+                          ? Brightness.light
+                          : Brightness.dark,
+                      name: court.name,
+                      sport: court.sport,
+                      surface: 'Grass',
+                      maxPeople: court.maxPeople,
+                    ),
+                  ),
+                  CustomChip.medium.neutral(
+                    palette: WidgetPalette.primary,
+                    icon: Symbols.star_rounded,
+                    filledIcon: true,
+                    label: 4.5.toString(),
+                  ),
+                ],
               ),
               Row(
                 spacing: 8.0,
                 children: [
                   CustomChip.medium.neutral(
                     palette: WidgetPalette.primary,
-                    icon: Symbols.star_rounded,
+                    icon: Symbols.clear_day_rounded,
                     filledIcon: true,
-                    label: 4.5.toString(),
+                    label: 'Weather',
                   ),
                   Expanded(
                     child: _AvailabilityInfo(
@@ -401,21 +415,14 @@ class _CourtTitle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 4.0,
       children: [
-        Text(
-          name,
-          style: textTheme.titleMedium?.copyWith(
-            color: brightness == Brightness.light ? colorScheme.onSurface : colorScheme.surface,
-          ),
-        ),
+        Text(name, style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface)),
         MarqueeWidget(
           child: Row(
             spacing: 4.0,
             children: [
               Text(
                 '${sport.name.toCapitalized()} · $surface ·',
-                style: textTheme.bodyMedium?.copyWith(
-                  color: brightness == Brightness.light ? colorScheme.onSurfaceVariant : colorScheme.outlineVariant,
-                ),
+                style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
               ),
               Icon(
                 Symbols.groups_rounded,
@@ -428,9 +435,7 @@ class _CourtTitle extends StatelessWidget {
               ),
               Text(
                 maxPeople.toString().padLeft(2, '0'),
-                style: textTheme.bodyMedium?.copyWith(
-                  color: brightness == Brightness.light ? colorScheme.onSurfaceVariant : colorScheme.outlineVariant,
-                ),
+                style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
               ),
             ],
           ),

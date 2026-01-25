@@ -12,7 +12,7 @@ extension WidgetStatusColor on WidgetStatus {
       case WidgetStatus.normal:
         return colorScheme.primary;
       case WidgetStatus.neutral:
-        return brightness == Brightness.light ? colorScheme.surface : colorScheme.surface;
+        return colorScheme.primary.withAlpha(125);
       case WidgetStatus.translucent:
         return brightness == Brightness.light
             ? colorScheme.inverseSurface.withAlpha(50)
@@ -32,11 +32,11 @@ extension WidgetStatusColor on WidgetStatus {
 
     switch (this) {
       case WidgetStatus.normal:
-        return brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary;
+        return colorScheme.onPrimary;
       case WidgetStatus.neutral:
-        return brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimary;
+        return brightness == Brightness.light ? colorScheme.onPrimary : colorScheme.onPrimaryContainer;
       case WidgetStatus.translucent:
-        return brightness == Brightness.light ? colorScheme.primary : colorScheme.primary;
+        return colorScheme.primary;
       case WidgetStatus.alert:
         return colorScheme.onTertiary;
       case WidgetStatus.success:
@@ -52,9 +52,9 @@ extension WidgetStatusColor on WidgetStatus {
 
     switch (this) {
       case WidgetStatus.normal:
-        return brightness == Brightness.light ? colorScheme.primaryContainer : colorScheme.primaryContainer;
+        return colorScheme.primaryContainer;
       case WidgetStatus.neutral:
-        return brightness == Brightness.light ? colorScheme.surface : colorScheme.surface;
+        return colorScheme.surface;
       case WidgetStatus.translucent:
         return brightness == Brightness.light
             ? colorScheme.surface.withAlpha(50)
@@ -74,9 +74,9 @@ extension WidgetStatusColor on WidgetStatus {
 
     switch (this) {
       case WidgetStatus.normal:
-        return brightness == Brightness.light ? colorScheme.onPrimaryContainer : colorScheme.onPrimaryContainer;
+        return colorScheme.onPrimaryContainer;
       case WidgetStatus.neutral:
-        return brightness == Brightness.light ? colorScheme.onSurface : colorScheme.onSurface;
+        return colorScheme.onSurface;
       case WidgetStatus.translucent:
         return brightness == Brightness.light ? colorScheme.surface : colorScheme.onSurface;
       case WidgetStatus.alert:

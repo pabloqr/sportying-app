@@ -1495,7 +1495,7 @@ class _SummaryPage extends StatelessWidget {
       child: Column(
         spacing: 8.0,
         children: [
-          CustomChip.medium.neutral(palette: WidgetPalette.primary, label: dateTimeRange!.start.toFormattedDate2()),
+          CustomChip.medium.normal(palette: WidgetPalette.primary, label: dateTimeRange!.start.toFormattedDate2()),
           Column(
             children: [
               Row(
@@ -1520,7 +1520,7 @@ class _SummaryPage extends StatelessWidget {
                           color: colorScheme.primary,
                           radius: BorderRadius.circular(1000.0),
                         ),
-                        CustomChip.medium.neutral(palette: WidgetPalette.primary, label: remainingText),
+                        CustomChip.medium.normal(palette: WidgetPalette.primary, label: remainingText),
                       ],
                     ),
                   ),
