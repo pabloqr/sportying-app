@@ -21,7 +21,7 @@ import 'package:sportying_app/features/core/widgets/visuals/loading_indicator.da
 import 'package:sportying_app/features/core/widgets/visuals/time_range_selector.dart';
 import 'package:sportying_app/features/core/widgets/visuals/wavy_progress_indicator.dart';
 import 'package:sportying_app/features/courts/widgets/court_card.dart';
-import 'package:sportying_app/features/reservations/view_model/reservation_process_viewmodel.dart';
+import 'package:sportying_app/features/reservations/reservation_process/view_model/reservation_process_viewmodel.dart';
 import 'package:sportying_app/features/sports/widgets/sport_card.dart';
 
 //--------------------------------------------------------------------------------------------------------------------//

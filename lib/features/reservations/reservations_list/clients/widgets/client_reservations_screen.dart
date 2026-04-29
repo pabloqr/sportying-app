@@ -1,21 +1,19 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:sportying_app/features/complexes/widgets/complex_card.dart';
 import 'package:sportying_app/features/core/widgets/visuals/error_indicator.dart';
 import 'package:sportying_app/features/core/widgets/visuals/loading_indicator.dart';
-import 'package:sportying_app/features/users/clients/view_model/client_explore_viewmodel.dart';
+import 'package:sportying_app/features/reservations/reservation_process/widgets/reservation_card.dart';
+import 'package:sportying_app/features/reservations/reservations_list/clients/view_model/client_reservations_viewmodel.dart';
 
-class ClientExploreScreen extends StatefulWidget {
-  const ClientExploreScreen({super.key, required this.viewModel});
+class ClientReservationsScreen extends StatefulWidget {
+  const ClientReservationsScreen({super.key, required this.viewModel});
 
-  final ClientExploreViewModel viewModel;
+  final ClientReservationsViewModel viewModel;
 
   @override
-  State<ClientExploreScreen> createState() => _ClientExploreScreenState();
+  State<ClientReservationsScreen> createState() => _ClientReservationsScreenState();
 }
 
-class _ClientExploreScreenState extends State<ClientExploreScreen> {
+class _ClientReservationsScreenState extends State<ClientReservationsScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -27,7 +25,7 @@ class _ClientExploreScreenState extends State<ClientExploreScreen> {
           return ErrorIndicator(
             title: 'Error while loading home',
             label: 'Try again',
-            onPressed: () => widget.viewModel.load.execute(),
+            onPressed: () => widget.viewModel.load.execute(6),
           );
         }
 
@@ -38,12 +36,9 @@ class _ClientExploreScreenState extends State<ClientExploreScreen> {
         builder: (context, _) {
           return ListView.builder(
             padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 220.0),
-            itemCount: widget.viewModel.complexes.isNotEmpty ? widget.viewModel.complexes.length : 10,
+            itemCount: widget.viewModel.reservations.isNotEmpty ? widget.viewModel.reservations.length : 10,
             itemBuilder: (context, index) {
-              return ComplexCard.card(
-                complex: widget.viewModel.complexes.elementAt(index),
-                rating: Random().nextInt(11) / 2.0,
-              );
+              return ReservationCard(reservation: widget.viewModel.reservations.elementAt(index));
             },
           );
         },

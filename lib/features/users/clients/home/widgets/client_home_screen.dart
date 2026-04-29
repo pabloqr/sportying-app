@@ -7,8 +7,8 @@ import 'package:sportying_app/features/core/widgets/scaffolds/header.dart';
 import 'package:sportying_app/features/core/widgets/visuals/error_indicator.dart';
 import 'package:sportying_app/features/core/widgets/visuals/loading_indicator.dart';
 import 'package:sportying_app/features/news/widgets/news_card.dart';
-import 'package:sportying_app/features/reservations/widgets/reservation_card.dart';
-import 'package:sportying_app/features/users/clients/view_model/client_home_viewmodel.dart';
+import 'package:sportying_app/features/reservations/reservation_process/widgets/reservation_card.dart';
+import 'package:sportying_app/features/users/clients/home/view_model/client_home_viewmodel.dart';
 
 class ClientHomeScreen extends StatefulWidget {
   const ClientHomeScreen({super.key, required this.viewModel});
