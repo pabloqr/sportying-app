@@ -39,10 +39,10 @@ class _MarqueeWidgetState extends State<MarqueeWidget> {
   }
 
   void _calculateAnimationDuration() {
-    String text = _extractTextFromWidget(widget.child);
-    int characterCount = text.length;
+    final text = _extractTextFromWidget(widget.child);
+    final characterCount = text.length;
 
-    double durationInSeconds = characterCount / widget.charactersPerSecond;
+    var durationInSeconds = characterCount / widget.charactersPerSecond;
     durationInSeconds = durationInSeconds < 1.0 ? 1.0 : durationInSeconds;
 
     _calculatedDuration = Duration(milliseconds: (durationInSeconds * 1000).round());
@@ -71,7 +71,7 @@ class _MarqueeWidgetState extends State<MarqueeWidget> {
     if (!mounted || !_controller.hasClients || !_needsScrolling) return;
 
     while (mounted && _controller.hasClients && _needsScrolling) {
-      await Future.delayed(widget.pauseDuration);
+      await Future<void>.delayed(widget.pauseDuration);
 
       if (!mounted || !_controller.hasClients) break;
 
@@ -83,7 +83,7 @@ class _MarqueeWidgetState extends State<MarqueeWidget> {
 
       if (!mounted || !_controller.hasClients) break;
 
-      await Future.delayed(widget.pauseDuration);
+      await Future<void>.delayed(widget.pauseDuration);
 
       if (!mounted || !_controller.hasClients) break;
 

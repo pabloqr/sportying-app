@@ -13,18 +13,10 @@ class InfoSectionWidget extends StatelessWidget {
       spacing: 8.0,
       children: [
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 8.0,
-            children: leftChildren,
-          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, spacing: 8.0, children: leftChildren),
         ),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 8.0,
-            children: rightChildren,
-          ),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, spacing: 8.0, children: rightChildren),
         ),
       ],
     );

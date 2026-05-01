@@ -96,6 +96,7 @@ class TimeProgressIndicator extends StatelessWidget {
       alignment: AlignmentGeometry.center,
       children: [
         CircularProgressIndicator(
+          // ignore: deprecated_member_use
           year2023: false,
           padding: EdgeInsets.zero,
           backgroundColor: colorScheme.primaryContainer,

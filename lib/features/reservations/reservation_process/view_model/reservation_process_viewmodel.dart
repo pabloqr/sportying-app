@@ -69,7 +69,7 @@ class ReservationProcessViewModel extends ChangeNotifier {
         _courts = courtsResult.value;
 
         // Obtener la disponibilidad de cada una de las pistas obtenidas
-        for (Court court in _courts) {
+        for (final court in _courts) {
           final availabilityResult = await _courtsRepository.getCourtAvailability(complex, court);
           switch (availabilityResult) {
             case Ok<CourtAvailability>():

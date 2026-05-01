@@ -5,6 +5,7 @@ class LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return const SafeArea(child: Center(child: CircularProgressIndicator(year2023: false)));
   }
 }

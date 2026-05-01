@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class DashedCircularBorderPainter extends CustomPainter {
@@ -17,7 +15,7 @@ class DashedCircularBorderPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
+    final paint = Paint()
       ..color = color
       ..strokeWidth = strokeWidth
       ..style = PaintingStyle.stroke
@@ -25,27 +23,26 @@ class DashedCircularBorderPainter extends CustomPainter {
 
     // Definir el círculo base. Restamos la mitad del grosor para que el borde
     // quede dentro del área del widget.
-    final double radius = (size.width - strokeWidth) / 2;
-    final Offset center = Offset(size.width / 2, size.height / 2);
-    
+    final radius = (size.width - strokeWidth) / 2;
+    final center = Offset(size.width / 2, size.height / 2);
+
     // Creamos el camino (path) del círculo completo
-    Path circularPath = Path()
-      ..addOval(Rect.fromCircle(center: center, radius: radius));
+    final circularPath = Path()..addOval(Rect.fromCircle(center: center, radius: radius));
 
     // Convertimos el camino sólido en discontinuo
-    Path dashedPath = _dashPath(circularPath, dashArray: CircularIntervalList<double>([dashLength, dashGap]));
+    final dashedPath = _dashPath(circularPath, dashArray: CircularIntervalList<double>([dashLength, dashGap]));
 
     canvas.drawPath(dashedPath, paint);
   }
 
   // Función auxiliar para crear el efecto discontinuo en cualquier Path
   Path _dashPath(Path source, {required CircularIntervalList<double> dashArray}) {
-    final Path dest = Path();
-    for (final PathMetric metric in source.computeMetrics()) {
-      double distance = 0.0;
-      bool draw = true;
+    final dest = Path();
+    for (final metric in source.computeMetrics()) {
+      var distance = 0.0;
+      var draw = true;
       while (distance < metric.length) {
-        final double len = dashArray.next;
+        final len = dashArray.next;
         if (draw) {
           dest.addPath(metric.extractPath(distance, distance + len), Offset.zero);
         }

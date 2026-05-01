@@ -46,10 +46,10 @@ class CustomGridView extends BoxScrollView {
     return SliverLayoutBuilder(
       builder: (context, constraints) {
         // Obtener el ancho disponible para el grid
-        final double crossAxisExtent = constraints.crossAxisExtent;
+        final crossAxisExtent = constraints.crossAxisExtent;
 
         // Calcular el número máximo de elementos por fila. Se usa la condición para evitar división de INF o entre 0
-        int maxCrossAxisCount = crossAxisExtent.isFinite && maxCrossAxisExtent > 0
+        final maxCrossAxisCount = crossAxisExtent.isFinite && maxCrossAxisExtent > 0
             ? math.max(1, ((crossAxisExtent + crossAxisSpacing) / (maxCrossAxisExtent + crossAxisSpacing)).ceil())
             : 1;
 

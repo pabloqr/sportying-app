@@ -53,8 +53,8 @@ class TimeRangeController extends ChangeNotifier {
   /// It clamps the start and end values to the current time window and schedule limits,
   /// and adjusts them if they intersect with any [unavailableRanges].
   RangeValues _getValidRangeValues(RangeValues rangeValue) {
-    double start = rangeValue.start;
-    double end = rangeValue.end;
+    var start = rangeValue.start;
+    var end = rangeValue.end;
 
     // First, ensure the range is within the schedule limits
     start = start.clamp(schedule.start, schedule.end - 1.0);
@@ -260,7 +260,7 @@ class TimeRangeController extends ChangeNotifier {
   void setUnavailableSlotsFromAvailability(List<CourtAvailabilitySlot> availability, DateTime forDate) {
     unavailableRanges.clear(); // Clear previous unavailable ranges.
 
-    for (var slot in availability) {
+    for (final slot in availability) {
       // Only process slots that are unavailable and for the correct date
       if (!slot.available && slot.dateIni.isSameDay(forDate)) {
         final startTime = slot.dateIni.toDouble();
@@ -362,7 +362,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
   @override
   void didUpdateWidget(TimeRangeSelector oldWidget) {
     super.didUpdateWidget(oldWidget);
-    bool availabilityChanged = !listEquals(widget.availability, oldWidget.availability);
+    final availabilityChanged = !listEquals(widget.availability, oldWidget.availability);
     if (widget.date != oldWidget.date || availabilityChanged) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -426,6 +426,7 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
                 SliderTheme(
                   data: SliderThemeData(trackHeight: 32.0),
                   child: RangeSlider(
+                    // ignore: deprecated_member_use
                     year2023: false,
                     padding: EdgeInsets.zero,
                     values: controller.currentRangeValues,
@@ -439,8 +440,8 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
                     onChanged: (values) {
                       final current = controller.currentRangeValues;
                       final difference = current.end - current.start;
-                      double start = values.start;
-                      double end = values.end;
+                      var start = values.start;
+                      var end = values.end;
 
                       if ((current.start - values.start) > 0.5) {
                         start = values.start;

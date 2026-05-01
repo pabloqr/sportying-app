@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:sportying_app/features/core/widgets/utils/animations.dart';
 
 class NavigationRailTransition extends StatefulWidget {
-  const NavigationRailTransition({super.key, required this.animation, required this.backgroundColor, required this.child});
+  const NavigationRailTransition({
+    super.key,
+    required this.animation,
+    required this.backgroundColor,
+    required this.child,
+  });
 
   final Animation<double> animation;
   final Widget child;

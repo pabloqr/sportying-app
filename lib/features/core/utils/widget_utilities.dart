@@ -4,11 +4,11 @@ import 'package:sportying_app/features/core/utils/widget_side.dart';
 class WidgetUtilities {
   static Future<String> getAddressFromLatLng(double lat, double lng) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(lat, lng);
-      Placemark place = placemarks.first;
+      final placemarks = await placemarkFromCoordinates(lat, lng);
+      final place = placemarks.first;
 
       final parts = [place.street, place.name, place.locality];
-      final address = parts.where((p) => p != null && p.trim().isNotEmpty).join(", ");
+      final address = parts.where((p) => p != null && p.trim().isNotEmpty).join(', ');
 
       return address.isNotEmpty ? address : 'No address provided';
     } catch (e) {
@@ -22,9 +22,9 @@ class WidgetUtilities {
     if (length == 1) return crossAxisCount == 1 ? WidgetSide.all : WidgetSide.left;
 
     // Calcular posiciones en el grid
-    final int col = index % crossAxisCount;
-    final int row = index ~/ crossAxisCount;
-    final int lastRow = (length - 1) ~/ crossAxisCount;
+    final col = index % crossAxisCount;
+    final row = index ~/ crossAxisCount;
+    final lastRow = (length - 1) ~/ crossAxisCount;
 
     // Caso extremo: una columna
     if (crossAxisCount == 1) {
@@ -41,10 +41,10 @@ class WidgetUtilities {
     }
 
     // Calcular los valores para las flags de esquinas
-    final bool isFirstRow = row == 0;
-    final bool isLastRow = row == lastRow;
-    final bool isFirstCol = col == 0;
-    final bool isLastCol = col == crossAxisCount - 1;
+    final isFirstRow = row == 0;
+    final isLastRow = row == lastRow;
+    final isFirstCol = col == 0;
+    final isLastCol = col == crossAxisCount - 1;
 
     // Caso frecuente: no está en ningún borde
     if ((!isFirstRow && !isLastRow) || (!isFirstCol && !isLastCol)) return WidgetSide.none;

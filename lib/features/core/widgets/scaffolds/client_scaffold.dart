@@ -41,8 +41,8 @@ class _ClientScaffoldState extends State<ClientScaffold> with SingleTickerProvid
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    final double width = MediaQuery.of(context).size.width;
-    final AnimationStatus status = _controller.status;
+    final width = MediaQuery.of(context).size.width;
+    final status = _controller.status;
     if (width > 600) {
       if (status != AnimationStatus.forward && status != AnimationStatus.completed) {
         _controller.forward();

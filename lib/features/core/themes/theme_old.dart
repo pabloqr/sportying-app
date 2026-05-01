@@ -1,5 +1,5 @@
-import "package:flutter/material.dart";
-import "package:sportying_app/features/core/themes/text_theme.dart";
+import 'package:flutter/material.dart';
+import 'package:sportying_app/features/core/themes/text_theme.dart';
 
 class MaterialTheme {
   final TextTheme textTheme;
@@ -348,10 +348,7 @@ class MaterialTheme {
     useMaterial3: true,
     brightness: colorScheme.brightness,
     colorScheme: colorScheme,
-    textTheme: textTheme.apply(
-      bodyColor: colorScheme.onSurface,
-      displayColor: colorScheme.onSurface,
-    ),
+    textTheme: textTheme.apply(bodyColor: colorScheme.onSurface, displayColor: colorScheme.onSurface),
     scaffoldBackgroundColor: colorScheme.surface,
     canvasColor: colorScheme.surface,
   );
@@ -438,11 +435,7 @@ class MaterialTheme {
     ),
   );
 
-
-  List<ExtendedColor> get extendedColors => [
-    success,
-    warning,
-  ];
+  List<ExtendedColor> get extendedColors => [success, warning];
 }
 
 class ExtendedColor {

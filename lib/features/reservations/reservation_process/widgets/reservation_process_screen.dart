@@ -1627,7 +1627,7 @@ class _PageNavigationControls extends StatelessWidget {
             ),
             minimumSize: WidgetStatePropertyAll(Size(_kBackButtonWidth, _kButtonMinHeight)),
           ),
-          child: const Text("Back"),
+          child: const Text('Back'),
         ),
         Expanded(
           child: FilledButton(
