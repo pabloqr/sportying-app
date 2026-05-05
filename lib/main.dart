@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sportying_app/core/config/dependencies.dart';
 import 'package:sportying_app/core/routing/router.dart';
 import 'package:sportying_app/features/core/themes/theme.dart';
 
-void main() {
-  runApp(MultiProvider(providers: appProviders, child: const MyApp()));
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final sharedPreferences = await SharedPreferences.getInstance();
+
+  runApp(
+    MultiProvider(
+      providers: getAppProviders(sharedPreferences: sharedPreferences),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -20,7 +29,7 @@ class MyApp extends StatelessWidget {
       theme: theme.light,
       darkTheme: theme.dark,
       themeMode: ThemeMode.light,
-      routerConfig: router(),
+      routerConfig: router(context.read()),
     );
   }
 }

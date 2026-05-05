@@ -1,5 +1,5 @@
 /// Utility class to wrap result data
-/// 
+///
 /// The result can be evaluated using a switch statement:
 /// ```dart
 /// switch (result) {

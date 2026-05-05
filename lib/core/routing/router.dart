@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:sportying_app/core/routing/routes.dart';
+import 'package:sportying_app/core/utils/result.dart';
+import 'package:sportying_app/data/repositories/auth/auth_repository.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/client_scaffold.dart';
 import 'package:sportying_app/features/reservations/reservation_process/view_model/reservation_process_viewmodel.dart';
 import 'package:sportying_app/features/reservations/reservation_process/widgets/reservation_process_screen.dart';
@@ -32,9 +34,24 @@ Widget withSystemUiOverlay(BuildContext context, {required Widget child}) {
   );
 }
 
-GoRouter router() => GoRouter(
-  initialLocation: Routes.clientDashboardRoute,
+GoRouter router(AuthRepository authRepository) => GoRouter(
   initialLocation: AppRoutes.clientDashboardRoute,
+  debugLogDiagnostics: true,
+  redirect: (context, state) async {
+    final result = await authRepository.autoAuth();
+    switch (result) {
+      case Ok<bool>():
+        final isAuthenticated = result.value;
+        if (!isAuthenticated) return AppRoutes.signInRoute;
+
+        final isSigningIn = state.matchedLocation == AppRoutes.signInRoute;
+        if (isSigningIn) return AppRoutes.homeRoute;
+
+        return null;
+      case Error<bool>():
+        return AppRoutes.signInRoute;
+    }
+  },
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
