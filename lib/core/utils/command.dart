@@ -1,8 +1,18 @@
 import 'package:flutter/foundation.dart';
 import 'package:sportying_app/core/utils/result.dart';
 
+/// Defines a command action that returns a [Result] of type [T].
+/// Used by [Command0] for actions without arguments.
 typedef CommandAction0<T> = Future<Result<T>> Function();
+
+/// Defines a command action that returns a [Result] of type [T].
+/// Takes an argument of type [A].
+/// Used by [Command1] for actions with one argument.
 typedef CommandAction1<T, A> = Future<Result<T>> Function(A);
+
+/// Defines a command action that returns a [Result] of type [T].
+/// Takes two arguments of type [A] and [B].
+/// Used by [Command2] for actions with two arguments.
 typedef CommandAction2<T, A, B> = Future<Result<T>> Function(A, B);
 
 /// Facilitates interaction with a ViewModel.
@@ -12,6 +22,7 @@ typedef CommandAction2<T, A, B> = Future<Result<T>> Function(A, B);
 ///
 /// Use [Command0] for actions without arguments.
 /// Use [Command1] for actions with one argument.
+/// Use [Command2] for actions with two arguments.
 ///
 /// Actions must return a [Result].
 ///
@@ -20,23 +31,35 @@ abstract class Command<T> extends ChangeNotifier {
   Command();
 
   bool _running = false;
-  bool get running => _running;
 
   Result<T>? _result;
+
+  /// Whether the action is running.
+  bool get running => _running;
+
+  /// Whether the action completed with an error.
   bool get error => _result is Error;
+
+  /// Whether the action completed successfully.
   bool get completed => _result is Ok;
+
+  /// The result of the most recent action.
+  ///
+  /// Returns `null` if the action is running or completed with an error.
   Result? get result => _result;
 
+  /// Clears the most recent action's result.
   void clearResult() {
     _result = null;
     notifyListeners();
   }
 
-  /// Internal execute implementation
+  /// Execute the provided [action], notifying listeners and setting the running and result states as necessary.
   Future<void> _execute(CommandAction0<T> action) async {
-    // Ensure the action can't launch multiple times.
+    // Ensure the action can't launch multiple times
     if (_running) return;
 
+    // Notify listeners
     _running = true;
     _result = null;
     notifyListeners();
@@ -53,10 +76,12 @@ abstract class Command<T> extends ChangeNotifier {
 /// [Command] without arguments.
 /// Takes a [CommandAction0] as action.
 class Command0<T> extends Command<T> {
+  /// Creates a [Command0] with the provided [CommandAction0].
   Command0(this._action);
 
   final CommandAction0<T> _action;
 
+  /// Executes the action.
   Future<void> execute() async {
     await _execute(_action);
   }
@@ -65,10 +90,12 @@ class Command0<T> extends Command<T> {
 /// [Command] with one argument.
 /// Takes a [CommandAction1] as action.
 class Command1<T, A> extends Command<T> {
+  /// Creates a [Command1] with the provided [CommandAction1].
   Command1(this._action);
 
   final CommandAction1<T, A> _action;
 
+  /// Executes the action.
   Future<void> execute(A arg0) async {
     await _execute(() => _action(arg0));
   }
@@ -77,10 +104,12 @@ class Command1<T, A> extends Command<T> {
 /// [Command] with two arguments.
 /// Takes a [CommandAction2] as action.
 class Command2<T, A, B> extends Command<T> {
+  /// Creates a [Command2] with the provided [CommandAction2].
   Command2(this._action);
 
   final CommandAction2<T, A, B> _action;
 
+  /// Executes the action.
   Future<void> execute(A arg0, B arg1) async {
     await _execute(() => _action(arg0, arg1));
   }
