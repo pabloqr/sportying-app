@@ -1,12 +1,12 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'court_api_model.freezed.dart';
-part 'court_api_model.g.dart';
+part 'court_dto.freezed.dart';
+part 'court_dto.g.dart';
 
 @freezed
-abstract class CourtApiModel with _$CourtApiModel {
-  const factory CourtApiModel({
-    int? id,
+abstract class CourtDto with _$CourtDto {
+  const factory CourtDto({
+    required int id,
     required int complexId,
     required String sport,
     required String name,
@@ -15,7 +15,7 @@ abstract class CourtApiModel with _$CourtApiModel {
     required String status,
     required DateTime createdAt,
     required DateTime updatedAt,
-  }) = _CourtApiModel;
+  }) = _CourtDto;
 
-  factory CourtApiModel.fromJson(Map<String, Object?> json) => _$CourtApiModelFromJson(json);
+  factory CourtDto.fromJson(Map<String, dynamic> json) => _$CourtDtoFromJson(json);
 }

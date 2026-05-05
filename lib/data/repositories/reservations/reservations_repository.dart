@@ -6,6 +6,12 @@ import 'package:sportying_app/data/services/courts/courts_remote_service.dart';
 import 'package:sportying_app/data/services/courts/models/court_api_model.dart';
 import 'package:sportying_app/data/services/reservations/models/reservation_api_model.dart';
 import 'package:sportying_app/data/services/reservations/reservations_remote_service.dart';
+import 'package:sportying_app/data/services/remote/complexes/complexes_remote_service.dart';
+import 'package:sportying_app/data/services/remote/complexes/models/complex_dto.dart';
+import 'package:sportying_app/data/services/remote/courts/courts_remote_service.dart';
+import 'package:sportying_app/data/services/remote/courts/models/court_dto.dart';
+import 'package:sportying_app/data/services/remote/reservations/models/reservation_dto.dart';
+import 'package:sportying_app/data/services/remote/reservations/reservations_remote_service.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
@@ -51,7 +57,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
       final result = await _remoteService.getUserReservations(userId, query);
       // Obtener el resultado de la operación
       switch (result) {
-        case Ok<List<ReservationApiModel>>():
+        case Ok<List<ReservationDto>>():
           _log.fine('Fetched reservations from server. Getting nested information.');
 
           return Result.ok(
@@ -66,7 +72,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                 final complexResult = await _complexesRemoteService.getComplex(reservation.complexId);
                 // Obtener el resultado de la operación
                 switch (complexResult) {
-                  case Ok<ComplexApiModel>():
+                  case Ok<ComplexDto>():
                     final value = complexResult.value;
 
                     // Obtener la dirección del complejo en forma de cadena de texto
@@ -97,7 +103,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                       updatedAt: value.updatedAt,
                     );
                     break;
-                  case Error<ComplexApiModel>():
+                  case Error<ComplexDto>():
                     throw complexResult.error;
                 }
 
@@ -105,9 +111,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                 final courtResult = await _courtsRemoteService.getCourt(reservation.complexId, reservation.courtId);
                 // Obtener el resultado de la operación
                 switch (courtResult) {
-                  case Ok<CourtApiModel>():
-                    final value = courtResult.value;
-
+                  case Ok<CourtDto>():
                     // Crear la instancia del modelo de la pista
                     court = Court(
                       id: value.id ?? 0,
@@ -129,7 +133,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                       updatedAt: value.updatedAt,
                     );
                     break;
-                  case Error<CourtApiModel>():
+                  case Error<CourtDto>():
                     throw courtResult.error;
                 }
 
@@ -164,7 +168,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
               }).toList(),
             ),
           );
-        case Error<List<ReservationApiModel>>():
+        case Error<List<ReservationDto>>():
           _log.warning('Failed to fetch nested information.');
           return Result.error(result.error);
       }

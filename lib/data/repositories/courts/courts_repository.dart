@@ -4,6 +4,9 @@ import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/services/courts/courts_remote_service.dart';
 import 'package:sportying_app/data/services/courts/models/court_api_model.dart';
 import 'package:sportying_app/data/services/courts/models/court_availability_api_model.dart';
+import 'package:sportying_app/data/services/remote/courts/courts_remote_service.dart';
+import 'package:sportying_app/data/services/remote/courts/models/court_availability_dto.dart';
+import 'package:sportying_app/data/services/remote/courts/models/court_dto.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
@@ -66,7 +69,7 @@ class CourtsRepositoryImpl implements CourtsRepository {
       final result = await _remoteService.getCourts(complex.id, query);
       // Obtener el resultado de la operación
       switch (result) {
-        case Ok<List<CourtApiModel>>():
+        case Ok<List<CourtDto>>():
           _log.fine('Fetched complexes from server. Getting nested information.');
 
           return Result.ok(
@@ -91,7 +94,7 @@ class CourtsRepositoryImpl implements CourtsRepository {
               }),
             ),
           );
-        case Error<List<CourtApiModel>>():
+        case Error<List<CourtDto>>():
           _log.warning('Failed to fetch nested information.');
           return Result.error(result.error);
       }
@@ -109,7 +112,7 @@ class CourtsRepositoryImpl implements CourtsRepository {
       final result = await _remoteService.getCourtAvailability(complex.id, court.id);
       // Obtener el resultado de la operación
       switch (result) {
-        case Ok<CourtAvailabilityApiModel>():
+        case Ok<CourtAvailabilityDto>():
           _log.fine('Fetched complexes from server. Getting nested information.');
 
           final availabilitySlots = result.value.availability.map((slot) {
@@ -128,6 +131,7 @@ class CourtsRepositoryImpl implements CourtsRepository {
             ),
           );
         case Error<CourtAvailabilityApiModel>():
+        case Error<CourtAvailabilityDto>():
           _log.warning('Failed to fetch nested information.');
           return Result.error(result.error);
       }

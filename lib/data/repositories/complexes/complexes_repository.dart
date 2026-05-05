@@ -2,6 +2,8 @@ import 'package:logging/logging.dart';
 import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
 import 'package:sportying_app/data/services/complexes/models/complex_api_model.dart';
+import 'package:sportying_app/data/services/remote/complexes/complexes_remote_service.dart';
+import 'package:sportying_app/data/services/remote/complexes/models/complex_dto.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
@@ -26,7 +28,7 @@ class ComplexesRepositoryImpl implements ComplexesRepository {
       final result = await _remoteService.getComplexes(query);
       // Obtener el resultado de la operación
       switch (result) {
-        case Ok<List<ComplexApiModel>>():
+        case Ok<List<ComplexDto>>():
           _log.fine('Fetched complexes from server. Getting nested information.');
 
           return Result.ok(
@@ -66,7 +68,7 @@ class ComplexesRepositoryImpl implements ComplexesRepository {
               }),
             ),
           );
-        case Error<List<ComplexApiModel>>():
+        case Error<List<ComplexDto>>():
           _log.warning('Failed to fetch nested information.');
           return Result.error(result.error);
       }

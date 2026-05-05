@@ -1,13 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'reservation_api_model.freezed.dart';
-part 'reservation_api_model.g.dart';
+part 'reservation_dto.freezed.dart';
+part 'reservation_dto.g.dart';
 
 @freezed
-abstract class ReservationApiModel with _$ReservationApiModel {
-  const factory ReservationApiModel({
-    int? id,
-    required userId,
+abstract class ReservationDto with _$ReservationDto {
+  const factory ReservationDto({
+    required int id,
+    required int userId,
     required int complexId,
     required int courtId,
     required DateTime dateIni,
@@ -17,7 +17,7 @@ abstract class ReservationApiModel with _$ReservationApiModel {
     required String timeFilter,
     required DateTime createdAt,
     required DateTime updatedAt,
-  }) = _ReservationApiModel;
+  }) = _ReservationDto;
 
-  factory ReservationApiModel.fromJson(Map<String, Object?> json) => _$ReservationApiModelFromJson(json);
+  factory ReservationDto.fromJson(Map<String, dynamic> json) => _$ReservationDtoFromJson(json);
 }
