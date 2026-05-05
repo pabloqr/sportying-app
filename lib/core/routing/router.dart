@@ -34,6 +34,7 @@ Widget withSystemUiOverlay(BuildContext context, {required Widget child}) {
 
 GoRouter router() => GoRouter(
   initialLocation: Routes.clientDashboardRoute,
+  initialLocation: AppRoutes.clientDashboardRoute,
   routes: [
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
@@ -43,7 +44,7 @@ GoRouter router() => GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: Routes.clientDashboardRoute,
+              path: AppRoutes.clientDashboardRoute,
               builder: (context, state) {
                 return ClientHomeScreen(
                   viewModel: ClientHomeViewModel(
@@ -58,7 +59,7 @@ GoRouter router() => GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: Routes.clientExploreRoute,
+              path: AppRoutes.clientExploreRoute,
               builder: (context, state) {
                 return ClientExploreScreen(viewModel: ClientExploreViewModel(complexesRepository: context.read()));
               },
@@ -68,7 +69,7 @@ GoRouter router() => GoRouter(
         StatefulShellBranch(
           routes: [
             GoRoute(
-              path: Routes.clientReservationsRoute,
+              path: AppRoutes.clientReservationsRoute,
               builder: (context, state) {
                 return ClientReservationsScreen(
                   viewModel: ClientReservationsViewModel(reservationRepository: context.read()),
@@ -80,14 +81,14 @@ GoRouter router() => GoRouter(
       ],
     ),
     GoRoute(
-      path: Routes.reservationNewRoute,
+      path: AppRoutes.reservationNewRoute,
       builder: (context, state) {
         return ReservationProcessScreen(
           viewModel: ReservationProcessViewModel(complexesRepository: context.read(), courtsRepository: context.read()),
         );
       },
     ),
-    GoRoute(path: Routes.reservationModifyRoute, builder: (context, state) => const Placeholder()),
-    GoRoute(path: Routes.reservationInfoRoute, builder: (context, state) => const Placeholder()),
+    GoRoute(path: AppRoutes.reservationModifyRoute, builder: (context, state) => const Placeholder()),
+    GoRoute(path: AppRoutes.reservationInfoRoute, builder: (context, state) => const Placeholder()),
   ],
 );

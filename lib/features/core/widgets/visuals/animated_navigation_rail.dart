@@ -47,7 +47,7 @@ class AnimatedNavigationRail extends StatelessWidget {
             AnimatedFloatingActionButton(
               animation: railFabAnimation,
               elevation: 0.0,
-              onPressed: () => context.push(Routes.reservationNewRoute),
+              onPressed: () => context.push(AppRoutes.reservationNewRoute),
               icon: const Icon(
                 Symbols.calendar_add_on_rounded,
                 size: 24,

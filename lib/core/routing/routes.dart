@@ -1,43 +1,53 @@
-abstract final class Routes {
-  //------------------------------------------------------------------------------------------------------------------//
-  // APP ROUTES
-  //------------------------------------------------------------------------------------------------------------------//
-  static const String clientRelative = 'client';
-  static const String adminRelative = 'admin';
+// ignore_for_file: unused_element
 
-  static const String homeRelative = 'home';
-  static const String exploreRelative = 'explore';
-  static const String profileRelative = 'profile';
-  static const String settingsRelative = 'settings';
+// -------------------------------------------------------------------------------------------------------------------//
+// COMMON ROUTES
+// -------------------------------------------------------------------------------------------------------------------//
+const String _authRelative = '/auth';
+const String _complexesRelative = '/complexes';
+const String _courtsRelative = '/courts';
+const String _devicesRelative = '/devices';
+const String _newsRelative = '/news';
+const String _notificationsRelative = '/notifications';
+const String _reservationsRelative = '/reservations';
+const String _usersRelative = '/users';
 
-  static const String complexesRelative = 'complexes';
-  static const String courtsRelative = 'courts';
-  static const String devicesRelative = 'devices';
-  static const String newsRelative = 'news';
-  static const String notificationsRelative = 'notifications';
-  static const String reservationsRelative = 'reservations';
-  static const String usersRelative = 'users';
+abstract final class ServerRoutes {
+  static const String signUpRoute = '$_authRelative/signup';
+  static const String signInRoute = '$_authRelative/signin';
+  static const String refreshAuthRoute = '$_authRelative/refresh-token';
+  static const String signOutRoute = '$_authRelative/signout';
+}
+
+abstract final class AppRoutes {
+  static const String _clientRelative = '/client';
+  static const String _adminRelative = '/admin';
+
+  static const String _homeRelative = '/home';
+  static const String _exploreRelative = '/explore';
+  static const String _profileRelative = '/profile';
+  static const String _settingsRelative = '/settings';
 
   static const String welcomeRoute = '/welcome';
+
+  static const String homeRoute = _homeRelative;
   static const String signUpRoute = '/signup';
   static const String signInRoute = '/signin';
 
-  static const String homeRoute = '/$homeRelative';
+  static const String clientDashboardRoute = '$_clientRelative$_homeRelative';
+  static const String clientReservationsRoute = '$_clientRelative$_reservationsRelative';
+  static const String clientExploreRoute = '$_clientRelative$_exploreRelative';
+  static const String clientProfileRoute = '$_clientRelative$_profileRelative';
+  static const String clientSettingsRoute = '$_clientRelative$_settingsRelative';
 
-  static const String clientDashboardRoute = '/$clientRelative/$homeRelative';
-  static const String clientReservationsRoute = '/$clientRelative/$reservationsRelative';
-  static const String clientExploreRoute = '/$clientRelative/$exploreRelative';
-  static const String clientProfileRoute = '/$clientRelative/$profileRelative';
-  static const String clientSettingsRoute = '/$clientRelative/$settingsRelative';
+  static const String adminDashboardRoute = '$_adminRelative$_homeRelative';
+  static const String adminReservationsRoute = '$_adminRelative$_reservationsRelative';
+  static const String adminProfileRoute = '$_adminRelative$_profileRelative';
+  static const String adminSettingsRoute = '$_adminRelative$_settingsRelative';
 
-  static const String adminDashboardRoute = '/$adminRelative/$homeRelative';
-  static const String adminReservationsRoute = '/$clientRelative/$reservationsRelative';
-  static const String adminProfileRoute = '/$clientRelative/$profileRelative';
-  static const String adminSettingsRoute = '/$adminRelative/$settingsRelative';
-
-  static const String complexInfoRoute = '/complexes/info';
-  static const String courtInfoRoute = '/court/info';
-  static const String reservationNewRoute = '/$reservationsRelative/new';
-  static const String reservationModifyRoute = '/$reservationsRelative/modify';
-  static const String reservationInfoRoute = '/$reservationsRelative/info';
+  static const String complexInfoRoute = '$_complexesRelative/info';
+  static const String courtInfoRoute = '$_courtsRelative/info';
+  static const String reservationNewRoute = '$_reservationsRelative/new';
+  static const String reservationModifyRoute = '$_reservationsRelative/modify';
+  static const String reservationInfoRoute = '$_reservationsRelative/info';
 }

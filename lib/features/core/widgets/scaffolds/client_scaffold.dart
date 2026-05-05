@@ -104,7 +104,7 @@ class _ClientScaffoldState extends State<ClientScaffold> with SingleTickerProvid
         ),
         floatingActionButton: AnimatedFloatingActionButton.extended(
           animation: _barAnimation,
-          onPressed: () => context.push(Routes.reservationNewRoute),
+          onPressed: () => context.push(AppRoutes.reservationNewRoute),
           label: const Text('Book'),
           icon: const Icon(Symbols.calendar_add_on_rounded, size: 24, fill: 1, weight: 400, grade: 0, opticalSize: 24),
         ),
