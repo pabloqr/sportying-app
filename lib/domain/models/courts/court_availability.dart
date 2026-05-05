@@ -3,14 +3,11 @@ import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
 
 part 'court_availability.freezed.dart';
-part 'court_availability.g.dart';
 
 @freezed
 abstract class CourtAvailabilitySlot with _$CourtAvailabilitySlot {
   const factory CourtAvailabilitySlot({required DateTime dateIni, required DateTime dateEnd, required bool available}) =
       _CourtAvailabilitySlot;
-
-  factory CourtAvailabilitySlot.fromJson(Map<String, Object?> json) => _$CourtAvailabilitySlotFromJson(json);
 }
 
 @freezed
@@ -21,6 +18,4 @@ abstract class CourtAvailability with _$CourtAvailability {
     required List<CourtAvailabilitySlot> availability,
     required DateTime nextAvailable,
   }) = _CourtAvailability;
-
-  factory CourtAvailability.fromJson(Map<String, Object?> json) => _$CourtAvailabilityFromJson(json);
 }

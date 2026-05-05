@@ -6,7 +6,6 @@ import 'package:sportying_app/domain/models/reservations/reservation_status.dart
 import 'package:sportying_app/domain/models/reservations/time_filter.dart';
 
 part 'reservation.freezed.dart';
-part 'reservation.g.dart';
 
 @freezed
 abstract class Reservation with _$Reservation {
@@ -23,6 +22,4 @@ abstract class Reservation with _$Reservation {
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _Reservation;
-
-  factory Reservation.fromJson(Map<String, Object?> json) => _$ReservationFromJson(json);
 }

@@ -1,11 +1,8 @@
 import 'package:logging/logging.dart';
 import 'package:sportying_app/core/utils/result.dart';
-import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
-import 'package:sportying_app/data/services/complexes/models/complex_api_model.dart';
-import 'package:sportying_app/data/services/courts/courts_remote_service.dart';
-import 'package:sportying_app/data/services/courts/models/court_api_model.dart';
-import 'package:sportying_app/data/services/reservations/models/reservation_api_model.dart';
-import 'package:sportying_app/data/services/reservations/reservations_remote_service.dart';
+import 'package:sportying_app/data/mappers/complex_mapper.dart';
+import 'package:sportying_app/data/mappers/court_mapper.dart';
+import 'package:sportying_app/data/mappers/reservation_mapper.dart';
 import 'package:sportying_app/data/services/remote/complexes/complexes_remote_service.dart';
 import 'package:sportying_app/data/services/remote/complexes/models/complex_dto.dart';
 import 'package:sportying_app/data/services/remote/courts/courts_remote_service.dart';
@@ -13,13 +10,8 @@ import 'package:sportying_app/data/services/remote/courts/models/court_dto.dart'
 import 'package:sportying_app/data/services/remote/reservations/models/reservation_dto.dart';
 import 'package:sportying_app/data/services/remote/reservations/reservations_remote_service.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
-import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
-import 'package:sportying_app/domain/models/courts/court_status.dart';
-import 'package:sportying_app/domain/models/reservations/availability_status.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
-import 'package:sportying_app/domain/models/reservations/reservation_status.dart';
-import 'package:sportying_app/domain/models/reservations/time_filter.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 
 abstract class ReservationsRepository {
@@ -82,26 +74,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                         : 'No address provided';
 
                     // Crear la instancia del modelo del complejo
-                    complex = Complex(
-                      id: value.id ?? 0,
-                      name: value.complexName,
-                      timeIni: value.timeIni,
-                      timeEnd: value.timeEnd,
-                      address: address,
-                      locLongitude: value.locLongitude,
-                      locLatitude: value.locLatitude,
-                      sports: value.sports
-                          .map(
-                            (valueSport) => Sport.values.firstWhere((sport) {
-                              final String name = sport.name.toLowerCase();
-                              final String jsonName = valueSport.toLowerCase();
-                              return name == jsonName;
-                            }),
-                          )
-                          .toSet(),
-                      createdAt: value.createdAt,
-                      updatedAt: value.updatedAt,
-                    );
+                    complex = value.toDomain(address);
                     break;
                   case Error<ComplexDto>():
                     throw complexResult.error;
@@ -113,25 +86,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                 switch (courtResult) {
                   case Ok<CourtDto>():
                     // Crear la instancia del modelo de la pista
-                    court = Court(
-                      id: value.id ?? 0,
-                      complex: complex,
-                      sport: Sport.values.firstWhere((sport) {
-                        final String name = sport.name.toLowerCase();
-                        final String jsonName = value.sport.toLowerCase();
-                        return name == jsonName;
-                      }),
-                      name: value.name,
-                      description: value.description,
-                      maxPeople: value.maxPeople,
-                      status: CourtStatus.values.firstWhere((status) {
-                        final String name = status.name.toLowerCase();
-                        final String jsonName = value.status.toLowerCase();
-                        return name == jsonName;
-                      }),
-                      createdAt: value.createdAt,
-                      updatedAt: value.updatedAt,
-                    );
+                    court = courtResult.value.toDomain(complex);
                     break;
                   case Error<CourtDto>():
                     throw courtResult.error;
@@ -140,31 +95,7 @@ class ReservationsRepositoryImpl implements ReservationsRepository {
                 _log.fine('Fetched nested information.');
 
                 // Crear la instancia del modelo de la reserva
-                return Reservation(
-                  id: reservation.id ?? 0,
-                  userId: reservation.userId,
-                  complex: complex,
-                  court: court,
-                  dateIni: reservation.dateIni.toLocal(),
-                  dateEnd: reservation.dateEnd.toLocal(),
-                  status: AvailabilityStatus.values.firstWhere((status) {
-                    final String name = status.name.toLowerCase();
-                    final String jsonName = reservation.status.toLowerCase();
-                    return name == jsonName;
-                  }),
-                  reservationStatus: ReservationStatus.values.firstWhere((status) {
-                    final String name = status.name.toLowerCase();
-                    final String jsonName = reservation.reservationStatus.toLowerCase();
-                    return name == jsonName;
-                  }),
-                  timeFilter: TimeFilter.values.firstWhere((filter) {
-                    final String name = filter.name.toLowerCase();
-                    final String jsonName = reservation.timeFilter.toLowerCase();
-                    return name == jsonName;
-                  }),
-                  createdAt: reservation.createdAt,
-                  updatedAt: reservation.updatedAt,
-                );
+                return reservation.toDomain(complex, court);
               }).toList(),
             ),
           );

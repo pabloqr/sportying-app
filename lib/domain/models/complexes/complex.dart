@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 
 part 'complex.freezed.dart';
-part 'complex.g.dart';
 
 @freezed
 abstract class Complex with _$Complex {
@@ -18,6 +17,4 @@ abstract class Complex with _$Complex {
     required DateTime createdAt,
     required DateTime updatedAt,
   }) = _Complex;
-
-  factory Complex.fromJson(Map<String, Object?> json) => _$ComplexFromJson(json);
 }

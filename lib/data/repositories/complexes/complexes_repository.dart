@@ -1,11 +1,9 @@
 import 'package:logging/logging.dart';
 import 'package:sportying_app/core/utils/result.dart';
-import 'package:sportying_app/data/services/complexes/complexes_remote_service.dart';
-import 'package:sportying_app/data/services/complexes/models/complex_api_model.dart';
+import 'package:sportying_app/data/mappers/complex_mapper.dart';
 import 'package:sportying_app/data/services/remote/complexes/complexes_remote_service.dart';
 import 'package:sportying_app/data/services/remote/complexes/models/complex_dto.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
-import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 
 abstract class ComplexesRepository {
@@ -45,26 +43,7 @@ class ComplexesRepositoryImpl implements ComplexesRepository {
                 _log.fine('Fetched nested information.');
 
                 // Crear la instancia del modelo del complejo
-                return Complex(
-                  id: complex.id ?? 0,
-                  name: complex.complexName,
-                  timeIni: complex.timeIni,
-                  timeEnd: complex.timeEnd,
-                  address: address,
-                  locLongitude: complex.locLongitude,
-                  locLatitude: complex.locLatitude,
-                  sports: complex.sports
-                      .map(
-                        (value) => Sport.values.firstWhere((sport) {
-                          final String name = sport.name.toLowerCase();
-                          final String jsonName = value.toLowerCase();
-                          return name == jsonName;
-                        }),
-                      )
-                      .toSet(),
-                  createdAt: complex.createdAt,
-                  updatedAt: complex.updatedAt,
-                );
+                return complex.toDomain(address);
               }),
             ),
           );
