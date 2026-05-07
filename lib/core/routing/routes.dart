@@ -30,7 +30,6 @@ abstract final class AppRoutes {
 
   static const String welcomeRoute = '/welcome';
 
-  static const String homeRoute = _homeRelative;
   static const String signUpRoute = '/signup';
   static const String signInRoute = '/signin';
 

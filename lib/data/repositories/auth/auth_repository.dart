@@ -20,12 +20,15 @@ import 'package:sportying_app/domain/models/users/user.dart';
 abstract class AuthRepository extends ChangeNotifier {
   String? _accessToken;
   String? _refreshToken;
+  User? _user;
 
   //------------------------------------------------------------------------------------------------------------------//
 
   String? get accessToken => _accessToken;
 
   String? get refreshToken => _refreshToken;
+
+  User? get user => _user;
 
   //------------------------------------------------------------------------------------------------------------------//
 
@@ -85,6 +88,8 @@ class AuthRepositoryImpl extends AuthRepository {
           // Actualizar los tokens locales
           _accessToken = authCredentials.accessToken;
           _refreshToken = authCredentials.refreshToken;
+          // Actualizar el modelo del usuario local
+          _user = authCredentials.user;
 
           return Result.ok(null);
         case Error<AuthCredentialsDto>():
@@ -130,6 +135,8 @@ class AuthRepositoryImpl extends AuthRepository {
           // Actualizar los tokens locales
           _accessToken = authCredentials.accessToken;
           _refreshToken = authCredentials.refreshToken;
+          // Actualizar el modelo del usuario local
+          _user = authCredentials.user;
 
           return Result.ok(null);
         case Error<AuthCredentialsDto>():
@@ -229,6 +236,8 @@ class AuthRepositoryImpl extends AuthRepository {
           // Limpiar los tokens locales
           _accessToken = null;
           _refreshToken = null;
+          // Limpiar el modelo del usuario local
+          _user = null;
 
           return Result.ok(null);
         }

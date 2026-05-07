@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sportying_app/core/routing/routes.dart';
 import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/repositories/auth/auth_repository.dart';
+import 'package:sportying_app/domain/models/users/user.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/client_scaffold.dart';
 import 'package:sportying_app/features/reservations/reservation_process/view_model/reservation_process_viewmodel.dart';
 import 'package:sportying_app/features/reservations/reservation_process/widgets/reservation_process_screen.dart';
@@ -44,8 +45,14 @@ GoRouter router(AuthRepository authRepository) => GoRouter(
         final isAuthenticated = result.value;
         if (!isAuthenticated) return AppRoutes.signInRoute;
 
-        final isSigningIn = state.matchedLocation == AppRoutes.signInRoute;
-        if (isSigningIn) return AppRoutes.homeRoute;
+        // Obtener el usuario autenticado (no puede ser null) y redirigir en función del rol
+        final destination = authRepository.user!.role == Role.client
+            ? AppRoutes.clientDashboardRoute
+            : AppRoutes.adminDashboardRoute;
+
+        // Verificar si es necesario redirigir
+        final needsRedirect = state.matchedLocation != destination;
+        if (needsRedirect) return destination;
 
         return null;
       case Error<bool>():
