@@ -122,7 +122,7 @@ class AuthLocalService {
 
   Future<Result<void>> clearAuth() async {
     try {
-      await Future.wait([clearTokens(), clearAuth()]);
+      await Future.wait([clearTokens(), clearUser()]);
       return Result.ok(null);
     } on Exception catch (e) {
       return Result.error(e);
