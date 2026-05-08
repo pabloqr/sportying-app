@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:sportying_app/core/storage/secure_storage_service.dart';
 import 'package:sportying_app/core/utils/result.dart';
+import 'package:sportying_app/core/utils/result_utils.dart';
 import 'package:sportying_app/data/mappers/user_mapper.dart';
 import 'package:sportying_app/data/services/remote/users/models/user_dto.dart';
 import 'package:sportying_app/domain/models/auth/tokens.dart';
@@ -90,7 +91,14 @@ class AuthLocalService {
 
   Future<Result<void>> saveAuth(Tokens tokens, User user) async {
     try {
-      await Future.wait([saveTokens(tokens), saveUser(user)]);
+      // Almacenar los tokens y el usuario
+      final results = await Future.wait([saveTokens(tokens), saveUser(user)]);
+
+      // Procesar los resultados
+      for (final result in results) {
+        ResultUtils.unwrapOrThrow(result);
+      }
+
       return Result.ok(null);
     } on Exception catch (e) {
       return Result.error(e);
@@ -122,7 +130,14 @@ class AuthLocalService {
 
   Future<Result<void>> clearAuth() async {
     try {
-      await Future.wait([clearTokens(), clearUser()]);
+      // Limpiar los tokens y el usuario
+      final results = await Future.wait([clearTokens(), clearUser()]);
+
+      // Procesar los resultados
+      for (final result in results) {
+        ResultUtils.unwrapOrThrow(result);
+      }
+
       return Result.ok(null);
     } on Exception catch (e) {
       return Result.error(e);
