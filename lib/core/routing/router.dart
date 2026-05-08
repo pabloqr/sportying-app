@@ -43,16 +43,16 @@ GoRouter router(AuthRepository authRepository) => GoRouter(
     switch (result) {
       case Ok<bool>():
         final isAuthenticated = result.value;
-        if (!isAuthenticated) return AppRoutes.signInRoute;
+        final isAuthRoute =
+            state.matchedLocation == AppRoutes.signUpRoute || state.matchedLocation == AppRoutes.signInRoute;
 
-        // Obtener el usuario autenticado (no puede ser null) y redirigir en función del rol
-        final destination = authRepository.user!.role == Role.client
-            ? AppRoutes.clientDashboardRoute
-            : AppRoutes.adminDashboardRoute;
+        if (!isAuthenticated) return isAuthRoute ? null : AppRoutes.signInRoute;
 
-        // Verificar si es necesario redirigir
-        final needsRedirect = state.matchedLocation != destination;
-        if (needsRedirect) return destination;
+        if (isAuthRoute) {
+          return authRepository.user!.role == Role.client
+              ? AppRoutes.clientDashboardRoute
+              : AppRoutes.adminDashboardRoute;
+        }
 
         return null;
       case Error<bool>():
