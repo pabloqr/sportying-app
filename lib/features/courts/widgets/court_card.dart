@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:sportying_app/core/utils/extension_utilities.dart';
+import 'package:sportying_app/core/utils/extension_utils.dart';
 import 'package:sportying_app/domain/models/complexes/sport.dart';
 import 'package:sportying_app/domain/models/courts/court.dart';
 import 'package:sportying_app/features/core/utils/widget_palette.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sportying_app/core/utils/extension_utilities.dart';
+import 'package:sportying_app/core/utils/extension_utils.dart';
 
 class DateContainer extends StatelessWidget {
   const DateContainer({

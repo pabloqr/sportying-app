@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:sportying_app/core/utils/exceptions.dart';
-import 'package:sportying_app/core/utils/network_utilities.dart';
+import 'package:sportying_app/core/utils/network_utils.dart';
 import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/services/remote/complexes/models/complex_dto.dart';
 import 'package:sportying_app/data/services/remote/core/authenticated_http_client.dart';

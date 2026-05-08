@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:provider/provider.dart';
-import 'package:sportying_app/core/utils/extension_utilities.dart';
+import 'package:sportying_app/core/utils/extension_utils.dart';
 import 'package:sportying_app/domain/models/courts/court_availability.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/info_section_widget.dart';
 import 'package:sportying_app/features/core/widgets/scaffolds/labeled_info_widget.dart';

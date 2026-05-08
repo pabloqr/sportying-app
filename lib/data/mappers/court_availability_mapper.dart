@@ -1,4 +1,4 @@
-import 'package:sportying_app/core/utils/extension_utilities.dart';
+import 'package:sportying_app/core/utils/extension_utils.dart';
 import 'package:sportying_app/data/mappers/court_availability_slot_mapper.dart';
 import 'package:sportying_app/data/services/remote/courts/models/court_availability_dto.dart';
 import 'package:sportying_app/domain/models/complexes/complex.dart';
