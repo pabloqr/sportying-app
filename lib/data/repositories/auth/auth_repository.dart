@@ -57,6 +57,24 @@ class AuthRepositoryImpl extends AuthRepository {
 
   //------------------------------------------------------------------------------------------------------------------//
 
+  void _updateLocalAuth(String accessToken, String refreshToken, [User? user]) {
+    // Actualizar los tokens locales
+    _accessToken = accessToken;
+    _refreshToken = refreshToken;
+    // Actualizar el modelo del usuario local
+    _user = user ?? _user;
+  }
+
+  void _clearLocalAuth() {
+    // Limpiar los tokens locales
+    _accessToken = null;
+    _refreshToken = null;
+    // Limpiar el modelo del usuario local
+    _user = null;
+  }
+
+  //------------------------------------------------------------------------------------------------------------------//
+
   @override
   Future<Result<void>> signUp(SignUp request) async {
     try {
@@ -85,11 +103,8 @@ class AuthRepositoryImpl extends AuthRepository {
             return Result.error(saveResult.error);
           }
 
-          // Actualizar los tokens locales
-          _accessToken = authCredentials.accessToken;
-          _refreshToken = authCredentials.refreshToken;
-          // Actualizar el modelo del usuario local
-          _user = authCredentials.user;
+          // Actualizar los datos de autenticación locales
+          _updateLocalAuth(authCredentials.accessToken, authCredentials.refreshToken, authCredentials.user);
 
           return Result.ok(null);
         case Error<AuthCredentialsDto>():
@@ -132,11 +147,8 @@ class AuthRepositoryImpl extends AuthRepository {
             return Result.error(saveResult.error);
           }
 
-          // Actualizar los tokens locales
-          _accessToken = authCredentials.accessToken;
-          _refreshToken = authCredentials.refreshToken;
-          // Actualizar el modelo del usuario local
-          _user = authCredentials.user;
+          // Actualizar los datos de autenticación locales
+          _updateLocalAuth(authCredentials.accessToken, authCredentials.refreshToken, authCredentials.user);
 
           return Result.ok(null);
         case Error<AuthCredentialsDto>():
@@ -191,8 +203,7 @@ class AuthRepositoryImpl extends AuthRepository {
           }
 
           // Actualizar los tokens locales
-          _accessToken = tokens.accessToken;
-          _refreshToken = tokens.refreshToken;
+          _updateLocalAuth(tokens.accessToken, tokens.refreshToken);
 
           return Result.ok(null);
         case Error<TokensDto>():
@@ -233,11 +244,8 @@ class AuthRepositoryImpl extends AuthRepository {
             _log.severe('Failed to clear auth data in local storage.');
           }
 
-          // Limpiar los tokens locales
-          _accessToken = null;
-          _refreshToken = null;
-          // Limpiar el modelo del usuario local
-          _user = null;
+          // Limpiar los datos de autenticación locales
+          _clearLocalAuth();
 
           return Result.ok(null);
         }
@@ -256,9 +264,8 @@ class AuthRepositoryImpl extends AuthRepository {
             _log.severe('Failed to clear auth data in local storage.');
           }
 
-          // Limpiar los tokens locales
-          _accessToken = null;
-          _refreshToken = null;
+          // Limpiar los datos de autenticación locales
+          _clearLocalAuth();
 
           return Result.ok(null);
         case Error<void>():
@@ -305,6 +312,11 @@ class AuthRepositoryImpl extends AuthRepository {
               return Result.error(refreshResult.error);
           }
         }
+
+        // Actualizar los datos de autenticación locales
+        _updateLocalAuth(accessToken, refreshToken, user);
+
+        return Result.ok(true);
       }
 
       // Si alguno de los elementos no es válido, no se puede iniciar sesión de forma automática
