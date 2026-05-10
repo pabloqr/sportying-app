@@ -8,6 +8,9 @@ on:
     branches:
       - main
 
+permissions:
+  security-events: write
+
 jobs:
   #---------------------------------------------------------------------------------------------------------------------
   # SECURITY - Ejecutar en paralelo
@@ -29,19 +32,15 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Activate sbom package
-        run: dart pub global activate sbom
-
-      - name: Generate sbom.yaml
-        run: |
-          cat << EOF > sbom.yaml
-          type: spdx
-          spdx:
-            SPDXFormat: 'tagvalue'
-          EOF
-
       - name: Generate SBOM
-        run: dart pub global run sbom
+        uses: sbomify/sbomify-action@master
+        env:
+          LOCK_FILE: pubspec.lock
+          OUTPUT_FILE: sbom.cdx.json
+          COMPONENT_NAME: sportying-app
+          COMPONENT_VERSION: ${{ github.ref_name }}
+          ENRICH: true
+          UPLOAD: false
 
       - name: Install Snyk CLI
         run: npm install -g snyk
@@ -50,7 +49,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          snyk sbom test --experimental --file sbom.spdx --sarif-file-output=snyk-oss.sarif --severity-threshold=high --fail-on=upgradable
+          snyk sbom test --experimental --file sbom.cdx.json --sarif-file-output=snyk-oss.sarif --severity-threshold=high --fail-on=upgradable
 
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v3
