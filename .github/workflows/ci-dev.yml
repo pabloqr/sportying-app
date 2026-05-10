@@ -33,6 +33,14 @@ jobs:
       - name: Activate sbom package
         run: dart pub global activate sbom
 
+      - name: Generate sbom.yaml
+        run: |
+          cat << EOF > sbom.yaml
+          type: spdx
+          spdx:
+            SPDXFormat: 'tagvalue'
+          EOF
+
       - name: Generate SBOM
         run: dart pub global run sbom
 
