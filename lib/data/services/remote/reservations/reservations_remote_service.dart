@@ -6,6 +6,7 @@ import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/services/remote/core/authenticated_http_client.dart';
 import 'package:sportying_app/data/services/remote/reservations/models/reservation_dto.dart';
 
+// ignore: one_member_abstracts
 abstract class ReservationsRemoteService {
   // Future<Result<List<ReservationDto>>> getReservations(Map<String, dynamic>? query);
   // Future<Result<ReservationDto>> getReservation(int reservationId);

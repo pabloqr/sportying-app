@@ -14,6 +14,7 @@ import 'package:sportying_app/domain/models/courts/court.dart';
 import 'package:sportying_app/domain/models/reservations/reservation.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 
+// ignore: one_member_abstracts
 abstract class ReservationsRepository {
   // Future<Result<List<Reservation>>> getReservations({Map<String, dynamic>? query});
   // Future<Result<Reservation>> getReservation(int reservationId);

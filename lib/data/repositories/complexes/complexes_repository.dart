@@ -6,6 +6,7 @@ import 'package:sportying_app/data/services/remote/complexes/models/complex_dto.
 import 'package:sportying_app/domain/models/complexes/complex.dart';
 import 'package:sportying_app/features/core/utils/widget_utilities.dart';
 
+// ignore: one_member_abstracts
 abstract class ComplexesRepository {
   Future<Result<List<Complex>>> getComplexes({Map<String, dynamic>? query});
   // Future<Result<Complex>> getComplex(int complexId);
