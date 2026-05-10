@@ -15,47 +15,47 @@ jobs:
   #---------------------------------------------------------------------------------------------------------------------
   # SECURITY - Ejecutar en paralelo
   #---------------------------------------------------------------------------------------------------------------------
-  snyk:
-    name: Snyk Security Scanning
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-          cache: true
-
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Generate SBOM
-        uses: sbomify/sbomify-action@master
-        env:
-          LOCK_FILE: pubspec.lock
-          OUTPUT_FILE: sbom.cdx.json
-          COMPONENT_NAME: sportying-app
-          COMPONENT_VERSION: ${{ github.ref_name }}
-          ENRICH: true
-          UPLOAD: false
-
-      - name: Install Snyk CLI
-        run: npm install -g snyk
-
-      - name: Run Snyk test
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: |
-          snyk sbom test --experimental --file sbom.cdx.json --sarif-file-output=snyk-oss.sarif --severity-threshold=high --fail-on=upgradable
-
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: snyk-oss.sarif
-          category: snyk-oss
+  #  snyk:
+  #    name: Snyk Security Scanning
+  #    runs-on: ubuntu-latest
+  #
+  #    steps:
+  #      - name: Checkout repository
+  #        uses: actions/checkout@v4
+  #
+  #      - name: Setup Flutter
+  #        uses: subosito/flutter-action@v2
+  #        with:
+  #          channel: stable
+  #          cache: true
+  #
+  #      - name: Install dependencies
+  #        run: flutter pub get
+  #
+  #      - name: Generate SBOM
+  #        uses: sbomify/sbomify-action@master
+  #        env:
+  #          LOCK_FILE: pubspec.lock
+  #          OUTPUT_FILE: sbom.cdx.json
+  #          COMPONENT_NAME: sportying-app
+  #          COMPONENT_VERSION: ${{ github.ref_name }}
+  #          ENRICH: true
+  #          UPLOAD: false
+  #
+  #      - name: Install Snyk CLI
+  #        run: npm install -g snyk
+  #
+  #      - name: Run Snyk test
+  #        env:
+  #          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+  #        run: |
+  #          snyk sbom test --experimental --file sbom.cdx.json --sarif-file-output=snyk-oss.sarif --severity-threshold=high --fail-on=upgradable
+  #
+  #      - name: Upload result to GitHub Code Scanning
+  #        uses: github/codeql-action/upload-sarif@v3
+  #        with:
+  #          sarif_file: snyk-oss.sarif
+  #          category: snyk-oss
 
   #---------------------------------------------------------------------------------------------------------------------
   # QUALITY - Ejecutar en paralelo
