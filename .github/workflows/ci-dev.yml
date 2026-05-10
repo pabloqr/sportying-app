@@ -30,6 +30,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Activate sbom package
+        run: dart pub global activate sbom
+
+      - name: Generate SBOM
+        run: dart pub global run sbom
+
       - name: Install Snyk CLI
         run: npm install -g snyk
 
@@ -37,7 +43,7 @@ jobs:
         continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        run: snyk test --file=pubspec.yaml --sarif-file-output=snyk-oss.sarif
+        run: snyk sbom test --experimental --file sbom-pub.json --sarif-file-output=snyk-oss.sarif
 
       - name: Upload result to GitHub Code Scanning
         uses: github/codeql-action/upload-sarif@v4
