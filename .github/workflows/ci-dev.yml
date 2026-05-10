@@ -44,6 +44,9 @@ jobs:
       - name: Generate SBOM
         run: dart pub global run sbom
 
+      - name: List generated files
+        run: ls -la
+
       - name: Install Snyk CLI
         run: npm install -g snyk
 
