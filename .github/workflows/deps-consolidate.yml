@@ -1,0 +1,132 @@
+name: Consolidate Dependabot Updates
+
+on:
+  schedule:
+    - cron: "0 9 * * 2" # Martes a las 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  consolidate:
+    name: Consolidate passing Dependabot PRs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dev
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch passing Dependabot PRs and consolidate
+        id: consolidate
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          BRANCH="chore/deps-update-$(date +%Y-%m-%d)"
+          MERGED_PRS=""
+          SKIPPED_PRS=""
+
+          # Obtener todas las PRs abiertas de Dependabot contra dev
+          PRS=$(gh pr list \
+            --repo "$REPO" \
+            --author "app/dependabot" \
+            --base dev \
+            --state open \
+            --json number,title,headRefName,statusCheckRollup \
+            --limit 50)
+
+          TOTAL=$(echo "$PRS" | jq 'length')
+
+          if [ "$TOTAL" -eq 0 ]; then
+            echo "no_prs=true" >> "$GITHUB_OUTPUT"
+            echo "There are no open Dependabot PRs against dev. Nothing to consolidate."
+            exit 0
+          fi
+
+          echo "no_prs=false" >> "$GITHUB_OUTPUT"
+
+          # Crear rama de consolidación desde dev
+          git checkout -b "$BRANCH"
+
+          # Iterar sobre cada PR y mergear las que han pasado todos los checks
+          for row in $(echo "$PRS" | jq -r '.[] | @base64'); do
+            _jq() { echo "$row" | base64 --decode | jq -r "$1"; }
+
+            NUMBER=$(_jq '.number')
+            TITLE=$(_jq '.title')
+            HEAD=$(_jq '.headRefName')
+            CHECKS=$(echo "$row" | base64 --decode | jq '.statusCheckRollup')
+
+            TOTAL_CHECKS=$(echo "$CHECKS" | jq 'length')
+
+            # Contar checks con resultado negativo distinguiendo CheckRun y StatusContext
+            FAILED_CHECKS=$(echo "$CHECKS" | jq '[.[] | select(
+              (.__typename == "CheckRun" and .conclusion != null and .conclusion != "SUCCESS") or
+              (.__typename == "StatusContext" and .state != null and .state != "SUCCESS")
+            )] | length')
+
+            if [ "$TOTAL_CHECKS" -eq 0 ] || [ "$FAILED_CHECKS" -gt 0 ]; then
+              echo "PR #$NUMBER ($TITLE) - skipped (checks failed or pending)"
+              SKIPPED_PRS="$SKIPPED_PRS\n- #$NUMBER: $TITLE"
+              continue
+            fi
+
+            # Hacer fetch de la rama de la PR y mergearla
+            git fetch origin "$HEAD"
+
+            if git merge --no-ff "origin/$HEAD" --no-edit -m "chore(deps): merge dependabot PR #$NUMBER - $TITLE"; then
+              echo "PR #$NUMBER ($TITLE) - merged successfully"
+              MERGED_PRS="$MERGED_PRS\n- #$NUMBER: $TITLE"
+            else
+              echo "PR #$NUMBER ($TITLE) - merge conflict, skipped"
+              git merge --abort
+              SKIPPED_PRS="$SKIPPED_PRS\n- #$NUMBER: $TITLE (conflict)"
+            fi
+          done
+
+          # Comprobar si se ha mergeado algo
+          if [ -z "$MERGED_PRS" ]; then
+            echo "merged_something=false" >> "$GITHUB_OUTPUT"
+            echo "No PR could be consolidated."
+            exit 0
+          fi
+
+          echo "merged_something=true" >> "$GITHUB_OUTPUT"
+
+          # Push de la rama de consolidación
+          git push origin "$BRANCH"
+
+          # Construir el cuerpo de la PR
+          BODY="## Consolidated dependency updates\n\n"
+          BODY="${BODY}This PR groups the Dependabot updates that passed all CI checks.\n\n"
+          BODY="${BODY}### Included\n${MERGED_PRS}\n\n"
+
+          if [ -n "$SKIPPED_PRS" ]; then
+            BODY="${BODY}### Skipped (manual review required)\n${SKIPPED_PRS}\n"
+          fi
+
+          # Abrir PR de consolidación contra dev
+          gh pr create \
+            --repo "$REPO" \
+            --base dev \
+            --head "$BRANCH" \
+            --title "chore(deps): consolidate dependency updates $(date +%Y-%m-%d)" \
+            --body "$(printf "$BODY")"
+
+      - name: Summary
+        if: steps.consolidate.outputs.no_prs == 'true'
+        run: echo "### There were no open Dependabot PRs this week." >>
+          "$GITHUB_STEP_SUMMARY"
