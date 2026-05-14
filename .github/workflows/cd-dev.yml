@@ -50,12 +50,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Setup Java
-        uses: actions/setup-java@v5
-        with:
-          distribution: temurin
-          java-version: 17
-
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
