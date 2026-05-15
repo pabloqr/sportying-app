@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/pabloqr/sportying-app/compare/v0.1.1...v0.1.2) (2026-05-15)
+
+
+### CI/CD
+
+* fix workflows ([#10](https://github.com/pabloqr/sportying-app/issues/10)) ([b90b6c9](https://github.com/pabloqr/sportying-app/commit/b90b6c99d0f6af5c6183dd81a0fb86e6f8e6fb1d))
+
 ## [0.1.1](https://github.com/pabloqr/sportying-app/compare/v0.1.0...v0.1.1) (2026-05-10)
 
 
