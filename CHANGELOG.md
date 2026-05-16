@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/pabloqr/sportying-app/compare/v0.1.2...v0.1.3) (2026-05-16)
+
+
+### CI/CD
+
+* fix `back-merge` workflow ([#14](https://github.com/pabloqr/sportying-app/issues/14)) ([c9e8991](https://github.com/pabloqr/sportying-app/commit/c9e8991ba7b35cdfe51b0c1a4f69efa761020188))
+
 ## [0.1.2](https://github.com/pabloqr/sportying-app/compare/v0.1.1...v0.1.2) (2026-05-15)
 
 
