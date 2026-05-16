@@ -152,7 +152,7 @@ jobs:
   smoke-result:
     name: Smoke tests result
     runs-on: ubuntu-latest
-    needs: [smoke-web, smoke-android]
+    needs: [validate, smoke-web, smoke-android]
     if: always()
 
     steps:
