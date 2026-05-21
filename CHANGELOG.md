@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.1.4](https://github.com/pabloqr/sportying-app/compare/v0.1.3...v0.1.4) (2026-05-21)
+
+
+### CI/CD
+
+* unify workflows with backend ([#19](https://github.com/pabloqr/sportying-app/issues/19)) ([c1b3888](https://github.com/pabloqr/sportying-app/commit/c1b38887b63ba4637cf9371257e90a9adea190e2))
+* upgrade actions/upload-artifact from v4 to v7 in cd-dev workflow ([2f942b2](https://github.com/pabloqr/sportying-app/commit/2f942b29b5641c518fe98637be6a8732df169278))
+* upgrade actions/upload-artifact from v4 to v7 in cd-dev workflow ([#21](https://github.com/pabloqr/sportying-app/issues/21)) ([d7d6440](https://github.com/pabloqr/sportying-app/commit/d7d64401c9ce5377689458c89062b5a6ba13844b))
+
 ## [0.1.3](https://github.com/pabloqr/sportying-app/compare/v0.1.2...v0.1.3) (2026-05-16)
 
 
