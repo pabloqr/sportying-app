@@ -2,7 +2,7 @@ name: CD Development
 
 on:
   push:
-    branches: [dev]
+    branches: [ dev ]
   workflow_dispatch:
 
 concurrency:
@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   #---------------------------------------------------------------------------------------------------------------------
-  # BUILD - Ejecutar al crear un tag de versión
+  # BUILD - Ejecutar al incluir cambios en la rama dev
   #---------------------------------------------------------------------------------------------------------------------
   validate:
     name: Analyze
@@ -44,7 +44,7 @@ jobs:
     name: Build app
     environment: development
     runs-on: ubuntu-latest
-    needs: [validate]
+    needs: validate
 
     steps:
       - name: Checkout repository
