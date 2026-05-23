@@ -37,9 +37,9 @@ void main() {
   final coverage = foundTotal == 0 ? 0 : hitTotal * 100 / foundTotal;
 
   final summary = StringBuffer()
-    ..writeln('## Unit test coverage')
+    ..writeln('## Test coverage')
     ..writeln()
-    ..writeln('Generated from `flutter test --coverage test/unit/`.')
+    ..writeln('Generated from `flutter test --coverage test/unit/ test/widget/`.')
     ..writeln()
     ..writeln('| File | Covered lines | Coverage |')
     ..writeln('| --- | ---: | ---: |');

@@ -46,6 +46,16 @@ void main() {
       expect(controller.unavailableRanges[0].end, equals(12.0));
     });
 
+    test('updateRangeValues snaps selections around unavailable ranges', () {
+      final controller = TimeRangeController()..addUnavailableRange(const RangeValues(10.0, 12.0));
+
+      controller.updateRangeValues(const RangeValues(9.0, 11.0));
+      expect(controller.currentRangeValues, equals(const RangeValues(9.0, 10.0)));
+
+      controller.updateRangeValues(const RangeValues(11.0, 13.0));
+      expect(controller.currentRangeValues, equals(const RangeValues(12.0, 13.0)));
+    });
+
     test('removeUnavailableRange can split a blocked period', () {
       final controller = TimeRangeController();
       controller.addUnavailableRange(const RangeValues(9.0, 13.0));
@@ -53,6 +63,28 @@ void main() {
       controller.removeUnavailableRange(const RangeValues(10.0, 12.0));
 
       expect(controller.unavailableRanges, equals([const RangeValues(9.0, 10.0), const RangeValues(12.0, 13.0)]));
+    });
+
+    test('removeUnavailableRange handles disjoint and edge overlaps', () {
+      final controller = TimeRangeController()..addUnavailableRange(const RangeValues(9.0, 13.0));
+
+      controller.removeUnavailableRange(const RangeValues(14.0, 15.0));
+      expect(controller.unavailableRanges, equals([const RangeValues(9.0, 13.0)]));
+
+      controller.removeUnavailableRange(const RangeValues(8.0, 10.0));
+      expect(controller.unavailableRanges, equals([const RangeValues(10.0, 13.0)]));
+
+      controller.removeUnavailableRange(const RangeValues(12.0, 14.0));
+      expect(controller.unavailableRanges, equals([const RangeValues(10.0, 12.0)]));
+    });
+
+    test('reset returns an afternoon selection to the morning period', () {
+      final controller = TimeRangeController()..setAfternoonTime();
+
+      controller.reset();
+
+      expect(controller.currentDayTime, DayTime.morning);
+      expect(controller.currentRangeValues, equals(const RangeValues(8.0, 9.0)));
     });
 
     test('setUnavailableSlotsFromAvailability includes only occupied slots for selected date and schedule', () {

@@ -84,26 +84,22 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      - name: Run unit tests with coverage
-        run: flutter test --coverage test/unit/
+      - name: Run unit and widget tests with coverage
+        run: flutter test --coverage test/unit/ test/widget/
 
-      - name: Create unit coverage summary
+      - name: Create test coverage summary
         run: |
           dart run tooling/generate_coverage_summary.dart
           cat coverage/summary.md >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Upload unit coverage artifact
+      - name: Upload test coverage artifact
         uses: actions/upload-artifact@v7
         with:
-          name: unit-coverage-report
+          name: test-coverage-report
           path: |
             coverage/lcov.info
             coverage/summary.md
           if-no-files-found: warn
-
-      # TODO: tests de widgets
-      # - name: Run widget tests
-      #   run: flutter test test/widget/
 
       # TODO: tests de integración
       # - name: Run integration tests
