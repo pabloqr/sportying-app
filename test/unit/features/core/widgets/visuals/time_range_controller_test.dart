@@ -26,6 +26,36 @@ void main() {
       expect(controller.currentRangeValues.end, equals(17.0));
     });
 
+    test('setMorningTime provides a full hour when the schedule crosses the morning limit', () {
+      final controller = TimeRangeController()..setSchedule(15.5, 17.0);
+
+      controller.setMorningTime();
+
+      expect(controller.currentTimeIni, equals(15.5));
+      expect(controller.currentTimeEnd, equals(16.5));
+      expect(controller.currentRangeValues, equals(const RangeValues(15.5, 16.5)));
+    });
+
+    test('setAfternoonTime falls back to the last hour for a morning-only schedule', () {
+      final controller = TimeRangeController()..setSchedule(8.0, 14.0);
+
+      controller.setAfternoonTime();
+
+      expect(controller.currentTimeIni, equals(13.0));
+      expect(controller.currentTimeEnd, equals(14.0));
+      expect(controller.currentRangeValues, equals(const RangeValues(13.0, 14.0)));
+    });
+
+    test('setAfternoonTime extends a short afternoon period backwards to one hour', () {
+      final controller = TimeRangeController()..setSchedule(8.0, 16.5);
+
+      controller.setAfternoonTime();
+
+      expect(controller.currentTimeIni, equals(15.5));
+      expect(controller.currentTimeEnd, equals(16.5));
+      expect(controller.currentRangeValues, equals(const RangeValues(15.5, 16.5)));
+    });
+
     test('setSchedule adjusts bounds and clamps current selection', () {
       final controller = TimeRangeController();
 
