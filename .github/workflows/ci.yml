@@ -2,7 +2,7 @@ name: CI
 
 on:
   pull_request:
-    branches: [ dev, main ]
+    branches: [dev, main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -84,9 +84,22 @@ jobs:
       - name: Analyze
         run: flutter analyze
 
-      # TODO: tests unitarios
-      # - name: Run unit tests with coverage
-      #   run: flutter test --coverage test/unit/
+      - name: Run unit tests with coverage
+        run: flutter test --coverage test/unit/
+
+      - name: Create unit coverage summary
+        run: |
+          dart run tooling/generate_coverage_summary.dart
+          cat coverage/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload unit coverage artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: unit-coverage-report
+          path: |
+            coverage/lcov.info
+            coverage/summary.md
+          if-no-files-found: warn
 
       # TODO: tests de widgets
       # - name: Run widget tests
@@ -152,7 +165,7 @@ jobs:
   smoke-result:
     name: Smoke tests result
     runs-on: ubuntu-latest
-    needs: [ validate, smoke-web, smoke-android ]
+    needs: [validate, smoke-web, smoke-android]
     if: always()
 
     steps:
