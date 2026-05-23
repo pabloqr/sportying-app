@@ -28,7 +28,7 @@ DateTime _calculateNextAvailable(List<CourtAvailabilitySlot> slots) {
     final nextStartTime = occupiedSlots[i + 1].dateIni;
 
     // Si hay hueco entre dos franjas ocupadas
-    if (currentEndTime.isBefore(nextStartTime) && currentEndTime.difference(nextStartTime).inHours >= 1) {
+    if (currentEndTime.isBefore(nextStartTime) && nextStartTime.difference(currentEndTime).inHours >= 1) {
       // Devolver el que sea más tarde: el fin de la franja ocupada actual o ahora
       return currentEndTime.isAfter(now) ? currentEndTime : now;
     }

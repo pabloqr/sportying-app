@@ -6,12 +6,17 @@ import 'package:sportying_app/core/utils/result.dart';
 import 'package:sportying_app/data/repositories/auth/auth_repository.dart';
 
 class AuthenticatedHttpClient {
-  AuthenticatedHttpClient({required http.Client client, required AuthRepository authRepository})
-    : _client = client,
-      _authRepository = authRepository;
+  AuthenticatedHttpClient({
+    required http.Client client,
+    required AuthRepository authRepository,
+    Duration timeout = const Duration(seconds: 10),
+  }) : _client = client,
+       _authRepository = authRepository,
+       _timeout = timeout;
 
   final http.Client _client;
   final AuthRepository _authRepository;
+  final Duration _timeout;
 
   //------------------------------------------------------------------------------------------------------------------//
 
@@ -33,8 +38,8 @@ class AuthenticatedHttpClient {
   Future<http.Response> _authenticatedRequest(Future<http.Response> Function() request) async {
     try {
       final response = await request().timeout(
-        const Duration(seconds: 10),
-        onTimeout: () => throw TimeoutException('Connection timeout', const Duration(seconds: 10)),
+        _timeout,
+        onTimeout: () => throw TimeoutException('Connection timeout', _timeout),
       );
 
       if (response.statusCode == 401) {
@@ -42,8 +47,8 @@ class AuthenticatedHttpClient {
         switch (result) {
           case Ok<void>():
             final newResponse = await request().timeout(
-              const Duration(seconds: 10),
-              onTimeout: () => throw TimeoutException('Connection timeout', const Duration(seconds: 10)),
+              _timeout,
+              onTimeout: () => throw TimeoutException('Connection timeout', _timeout),
             );
 
             return newResponse;

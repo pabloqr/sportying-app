@@ -28,7 +28,7 @@ extension UserMapper on User {
       phonePrefix: phonePrefix,
       phoneNumber: phoneNumber,
       createdAt: createdAt,
-      updatedAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 }

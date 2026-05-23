@@ -23,13 +23,18 @@ abstract class AuthRemoteService {
 }
 
 class AuthRemoteServiceImpl extends AuthRemoteService {
-  AuthRemoteServiceImpl({required http.Client client, required ConfigService configService})
-    : _client = client,
-      _configService = configService;
+  AuthRemoteServiceImpl({
+    required http.Client client,
+    required ConfigService configService,
+    Duration timeout = const Duration(seconds: 10),
+  }) : _client = client,
+       _configService = configService,
+       _timeout = timeout;
 
   final http.Client _client;
 
   final ConfigService _configService;
+  final Duration _timeout;
 
   @override
   Future<Result<AuthCredentialsDto>> signUp(SignUpDto request) async {
@@ -38,10 +43,7 @@ class AuthRemoteServiceImpl extends AuthRemoteService {
     try {
       final response = await _client
           .post(uri, headers: {'Content-Type': 'application/json'}, body: jsonEncode(request.toJson()))
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () => throw TimeoutException('Connection timeout', const Duration(seconds: 10)),
-          );
+          .timeout(_timeout, onTimeout: () => throw TimeoutException('Connection timeout', _timeout));
 
       if (response.statusCode == HttpStatus.created) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -62,10 +64,7 @@ class AuthRemoteServiceImpl extends AuthRemoteService {
     try {
       final response = await _client
           .post(uri, headers: {'Content-Type': 'application/json'}, body: jsonEncode(request.toJson()))
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () => throw TimeoutException('Connection timeout', const Duration(seconds: 10)),
-          );
+          .timeout(_timeout, onTimeout: () => throw TimeoutException('Connection timeout', _timeout));
 
       if (response.statusCode == HttpStatus.ok) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -86,10 +85,7 @@ class AuthRemoteServiceImpl extends AuthRemoteService {
     try {
       final response = await _client
           .post(uri, headers: {'Content-Type': 'application/json'}, body: json.encode({'refreshToken': refreshToken}))
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () => throw TimeoutException('Connection timeout', const Duration(seconds: 10)),
-          );
+          .timeout(_timeout, onTimeout: () => throw TimeoutException('Connection timeout', _timeout));
 
       if (response.statusCode == HttpStatus.ok) {
         final data = jsonDecode(utf8.decode(response.bodyBytes));
@@ -112,10 +108,7 @@ class AuthRemoteServiceImpl extends AuthRemoteService {
     try {
       final response = await _client
           .post(uri, headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer $accessToken'})
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () => throw TimeoutException('Connection timeout', const Duration(seconds: 10)),
-          );
+          .timeout(_timeout, onTimeout: () => throw TimeoutException('Connection timeout', _timeout));
 
       if (response.statusCode == HttpStatus.ok) {
         return Result.ok(null);
