@@ -132,11 +132,11 @@ class TimeRangeController extends ChangeNotifier {
       nightLimit = timeEnd;
     }
 
-    // Re-validate current selection with new schedule
-    currentRangeValues = _getValidRangeValues(currentRangeValues);
-
     // Ensure current time window is within schedule
     _adjustCurrentTimeWindow();
+
+    // Re-validate current selection against the adjusted active window
+    currentRangeValues = _getValidRangeValues(currentRangeValues);
 
     notifyListeners();
   }
@@ -368,13 +368,6 @@ class _TimeRangeSelectorState extends State<TimeRangeSelector> {
         if (mounted) {
           _updateControllerSchedule();
           _updateControllerUnavailableSlots();
-          // Sincronizar _dayTime después de actualizar
-          final newDayTime = _timeRangeController.currentDayTime;
-          if (_dayTime != newDayTime) {
-            setState(() {
-              _dayTime = newDayTime;
-            });
-          }
         }
       });
     }
